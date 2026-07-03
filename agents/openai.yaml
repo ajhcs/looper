@@ -1,0 +1,4 @@
+interface:
+  display_name: "Looper"
+  short_description: "Write tight agent loops for Codex"
+  default_prompt: "Use $looper to write a Codex loop for parallel subagents."
