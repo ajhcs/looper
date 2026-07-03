@@ -9,6 +9,8 @@ Write loops for capable agents. Assume the model can reason, inspect artifacts, 
 
 Looper is for planned work. If the bead list or plan is too vague to choose slices, lanes, and proof, the loop should stop and ask for planning instead of inventing implementation scope.
 
+Default length: keep generated loops under 3500 characters unless the user asks for more detail. Prefer dense operational language over explanation.
+
 ## Loop Shape
 
 Every looper loop must include:
@@ -16,11 +18,13 @@ Every looper loop must include:
 1. **State**: the compact variables the loop carries forward, such as `goal`, `plan`, `beads`, `slice`, `lanes`, `evidence`, `changes`, `risks`, `tests`, `open_questions`, and `stop_reason`.
 2. **Cycle**: the repeated action, written as a short numbered loop or pseudocode block.
 3. **Critic**: a check that compares the current result against the goal and evidence, not against vibes.
-4. **Escalation**: what changes on the next pass when the critic fails.
+4. **Adaptation**: how the loop changes strategy, slice size, lane mix, proof surface, or checkpoint when progress stalls or evidence fails.
 5. **Stop**: exact success, budget, or blocked conditions.
 6. **Output**: the artifact the loop returns.
 
 Completion criterion: the loop can be executed by another Codex instance without inventing missing control flow.
+
+Long-running loops must be engineered as durable agentic systems, not brittle retry scripts. Include compact checkpoint state, a progress ledger, a heartbeat cadence, and a re-entry rule so the loop can continue for days or weeks across pauses, queued checks, fresh context windows, and partial failures.
 
 ## Beads And Slices
 
@@ -92,9 +96,11 @@ Prefer loops that:
 - inspect local context before deciding
 - use `rg` for search and `apply_patch` for manual edits
 - preserve user changes
+- checkpoint decisions, evidence, current slice, next action, and last-progress timestamp
 - run focused verification before declaring success
 - report `waiting` progress when CI, checks, or external jobs are queued or in progress and still making progress
 - report blocked states only with the exact missing user/provider input, or with a non-progressing condition observed across three checks
+- adapt by narrowing scope, widening evidence, changing lanes, or replanning the slice before declaring failure
 
 Avoid loops that:
 
@@ -103,6 +109,7 @@ Avoid loops that:
 - make subagents coordinate with each other
 - treat consensus as proof
 - use "reflect" as a substitute for a concrete critic
+- hard-code a fixed number of retries when progress can be measured
 
 ## Template
 
@@ -111,25 +118,24 @@ Use this skeleton unless the user asks for a different format:
 ```text
 State:
 - goal:
-- plan:
-- beads:
-- slice:
+- plan/beads:
+- current_slice:
 - lanes:
-- evidence:
-- changes:
-- risks:
-- tests:
-- stop_reason:
+- evidence/tests:
+- progress_ledger:
+- checkpoint:
+- status:
 
 Loop:
-1. Read the plan or bead list just enough to identify parent beads, childbeads, constraints, and proof needs.
-2. Choose the next slice: one logical concern, preferably 50-250 changed lines.
-3. Classify the slice and choose lanes. Default code lane is /implement medium, then /codereview high.
-4. Dispatch subagents with the slice, constraints, proof needs, and compact return expectations.
-5. Critic: compare returned progress, diff, tests, and risks to the goal, slice, and proof needs.
-6. If the critic fails, change one of: slice boundary, lane selection, context, implementation, or test surface, then repeat.
-7. If CI, checks, or external jobs are queued or in progress and still making progress, return a progress packet with status `waiting`; do not mark the goal blocked.
-8. Stop when success is demonstrated, the planned slice budget is exhausted, the work needs replanning, user/provider input is required, or the same non-progressing condition repeats across three checks.
+1. Re-enter from checkpoint: read goal, ledger, last evidence, current slice, and next action.
+2. Choose or resize one slice with clear proof; split if unrelated or too large.
+3. Select lanes. Default: /implement medium, then /codereview high. Add specialists only when proof requires them.
+4. Dispatch with compact return format: changed, evidence, risk, next_action.
+5. Critic: compare diff/results/tests to goal, slice proof, regressions, and open risks.
+6. Adapt if critic fails: narrow or split slice, widen evidence, change lane mix, repair context, or replan the slice. Record the change in the ledger.
+7. Checkpoint after every material result: status, evidence, decisions, files, risks, next action, last-progress timestamp.
+8. If CI/checks/external jobs are queued or progressing, return status `waiting`, not `blocked`.
+9. Stop only when done, budget requires handoff, replanning is needed, user/provider input is required, or the same non-progressing condition repeats across three checks.
 
 Parallel branch, when useful:
 - Dispatch independent slices or advisory lanes with separate scopes and compact return expectations.
@@ -147,4 +153,4 @@ Return:
 
 ## Style
 
-Write the loop as operational instructions, not motivational prose. Keep it compact enough to paste into a prompt or skill. Use concrete nouns for state, concrete verbs for steps, and checkable conditions for stops.
+Write the loop as operational instructions, not motivational prose. Keep it compact enough to paste into a prompt or skill, normally under 3500 characters. Use concrete nouns for state, concrete verbs for steps, and checkable conditions for stops.
