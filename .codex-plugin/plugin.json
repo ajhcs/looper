@@ -1,6 +1,6 @@
 {
   "name": "looper",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Write tight Codex orchestration loops that use Matt Pocock Skills for implementation and review lanes.",
   "author": {
     "name": "Colet"

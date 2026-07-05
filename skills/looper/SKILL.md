@@ -5,17 +5,19 @@ description: Looper writes tight Codex orchestration loops over plans, beads, ch
 
 # Looper
 
-Write loops for capable agents. Assume the model can reason, inspect artifacts, use tools, and recover from uncertainty. Do not write loops that spend tokens teaching the model how to think.
+Write loops for capable agents. Assume the model can reason, inspect artifacts, use tools, and recover from uncertainty. Do not teach the agent how to think.
 
 Looper is for planned work. If the bead list or plan is too vague to choose slices, lanes, and proof, the loop should stop and ask for planning instead of inventing implementation scope.
 
-Default length: keep generated loops under 3500 characters unless the user asks for more detail. Prefer dense operational language over explanation.
+Default length: target 1200-2000 characters and stay under 2600 unless the user asks for more detail. Prefer outcome-first instructions, compact state, and evidence checks over process-heavy scaffolding.
+
+Prompt for newer agents like an engineer: define the job, constraints, proof, stop conditions, and handoff shape; leave routine pathfinding to the lane agent. Omit rationale, motivation, and repeated cautions unless they change behavior.
 
 Requirement: Matt Pocock Skills must be installed as the `matt-pocock-skills` plugin. Looper's default code lanes depend on `matt-pocock-skills:implement` and `matt-pocock-skills:code-review`; if those skills are unavailable, stop and report the missing dependency instead of falling back to generic implementation or review lanes.
 
 ## Loop Shape
 
-Every looper loop must include:
+Every looper loop must include, in compact form:
 
 1. **State**: the compact variables the loop carries forward, such as `goal`, `plan`, `beads`, `slice`, `lanes`, `evidence`, `changes`, `risks`, `tests`, `open_questions`, and `stop_reason`.
 2. **Cycle**: the repeated action, written as a short numbered loop or pseudocode block.
@@ -26,7 +28,7 @@ Every looper loop must include:
 
 Completion criterion: the loop can be executed by another Codex instance without inventing missing control flow.
 
-Long-running loops must be engineered as durable agentic systems, not brittle retry scripts. Include compact checkpoint state, a progress ledger, a heartbeat cadence, and a re-entry rule so the loop can continue for days or weeks across pauses, queued checks, fresh context windows, and partial failures.
+For long-running loops, add only the durable pieces needed: checkpoint state, progress ledger, heartbeat cadence, and re-entry rule.
 
 ## Beads And Slices
 
@@ -71,11 +73,11 @@ When writing a parallel loop, include:
 - conflict rule
 - parent verification step
 
-Worker returns should be compact and decision-useful, not full reasoning dumps: what changed or was learned, what evidence proves it, what remains risky or blocked, and the recommended next action. Reviewer/fixer returns should say whether the slice is merge-ready, what was fixed, and the highest-risk remaining concern.
+Worker returns should be decision-useful, not full reasoning dumps: changed/learned, evidence, risk/blocker, next action. Reviewer/fixer returns should say merge-ready or not, fixes made, and highest remaining risk.
 
 ## Skill Selection
 
-Use specialized skills sparingly. First classify the bead with light reading or thinking; then choose the smallest lane set that can prove the slice.
+Use specialized skills sparingly. Classify the bead quickly, then choose the smallest lane set that can prove the slice.
 
 Default code slice:
 
@@ -103,6 +105,7 @@ Prefer loops that:
 - report `waiting` progress when CI, checks, or external jobs are queued or in progress and still making progress
 - report blocked states only with the exact missing user/provider input, or with a non-progressing condition observed across three checks
 - adapt by narrowing scope, widening evidence, changing lanes, or replanning the slice before declaring failure
+- compress obvious mechanics into short imperatives
 
 Avoid loops that:
 
@@ -112,37 +115,30 @@ Avoid loops that:
 - treat consensus as proof
 - use "reflect" as a substitute for a concrete critic
 - hard-code a fixed number of retries when progress can be measured
+- explain why ordinary engineering steps matter
 
 ## Template
 
-Use this skeleton unless the user asks for a different format:
+Use this skeleton unless the user asks for a different format. Keep fields one line when possible.
 
 ```text
 State:
-- goal:
-- plan/beads:
-- current_slice:
+- goal / slice / proof:
 - lanes:
-- evidence/tests:
-- progress_ledger:
-- checkpoint:
-- status:
+- ledger / checkpoint / status:
 
 Loop:
-1. Re-enter from checkpoint: read goal, ledger, last evidence, current slice, and next action.
-2. Choose or resize one slice with clear proof; split if unrelated or too large.
-3. Select lanes. Default: `matt-pocock-skills:implement` medium, then `matt-pocock-skills:code-review` high. Add specialists only when proof requires them.
-4. Dispatch with compact return format: changed, evidence, risk, next_action.
-5. Critic: compare diff/results/tests to goal, slice proof, regressions, and open risks.
-6. Adapt if critic fails: narrow or split slice, widen evidence, change lane mix, repair context, or replan the slice. Record the change in the ledger.
-7. Checkpoint after every material result: status, evidence, decisions, files, risks, next action, last-progress timestamp.
-8. If CI/checks/external jobs are queued or progressing, return status `waiting`, not `blocked`.
-9. Stop only when done, budget requires handoff, replanning is needed, user/provider input is required, or the same non-progressing condition repeats across three checks.
+1. Re-enter from checkpoint; choose the next provable slice.
+2. Default lanes: `matt-pocock-skills:implement` medium, then `matt-pocock-skills:code-review` high. Add specialists only for proof gaps.
+3. Require compact returns: changed, evidence, risk, next_action.
+4. Critic: compare result to goal, slice proof, regressions, and open risks.
+5. If critic fails, narrow/split, widen evidence, change lanes, or replan; record the decision.
+6. Checkpoint status, evidence, files, risks, next action, and timestamp.
+7. Return `waiting` for queued/progressing checks; `blocked` only for required input or repeated non-progress.
 
 Parallel branch, when useful:
-- Dispatch independent slices or advisory lanes with separate scopes and compact return expectations.
-- Merge raw findings by evidence strength.
-- Resolve conflicts by checking source artifacts, not by voting.
+- Dispatch independent lanes with separate scopes and compact returns.
+- Merge by evidence strength; resolve conflicts from source artifacts.
 - Parent performs final verification.
 
 Return:
@@ -150,9 +146,9 @@ Return:
 - verification evidence
 - residual risks or blockers
 - progress packet status: `complete`, `waiting`, or `blocked`
-- commit/PR slice recommendation
+- commit/PR recommendation
 ```
 
 ## Style
 
-Write the loop as operational instructions, not motivational prose. Keep it compact enough to paste into a prompt or skill, normally under 3500 characters. Use concrete nouns for state, concrete verbs for steps, and checkable conditions for stops.
+Write the loop as operational instructions, not motivational prose. Keep it compact enough to paste into a prompt or skill, normally under 2600 characters. Use concrete nouns for state, concrete verbs for steps, and checkable stop conditions.
