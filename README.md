@@ -18,7 +18,7 @@ It is intentionally compact. The point is not to teach an agent how to think; it
 - Splitting work into small, reviewable slices.
 - Dispatching implementor, reviewer, fixer, specialist, or parallel discovery lanes.
 - Keeping the parent agent focused on synthesis and verification.
-- Producing compact loops, normally under 3500 characters.
+- Producing compact loops, normally 1200-2000 characters and under 2600 unless more detail is requested.
 - Reporting progress without pretending that queued CI or in-progress external jobs are blocked.
 
 ## How I Use It
@@ -32,6 +32,8 @@ I use Looper when I want Codex to keep moving through a plan with discipline:
 5. Return a compact progress packet with `complete`, `waiting`, or `blocked`.
 
 The skill is opinionated about momentum. CI that is queued, checks that are still running, and external jobs that are making progress should be reported as `waiting`, not `blocked`. A blocked state is reserved for required user/provider input or the same non-progressing condition repeating across three checks.
+
+Looper assumes modern Codex agents can infer routine pathfinding. It focuses on the job, constraints, proof, stop conditions, and handoff shape rather than spelling out every ordinary engineering step.
 
 ## Install
 
