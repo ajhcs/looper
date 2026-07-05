@@ -1,0 +1,4 @@
+interface:
+  display_name: "Phone-A-SWE"
+  short_description: "Research software decisions like a senior engineer"
+  default_prompt: "Use $phone-a-swe to decide this software question with repository evidence, current sources, and explicit uncertainty labels."

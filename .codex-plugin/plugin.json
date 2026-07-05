@@ -1,7 +1,7 @@
 {
   "name": "looper",
-  "version": "0.1.1",
-  "description": "Write tight Codex orchestration loops that use Matt Pocock Skills for implementation and review lanes.",
+  "version": "0.3.0",
+  "description": "Decompose beads, write tight Codex orchestration loops, and phone a senior SWE for research-backed decisions.",
   "author": {
     "name": "Colet"
   },
@@ -11,13 +11,17 @@
     "skills",
     "orchestration",
     "agents",
-    "matt-pocock-skills"
+    "beads",
+    "decomposition",
+    "matt-pocock-skills",
+    "software-engineering",
+    "research"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Looper",
-    "shortDescription": "Write tight agent loops for Codex.",
-    "longDescription": "Looper writes compact Codex orchestration loops over plans, beads, slices, subagents, review/fix passes, and proof. It requires Matt Pocock Skills to be installed because its default code lanes call matt-pocock-skills:implement and matt-pocock-skills:code-review.",
+    "shortDescription": "Decompose beads, write loops, phone a SWE.",
+    "longDescription": "Looper writes compact Codex orchestration loops over plans, beads, slices, subagents, review/fix passes, and proof. It also includes Beadwriter for decomposing parent beads, PRDs, issue briefs, and grill-with-docs output into commit-sized childbeads, plus Phone-A-SWE for research-backed software decisions in systems-engineering terms. Looper's default code lanes require Matt Pocock Skills because they call matt-pocock-skills:implement and matt-pocock-skills:code-review.",
     "developerName": "Colet",
     "category": "Productivity",
     "capabilities": [
@@ -26,8 +30,10 @@
     ],
     "defaultPrompt": [
       "Use Looper to write a Codex loop.",
+      "Use Beadwriter to decompose this bead.",
       "Turn this plan into implementation slices.",
-      "Write a loop using Matt Pocock skill lanes."
+      "Write a loop using Matt Pocock skill lanes.",
+      "Use Phone-A-SWE to research this technical decision."
     ],
     "composerIcon": "./assets/LooperIcon.png",
     "logo": "./assets/LooperIcon.png",

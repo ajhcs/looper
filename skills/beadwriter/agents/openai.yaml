@@ -1,0 +1,4 @@
+interface:
+  display_name: "Beadwriter"
+  short_description: "Decompose beads into commit-sized work"
+  default_prompt: "Use $beadwriter to decompose this bead into commit-sized childbeads."

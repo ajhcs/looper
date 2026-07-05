@@ -5,14 +5,18 @@
 <h1 align="center">Looper</h1>
 
 <p align="center">
-  My personal Codex skill for turning plans into tight agent loops.
+  My personal Codex skills for bead decomposition, tight agent loops, and senior SWE decision research.
 </p>
 
 Looper is the orchestration skill I use personally when work needs more structure than a single prompt, but less ceremony than a project management system. It helps Codex break planned work into slices, choose useful subagent lanes, verify progress with evidence, and stop cleanly when the work is done, waiting, or genuinely blocked.
 
+This plugin also includes Beadwriter for decomposing parent beads into commit-sized childbeads, and Phone-A-SWE for technical decisions that need current sources, codebase context, and systems-engineering translation.
+
 It is intentionally compact. The point is not to teach an agent how to think; it is to give a capable agent a reliable control loop that can keep working across pauses, fresh context windows, queued checks, and partial failures.
 
 ## What It Is For
+
+### Looper
 
 - Turning a plan, bead list, or implementation brief into repeatable Codex cycles.
 - Splitting work into small, reviewable slices.
@@ -20,6 +24,22 @@ It is intentionally compact. The point is not to teach an agent how to think; it
 - Keeping the parent agent focused on synthesis and verification.
 - Producing compact loops, normally 1200-2000 characters and under 2600 unless more detail is requested.
 - Reporting progress without pretending that queued CI or in-progress external jobs are blocked.
+
+### Beadwriter
+
+- Decomposing grill-with-docs output, PRDs, issue briefs, or parent beads into childbeads.
+- Keeping each childbead close to one atomic commit: one logical change, one proof surface, one commit sentence.
+- Using LOC as a sizing signal: 20-150 meaningful changed LOC per commit-sized childbead, with a soft cap around 200.
+- Preparing bead packets with scope, likely files, proof, dependencies, size, and review focus.
+- Marking a bead list ready for Looper only when it can be handed to an implementation loop without inventing scope.
+
+### Phone-A-SWE
+
+- Researching software engineering decisions using local codebase context and current web sources.
+- Comparing architecture, framework, API, library, MCP, skill, or implementation options.
+- Translating software tradeoffs into systems terms: interfaces, invariants, constraints, failure modes, blast radius, reversibility, proof, and residual risk.
+- Forcing accuracy with evidence labels: `verified`, `inferred`, `unknown`, `not inspected`, and `not run`.
+- Producing a small decision packet instead of a sprawling research report.
 
 ## How I Use It
 
@@ -55,14 +75,18 @@ Then invoke it in Codex with:
 
 ```text
 $looper
+$beadwriter
+$phone-a-swe
 ```
 
 ## Repository
 
-- `SKILL.md` contains the Looper skill instructions.
+- `SKILL.md` contains the direct local Looper skill instructions.
 - `skills/looper/SKILL.md` contains the plugin-native copy of the same skill.
+- `skills/beadwriter/SKILL.md` contains the bead decomposition and childbead writing skill.
+- `skills/phone-a-swe/SKILL.md` contains the Phone-A-SWE decision research skill.
 - `.codex-plugin/plugin.json` contains plugin metadata and documents the Matt Pocock Skills dependency.
-- `agents/openai.yaml` contains the agent metadata for the skill.
+- `agents/openai.yaml` contains the agent metadata for the plugin.
 - `assets/LooperIcon.png` is the icon I use for the project.
 
 ## Status

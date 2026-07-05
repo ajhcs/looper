@@ -86,6 +86,8 @@ Default code slice:
 
 Use specialist lanes only when the bead names the domain or the proof requires it:
 
+- decomposing a parent bead, PRD, issue brief, or grill-with-docs output into commit-sized childbeads: `beadwriter`
+- software decision, architecture option, library/API/framework choice, MCP/skill choice, current best practice, or codebase tradeoff research: `phone-a-swe`
 - security boundary, exploit, auth, input, permission, secret, or data-flow work
 - visual design, screenshots, UI polish, or rendered frontend proof
 - CI, failing tests, flaky tests, or deployment failure
