@@ -35,12 +35,19 @@ The skill is opinionated about momentum. CI that is queued, checks that are stil
 
 ## Install
 
+Looper requires Matt Pocock Skills to be installed first. Its default implementation and review lanes call:
+
+- `matt-pocock-skills:implement`
+- `matt-pocock-skills:code-review`
+
 Copy this folder into your Codex skills directory:
 
 ```powershell
 New-Item -ItemType Directory -Force "$env:USERPROFILE\.codex\skills\looper"
-Copy-Item -Recurse -Force SKILL.md, agents, assets "$env:USERPROFILE\.codex\skills\looper\"
+Copy-Item -Recurse -Force .codex-plugin, skills, SKILL.md, agents, assets "$env:USERPROFILE\.codex\skills\looper\"
 ```
+
+For plugin installs, use the plugin-native copy under `skills/looper/SKILL.md`; the root `SKILL.md` remains for direct local skill use.
 
 Then invoke it in Codex with:
 
@@ -51,6 +58,8 @@ $looper
 ## Repository
 
 - `SKILL.md` contains the Looper skill instructions.
+- `skills/looper/SKILL.md` contains the plugin-native copy of the same skill.
+- `.codex-plugin/plugin.json` contains plugin metadata and documents the Matt Pocock Skills dependency.
 - `agents/openai.yaml` contains the agent metadata for the skill.
 - `assets/LooperIcon.png` is the icon I use for the project.
 

@@ -1,0 +1,36 @@
+{
+  "name": "looper",
+  "version": "0.1.0",
+  "description": "Write tight Codex orchestration loops that use Matt Pocock Skills for implementation and review lanes.",
+  "author": {
+    "name": "Colet"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "codex",
+    "skills",
+    "orchestration",
+    "agents",
+    "matt-pocock-skills"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Looper",
+    "shortDescription": "Write tight agent loops for Codex.",
+    "longDescription": "Looper writes compact Codex orchestration loops over plans, beads, slices, subagents, review/fix passes, and proof. It requires Matt Pocock Skills to be installed because its default code lanes call matt-pocock-skills:implement and matt-pocock-skills:code-review.",
+    "developerName": "Colet",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use Looper to write a Codex loop.",
+      "Turn this plan into implementation slices.",
+      "Write a loop using Matt Pocock skill lanes."
+    ],
+    "composerIcon": "./assets/LooperIcon.png",
+    "logo": "./assets/LooperIcon.png",
+    "brandColor": "#0F766E"
+  }
+}
