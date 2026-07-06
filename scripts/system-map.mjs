@@ -425,6 +425,37 @@ export function renderHtml(mapSource) {
       text-decoration-thickness: 1px;
     }
 
+    .trace-controls {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .trace-button {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fbfcfd;
+      color: var(--ink);
+      font: inherit;
+      font-weight: 650;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .trace-button:hover,
+    .trace-button:focus {
+      border-color: var(--accent);
+      outline: 2px solid rgba(11, 114, 133, 0.16);
+    }
+
+    .trace-path {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
     @media (max-width: 900px) {
       .map-body {
         grid-template-columns: 1fr;
@@ -534,16 +565,57 @@ export function renderHtml(mapSource) {
             "target-arrow-color": "#0b7285",
             "width": 4
           }
+        },
+        {
+          selector: ".trace-dim",
+          style: {
+            "opacity": 0.18
+          }
+        },
+        {
+          selector: "node.trace-highlight",
+          style: {
+            "border-color": "#c2410c",
+            "border-width": 5,
+            "opacity": 1
+          }
+        },
+        {
+          selector: "edge.trace-highlight",
+          style: {
+            "line-color": "#c2410c",
+            "target-arrow-color": "#c2410c",
+            "width": 5,
+            "opacity": 1
+          }
         }
       ]
     });
 
     const detailPanel = document.getElementById("map-detail-panel");
+    mapData.relationshipsById = Object.fromEntries(mapData.relationships.map((relationship) => [relationship.id, relationship]));
+    mapData.tracesById = Object.fromEntries(mapData.derivedTraces.map((trace) => [trace.id, trace]));
+    renderEmptyDetails();
 
     cy.on("tap", "node", (event) => {
       const node = event.target;
       renderNodeDetails(node.id());
     });
+
+    cy.on("tap", "edge", (event) => {
+      const edge = event.target;
+      renderRelationshipDetails(edge.id());
+    });
+
+    function renderEmptyDetails() {
+      detailPanel.innerHTML = [
+        '<p class="detail-eyebrow">Map Detail Panel</p>',
+        '<h2 class="detail-title">Select a node or relationship</h2>',
+        '<p class="detail-empty">Choose a mapped thing or connector to inspect evidence quality, relationship explanations, risks, unknowns, and generated child map navigation.</p>',
+        renderTracePanel(null)
+      ].join("");
+      wireTraceButtons();
+    }
 
     function renderNodeDetails(nodeId) {
       const node = mapData.nodesById[nodeId];
@@ -561,8 +633,28 @@ export function renderHtml(mapSource) {
         renderRelationships("Incoming relationships", node.incomingRelationships, "fromLabel"),
         renderRelationships("Outgoing relationships", node.outgoingRelationships, "toLabel"),
         renderRelatedRisks(node.relatedRisksAndUnknowns),
-        renderChildMap(node.childMap)
+        renderChildMap(node.childMap),
+        renderTracePanel(null)
       ].join("");
+      wireTraceButtons();
+    }
+
+    function renderRelationshipDetails(relationshipId) {
+      const relationship = mapData.relationshipsById[relationshipId];
+      if (!relationship) {
+        return;
+      }
+
+      detailPanel.innerHTML = [
+        '<p class="detail-eyebrow">Relationship Explanation</p>',
+        '<h2 class="detail-title">' + escapeDetailHtml(relationship.fromLabel) + ' -> ' + escapeDetailHtml(relationship.toLabel) + '</h2>',
+        '<p class="detail-meta">' + escapeDetailHtml(relationship.type) + ' / ' + escapeDetailHtml(relationship.label) + ' / ' + escapeDetailHtml(relationship.status) + '</p>',
+        '<p class="detail-description">' + escapeDetailHtml(relationship.why) + '</p>',
+        renderDetailPills("Evidence quality", relationship.evidenceQualityLabels),
+        renderSources(relationship.sources),
+        renderTracePanel(relationshipId)
+      ].join("");
+      wireTraceButtons();
     }
 
     function renderDetailPills(title, labels) {
@@ -587,7 +679,8 @@ export function renderHtml(mapSource) {
       return '<section class="detail-section"><h3>' + title + '</h3>' +
         renderList(relationships, (relationship) => [
           '<strong>' + escapeDetailHtml(relationship[labelKey]) + '</strong>',
-          '<div class="detail-source-meta">' + escapeDetailHtml(relationship.label) + ' / ' + escapeDetailHtml(relationship.type) + ' / ' + escapeDetailHtml(relationship.status) + '</div>'
+          '<div class="detail-source-meta">' + escapeDetailHtml(relationship.label) + ' / ' + escapeDetailHtml(relationship.type) + ' / ' + escapeDetailHtml(relationship.status) + '</div>',
+          '<div>' + escapeDetailHtml(relationship.why) + '</div>'
         ].join("")) +
         '</section>';
     }
@@ -613,6 +706,59 @@ export function renderHtml(mapSource) {
         '</section>';
     }
 
+    function renderTracePanel(selectedRelationshipId) {
+      const traces = mapData.derivedTraces || [];
+      const matchingTraces = selectedRelationshipId
+        ? traces.filter((trace) => trace.relationshipIds.includes(selectedRelationshipId))
+        : traces;
+      const buttons = matchingTraces.map((trace) => [
+        '<button class="trace-button" type="button" data-trace-id="' + escapeDetailAttribute(trace.id) + '">',
+        escapeDetailHtml(trace.title),
+        '<div class="trace-path">' + escapeDetailHtml(trace.layerPath.join(" -> ")) + '</div>',
+        '</button>'
+      ].join("")).join("");
+
+      return '<section id="trace-mode-panel" class="detail-section" data-trace-count="' + traces.length + '">' +
+        '<h3>Trace Mode</h3>' +
+        '<p class="detail-empty">Highlight a derived cross-layer path from existing relationships.</p>' +
+        '<div class="trace-controls" aria-label="Trace controls">' +
+        (buttons || '<p class="detail-empty">No derived traces include this relationship.</p>') +
+        '</div>' +
+        '</section>';
+    }
+
+    function wireTraceButtons() {
+      for (const button of detailPanel.querySelectorAll("[data-trace-id]")) {
+        button.addEventListener("click", () => highlightTrace(button.dataset.traceId));
+      }
+    }
+
+    function highlightTrace(traceId) {
+      const trace = mapData.tracesById[traceId];
+      if (!trace) {
+        return;
+      }
+
+      cy.elements().removeClass("trace-highlight trace-dim");
+      cy.elements().addClass("trace-dim");
+      let highlighted = cy.collection();
+      for (const nodeId of trace.nodeIds) {
+        highlighted = highlighted.union(cy.getElementById(nodeId));
+      }
+      for (const relationshipId of trace.relationshipIds) {
+        highlighted = highlighted.union(cy.getElementById(relationshipId));
+      }
+      highlighted.removeClass("trace-dim").addClass("trace-highlight");
+
+      const summary = document.createElement("p");
+      summary.className = "trace-path";
+      summary.textContent = trace.description;
+      const panel = detailPanel.querySelector("#trace-mode-panel");
+      panel?.querySelector(".trace-path[data-active-summary]")?.remove();
+      summary.dataset.activeSummary = "true";
+      panel?.append(summary);
+    }
+
     function renderList(items, renderItem) {
       if (!items || items.length === 0) {
         return '<p class="detail-empty">None recorded.</p>';
@@ -633,7 +779,7 @@ export function renderHtml(mapSource) {
       return escapeDetailHtml(value).replaceAll("'", "&#39;");
     }
 
-    window.systemMapView = { mapData, cy, renderNodeDetails };
+    window.systemMapView = { mapData, cy, renderNodeDetails, renderRelationshipDetails, highlightTrace };
   </script>
 </body>
 </html>
@@ -664,10 +810,10 @@ function buildHtmlRendererData(mapSource) {
     const sourceRefs = (node.evidence ?? []).map((sourceId) => sourcesById.get(sourceId)).filter(Boolean);
     const incomingRelationships = rawRelationships
       .filter((relationship) => relationship.to === node.id)
-      .map((relationship) => summarizeRelationship(relationship, rawNodesById));
+      .map((relationship) => summarizeRelationship(relationship, rawNodesById, sourcesById));
     const outgoingRelationships = rawRelationships
       .filter((relationship) => relationship.from === node.id)
-      .map((relationship) => summarizeRelationship(relationship, rawNodesById));
+      .map((relationship) => summarizeRelationship(relationship, rawNodesById, sourcesById));
     const relatedRisksAndUnknowns = [...incomingRelationships, ...outgoingRelationships]
       .map((relationship) => relationship.from === node.id ? relationship.to : relationship.from)
       .map((relatedNodeId) => rawNodesById.get(relatedNodeId))
@@ -708,15 +854,9 @@ function buildHtmlRendererData(mapSource) {
 
   const relationships = (mapSource.relationships ?? []).map((relationship) => {
     const statusStyle = htmlStatusStyles[relationship.status] ?? htmlStatusStyles.unknown;
+    const summary = summarizeRelationship(relationship, rawNodesById, sourcesById);
     return {
-      id: relationship.id,
-      from: relationship.from,
-      to: relationship.to,
-      type: relationship.type,
-      label: relationship.label || relationship.type,
-      status: relationship.status,
-      description: relationship.description ?? "",
-      evidence: relationship.evidence ?? [],
+      ...summary,
       classes: [`relationship-${relationship.type}`, `status-${relationship.status}`],
       style: {
         lineStyle: statusStyle.borderStyle === "solid" ? "solid" : statusStyle.borderStyle,
@@ -735,6 +875,7 @@ function buildHtmlRendererData(mapSource) {
     layers: mapSource.layers ?? [],
     sources: [...sourcesById.values()],
     childMaps: [...childMapsById.values()],
+    derivedTraces: deriveCrossLayerTraces(mapSource, rawNodesById, rawRelationships),
     nodes,
     relationships,
     elements: [
@@ -768,6 +909,7 @@ function buildHtmlRendererData(mapSource) {
           status: relationship.status,
           description: relationship.description,
           evidence: relationship.evidence,
+          why: relationship.why,
           lineStyle: relationship.style.lineStyle,
           opacity: relationship.style.opacity
         },
@@ -777,18 +919,123 @@ function buildHtmlRendererData(mapSource) {
   };
 }
 
-function summarizeRelationship(relationship, nodesById) {
+function summarizeRelationship(relationship, nodesById, sourcesById) {
+  const sourceRefs = (relationship.evidence ?? []).map((sourceId) => sourcesById.get(sourceId)).filter(Boolean);
+  const fromLabel = nodesById.get(relationship.from)?.label ?? relationship.from;
+  const toLabel = nodesById.get(relationship.to)?.label ?? relationship.to;
+  const label = relationship.label || relationship.type;
   return {
     id: relationship.id,
     from: relationship.from,
     to: relationship.to,
-    fromLabel: nodesById.get(relationship.from)?.label ?? relationship.from,
-    toLabel: nodesById.get(relationship.to)?.label ?? relationship.to,
+    fromLabel,
+    toLabel,
     type: relationship.type,
-    label: relationship.label || relationship.type,
+    label,
     status: relationship.status,
-    description: relationship.description ?? ""
+    description: relationship.description ?? "",
+    evidence: relationship.evidence ?? [],
+    evidenceQualityLabels: uniqueLabels(sourceRefs.map((source) => source.confidenceLabel)),
+    sources: sourceRefs,
+    why: relationship.description || `${fromLabel} ${label} ${toLabel}, so the map treats them as connected when following ${relationship.type} behavior.`
   };
+}
+
+function deriveCrossLayerTraces(mapSource, nodesById, relationships) {
+  const productNodes = (mapSource.nodes ?? []).filter((node) => node.layer === "Product");
+  return productNodes
+    .map((productNode) => deriveTraceForProductNode(productNode, nodesById, relationships))
+    .filter(Boolean);
+}
+
+function deriveTraceForProductNode(productNode, nodesById, relationships) {
+  const targetPredicates = [
+    (node) => node.layer === "Code",
+    (node) => node.layer === "System",
+    (node) => node.layer === "Data",
+    (node) => node.layer === "Knowledge",
+    (node) => node.type === "Risk" || node.type === "Unknown"
+  ];
+  const orderedNodeIds = [productNode.id];
+  const orderedRelationshipIds = [];
+
+  for (const predicate of targetPredicates) {
+    const path = findNearestPath(productNode.id, nodesById, relationships, predicate);
+    if (!path) {
+      continue;
+    }
+    for (const relationshipId of path.relationshipIds) {
+      if (!orderedRelationshipIds.includes(relationshipId)) {
+        orderedRelationshipIds.push(relationshipId);
+      }
+    }
+    for (const nodeId of path.nodeIds) {
+      if (!orderedNodeIds.includes(nodeId)) {
+        orderedNodeIds.push(nodeId);
+      }
+    }
+  }
+
+  if (orderedRelationshipIds.length === 0) {
+    return null;
+  }
+
+  const layerPath = uniqueLabels(orderedNodeIds.map((nodeId) => nodesById.get(nodeId)?.layer).filter(Boolean));
+  const riskLabels = orderedNodeIds
+    .map((nodeId) => nodesById.get(nodeId))
+    .filter((node) => node?.type === "Risk" || node?.type === "Unknown")
+    .map((node) => node.label);
+
+  return {
+    id: `trace-${productNode.id}`,
+    title: `${productNode.label} cross-layer trace`,
+    anchorNodeId: productNode.id,
+    nodeIds: orderedNodeIds,
+    relationshipIds: orderedRelationshipIds,
+    layerPath,
+    description: riskLabels.length > 0
+      ? `Follows ${productNode.label} through ${layerPath.join(", ")} and includes risk/unknown coverage: ${riskLabels.join(", ")}.`
+      : `Follows ${productNode.label} through ${layerPath.join(", ")} using existing relationships.`
+  };
+}
+
+function findNearestPath(startNodeId, nodesById, relationships, predicate) {
+  const adjacency = new Map();
+  for (const relationship of relationships) {
+    if (!adjacency.has(relationship.from)) {
+      adjacency.set(relationship.from, []);
+    }
+    if (!adjacency.has(relationship.to)) {
+      adjacency.set(relationship.to, []);
+    }
+    adjacency.get(relationship.from).push({ nodeId: relationship.to, relationshipId: relationship.id });
+    adjacency.get(relationship.to).push({ nodeId: relationship.from, relationshipId: relationship.id });
+  }
+
+  const queue = [{ nodeIds: [startNodeId], relationshipIds: [] }];
+  const seen = new Set([startNodeId]);
+
+  while (queue.length > 0) {
+    const path = queue.shift();
+    const currentNodeId = path.nodeIds.at(-1);
+    const currentNode = nodesById.get(currentNodeId);
+    if (currentNodeId !== startNodeId && predicate(currentNode)) {
+      return path;
+    }
+
+    for (const next of adjacency.get(currentNodeId) ?? []) {
+      if (seen.has(next.nodeId)) {
+        continue;
+      }
+      seen.add(next.nodeId);
+      queue.push({
+        nodeIds: [...path.nodeIds, next.nodeId],
+        relationshipIds: [...path.relationshipIds, next.relationshipId]
+      });
+    }
+  }
+
+  return null;
 }
 
 function generatedChildHtmlPath(childPath) {

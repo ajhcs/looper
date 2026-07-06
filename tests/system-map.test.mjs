@@ -100,6 +100,50 @@ describe("System Map renderers", () => {
     assert.doesNotMatch(html, /href="\.\/analytics-events\.map\.yaml"/);
   });
 
+  it("adds relationship explanation UI hooks and inspectable edge data", () => {
+    const html = renderHtml(analytics);
+    const rendererData = extractRendererData(html);
+    const relationship = rendererData.relationships.find((item) => item.id === "dashboard-measures-interactions");
+    const edge = rendererData.elements.find((item) => item.group === "edges" && item.data.id === "dashboard-measures-interactions");
+
+    assert.match(html, /Relationship Explanation/);
+    assert.match(html, /renderRelationshipDetails\(edge\.id\(\)\)/);
+    assert.match(html, /window\.systemMapView = \{ mapData, cy, renderNodeDetails, renderRelationshipDetails, highlightTrace \}/);
+    assert.equal(relationship.type, "measures");
+    assert.equal(relationship.label, "displays");
+    assert.equal(relationship.status, "active");
+    assert.deepEqual(relationship.evidenceQualityLabels, ["Inferred"]);
+    assert.match(relationship.why, /Analytics Dashboard displays Tracked Interactions/);
+    assert.equal(edge.data.why, relationship.why);
+  });
+
+  it("adds trace controls and highlighted path data derived from existing relationships", () => {
+    const html = renderHtml(analytics);
+    const rendererData = extractRendererData(html);
+    const trace = rendererData.derivedTraces.find((item) => item.id === "trace-dashboard-surface");
+
+    assert.match(html, /id="trace-mode-panel"/);
+    assert.match(html, /class="trace-controls"/);
+    assert.match(html, /function highlightTrace\(traceId\)/);
+    assert.match(html, /trace-highlight/);
+    assert.ok(trace, "expected a derived Dashboard trace");
+    assert.deepEqual(trace.layerPath, ["Product", "System", "Code", "Data", "Knowledge"]);
+    assert.deepEqual(
+      trace.relationshipIds,
+      [
+        "dashboard-uses-collection",
+        "collection-uses-server",
+        "code-implements-server",
+        "store-feeds-dashboard",
+        "dashboard-measures-interactions",
+        "data-quality-risks-metrics"
+      ]
+    );
+    assert.ok(trace.nodeIds.includes("analytics-code"));
+    assert.ok(trace.nodeIds.includes("data-quality-risk"));
+    assert.match(trace.description, /Data Quality Coverage/);
+  });
+
   it("reports preflight state", () => {
     const preflight = runPreflight();
     assert.match(preflight, /System Mapper preflight/);
@@ -133,4 +177,10 @@ describe("Map Source schema", () => {
 
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function extractRendererData(html) {
+  const match = html.match(/<script id="system-map-data" type="application\/json">(?<json>[\s\S]*?)<\/script>/);
+  assert.ok(match?.groups?.json, "expected embedded renderer data");
+  return JSON.parse(match.groups.json);
 }

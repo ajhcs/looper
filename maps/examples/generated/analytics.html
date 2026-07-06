@@ -157,6 +157,37 @@
       text-decoration-thickness: 1px;
     }
 
+    .trace-controls {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .trace-button {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fbfcfd;
+      color: var(--ink);
+      font: inherit;
+      font-weight: 650;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .trace-button:hover,
+    .trace-button:focus {
+      border-color: var(--accent);
+      outline: 2px solid rgba(11, 114, 133, 0.16);
+    }
+
+    .trace-path {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
     @media (max-width: 900px) {
       .map-body {
         grid-template-columns: 1fr;
@@ -245,6 +276,38 @@
       "generatedHtmlPath": "./analytics-events.html"
     }
   ],
+  "derivedTraces": [
+    {
+      "id": "trace-dashboard-surface",
+      "title": "Analytics Dashboard cross-layer trace",
+      "anchorNodeId": "dashboard-surface",
+      "nodeIds": [
+        "dashboard-surface",
+        "collection-path",
+        "local-analytics-server",
+        "analytics-code",
+        "reporting-store",
+        "tracked-interactions",
+        "data-quality-risk"
+      ],
+      "relationshipIds": [
+        "dashboard-uses-collection",
+        "collection-uses-server",
+        "code-implements-server",
+        "store-feeds-dashboard",
+        "dashboard-measures-interactions",
+        "data-quality-risks-metrics"
+      ],
+      "layerPath": [
+        "Product",
+        "System",
+        "Code",
+        "Data",
+        "Knowledge"
+      ],
+      "description": "Follows Analytics Dashboard through Product, System, Code, Data, Knowledge and includes risk/unknown coverage: Data Quality Coverage."
+    }
+  ],
   "nodes": [
     {
       "id": "dashboard-surface",
@@ -281,7 +344,24 @@
           "type": "feeds",
           "label": "powers reports",
           "status": "active",
-          "description": ""
+          "description": "",
+          "evidence": [
+            "implementation-inference"
+          ],
+          "evidenceQualityLabels": [
+            "Inferred"
+          ],
+          "sources": [
+            {
+              "id": "implementation-inference",
+              "type": "conversation",
+              "title": "Generic analytics implementation inference",
+              "confidence": "inferred",
+              "confidenceLabel": "Inferred",
+              "pathText": ""
+            }
+          ],
+          "why": "Reporting Store powers reports Analytics Dashboard, so the map treats them as connected when following feeds behavior."
         }
       ],
       "outgoingRelationships": [
@@ -294,7 +374,24 @@
           "type": "measures",
           "label": "displays",
           "status": "active",
-          "description": ""
+          "description": "",
+          "evidence": [
+            "implementation-inference"
+          ],
+          "evidenceQualityLabels": [
+            "Inferred"
+          ],
+          "sources": [
+            {
+              "id": "implementation-inference",
+              "type": "conversation",
+              "title": "Generic analytics implementation inference",
+              "confidence": "inferred",
+              "confidenceLabel": "Inferred",
+              "pathText": ""
+            }
+          ],
+          "why": "Analytics Dashboard displays Tracked Interactions, so the map treats them as connected when following measures behavior."
         },
         {
           "id": "dashboard-uses-collection",
@@ -305,7 +402,24 @@
           "type": "uses",
           "label": "emits events through",
           "status": "active",
-          "description": ""
+          "description": "",
+          "evidence": [
+            "implementation-inference"
+          ],
+          "evidenceQualityLabels": [
+            "Inferred"
+          ],
+          "sources": [
+            {
+              "id": "implementation-inference",
+              "type": "conversation",
+              "title": "Generic analytics implementation inference",
+              "confidence": "inferred",
+              "confidenceLabel": "Inferred",
+              "pathText": ""
+            }
+          ],
+          "why": "Analytics Dashboard emits events through Collection Path, so the map treats them as connected when following uses behavior."
         }
       ],
       "relatedRisksAndUnknowns": [],
@@ -356,7 +470,24 @@
           "type": "feeds",
           "label": "informs",
           "status": "partial",
-          "description": ""
+          "description": "",
+          "evidence": [
+            "implementation-inference"
+          ],
+          "evidenceQualityLabels": [
+            "Inferred"
+          ],
+          "sources": [
+            {
+              "id": "implementation-inference",
+              "type": "conversation",
+              "title": "Generic analytics implementation inference",
+              "confidence": "inferred",
+              "confidenceLabel": "Inferred",
+              "pathText": ""
+            }
+          ],
+          "why": "Tracked Interactions informs Pricing Insights, so the map treats them as connected when following feeds behavior."
         }
       ],
       "outgoingRelationships": [],
@@ -408,7 +539,24 @@
           "type": "measures",
           "label": "displays",
           "status": "active",
-          "description": ""
+          "description": "",
+          "evidence": [
+            "implementation-inference"
+          ],
+          "evidenceQualityLabels": [
+            "Inferred"
+          ],
+          "sources": [
+            {
+              "id": "implementation-inference",
+              "type": "conversation",
+              "title": "Generic analytics implementation inference",
+              "confidence": "inferred",
+              "confidenceLabel": "Inferred",
+              "pathText": ""
+            }
+          ],
+          "why": "Analytics Dashboard displays Tracked Interactions, so the map treats them as connected when following measures behavior."
         },
         {
           "id": "data-quality-risks-metrics",
@@ -419,7 +567,24 @@
           "type": "risks",
           "label": "can distort",
           "status": "at_risk",
-          "description": ""
+          "description": "",
+          "evidence": [
+            "implementation-inference"
+          ],
+          "evidenceQualityLabels": [
+            "Inferred"
+          ],
+          "sources": [
+            {
+              "id": "implementation-inference",
+              "type": "conversation",
+              "title": "Generic analytics implementation inference",
+              "confidence": "inferred",
+              "confidenceLabel": "Inferred",
+              "pathText": ""
+            }
+          ],
+          "why": "Data Quality Coverage can distort Tracked Interactions, so the map treats them as connected when following risks behavior."
         }
       ],
       "outgoingRelationships": [
@@ -432,7 +597,24 @@
           "type": "feeds",
           "label": "informs",
           "status": "partial",
-          "description": ""
+          "description": "",
+          "evidence": [
+            "implementation-inference"
+          ],
+          "evidenceQualityLabels": [
+            "Inferred"
+          ],
+          "sources": [
+            {
+              "id": "implementation-inference",
+              "type": "conversation",
+              "title": "Generic analytics implementation inference",
+              "confidence": "inferred",
+              "confidenceLabel": "Inferred",
+              "pathText": ""
+            }
+          ],
+          "why": "Tracked Interactions informs Pricing Insights, so the map treats them as connected when following feeds behavior."
         }
       ],
       "relatedRisksAndUnknowns": [
@@ -491,7 +673,24 @@
           "type": "transforms",
           "label": "validates",
           "status": "active",
-          "description": ""
+          "description": "",
+          "evidence": [
+            "implementation-inference"
+          ],
+          "evidenceQualityLabels": [
+            "Inferred"
+          ],
+          "sources": [
+            {
+              "id": "implementation-inference",
+              "type": "conversation",
+              "title": "Generic analytics implementation inference",
+              "confidence": "inferred",
+              "confidenceLabel": "Inferred",
+              "pathText": ""
+            }
+          ],
+          "why": "Local Analytics Server validates Event Schema, so the map treats them as connected when following transforms behavior."
         }
       ],
       "outgoingRelationships": [
@@ -504,7 +703,24 @@
           "type": "feeds",
           "label": "persists into",
           "status": "active",
-          "description": ""
+          "description": "",
+          "evidence": [
+            "implementation-inference"
+          ],
+          "evidenceQualityLabels": [
+            "Inferred"
+          ],
+          "sources": [
+            {
+              "id": "implementation-inference",
+              "type": "conversation",
+              "title": "Generic analytics implementation inference",
+              "confidence": "inferred",
+              "confidenceLabel": "Inferred",
+              "pathText": ""
+            }
+          ],
+          "why": "Event Schema persists into Reporting Store, so the map treats them as connected when following feeds behavior."
         }
       ],
       "relatedRisksAndUnknowns": [],
@@ -560,7 +776,24 @@
           "type": "uses",
           "label": "emits events through",
           "status": "active",
-          "description": ""
+          "description": "",
+          "evidence": [
+            "implementation-inference"
+          ],
+          "evidenceQualityLabels": [
+            "Inferred"
+          ],
+          "sources": [
+            {
+              "id": "implementation-inference",
+              "type": "conversation",
+              "title": "Generic analytics implementation inference",
+              "confidence": "inferred",
+              "confidenceLabel": "Inferred",
+              "pathText": ""
+            }
+          ],
+          "why": "Analytics Dashboard emits events through Collection Path, so the map treats them as connected when following uses behavior."
         },
         {
           "id": "collection-exposes-gateway",
@@ -571,7 +804,24 @@
           "type": "exposes",
           "label": "exposes",
           "status": "partial",
-          "description": ""
+          "description": "",
+          "evidence": [
+            "implementation-inference"
+          ],
+          "evidenceQualityLabels": [
+            "Inferred"
+          ],
+          "sources": [
+            {
+              "id": "implementation-inference",
+              "type": "conversation",
+              "title": "Generic analytics implementation inference",
+              "confidence": "inferred",
+              "confidenceLabel": "Inferred",
+              "pathText": ""
+            }
+          ],
+          "why": "Cloudflare Gateway exposes Collection Path, so the map treats them as connected when following exposes behavior."
         },
         {
           "id": "gateway-protects-collection",
@@ -582,7 +832,24 @@
           "type": "protects",
           "label": "mediates",
           "status": "partial",
-          "description": ""
+          "description": "",
+          "evidence": [
+            "implementation-inference"
+          ],
+          "evidenceQualityLabels": [
+            "Inferred"
+          ],
+          "sources": [
+            {
+              "id": "implementation-inference",
+              "type": "conversation",
+              "title": "Generic analytics implementation inference",
+              "confidence": "inferred",
+              "confidenceLabel": "Inferred",
+              "pathText": ""
+            }
+          ],
+          "why": "Cloudflare Gateway mediates Collection Path, so the map treats them as connected when following protects behavior."
         },
         {
           "id": "security-risks-collection",
@@ -593,7 +860,24 @@
           "type": "risks",
           "label": "needs verification for",
           "status": "unknown",
-          "description": ""
+          "description": "",
+          "evidence": [
+            "implementation-inference"
+          ],
+          "evidenceQualityLabels": [
+            "Inferred"
+          ],
+          "sources": [
+            {
+              "id": "implementation-inference",
+              "type": "conversation",
+              "title": "Generic analytics implementation inference",
+              "confidence": "inferred",
+              "confidenceLabel": "Inferred",
+              "pathText": ""
+            }
+          ],
+          "why": "Security Coverage Unknowns needs verification for Collection Path, so the map treats them as connected when following risks behavior."
         }
       ],
       "outgoingRelationships": [
@@ -606,7 +890,24 @@
           "type": "uses",
           "label": "accepted by",
           "status": "active",
-          "description": ""
+          "description": "",
+          "evidence": [
+            "implementation-inference"
+          ],
+          "evidenceQualityLabels": [
+            "Inferred"
+          ],
+          "sources": [
+            {
+              "id": "implementation-inference",
+              "type": "conversation",
+              "title": "Generic analytics implementation inference",
+              "confidence": "inferred",
+              "confidenceLabel": "Inferred",
+              "pathText": ""
+            }
+          ],
+          "why": "Collection Path accepted by Local Analytics Server, so the map treats them as connected when following uses behavior."
         }
       ],
       "relatedRisksAndUnknowns": [
@@ -665,7 +966,24 @@
           "type": "uses",
           "label": "accepted by",
           "status": "active",
-          "description": ""
+          "description": "",
+          "evidence": [
+            "implementation-inference"
+          ],
+          "evidenceQualityLabels": [
+            "Inferred"
+          ],
+          "sources": [
+            {
+              "id": "implementation-inference",
+              "type": "conversation",
+              "title": "Generic analytics implementation inference",
+              "confidence": "inferred",
+              "confidenceLabel": "Inferred",
+              "pathText": ""
+            }
+          ],
+          "why": "Collection Path accepted by Local Analytics Server, so the map treats them as connected when following uses behavior."
         },
         {
           "id": "code-implements-server",
@@ -676,7 +994,24 @@
           "type": "implements",
           "label": "implements",
           "status": "active",
-          "description": ""
+          "description": "",
+          "evidence": [
+            "implementation-inference"
+          ],
+          "evidenceQualityLabels": [
+            "Inferred"
+          ],
+          "sources": [
+            {
+              "id": "implementation-inference",
+              "type": "conversation",
+              "title": "Generic analytics implementation inference",
+              "confidence": "inferred",
+              "confidenceLabel": "Inferred",
+              "pathText": ""
+            }
+          ],
+          "why": "Analytics Code Area implements Local Analytics Server, so the map treats them as connected when following implements behavior."
         }
       ],
       "outgoingRelationships": [
@@ -689,7 +1024,24 @@
           "type": "transforms",
           "label": "validates",
           "status": "active",
-          "description": ""
+          "description": "",
+          "evidence": [
+            "implementation-inference"
+          ],
+          "evidenceQualityLabels": [
+            "Inferred"
+          ],
+          "sources": [
+            {
+              "id": "implementation-inference",
+              "type": "conversation",
+              "title": "Generic analytics implementation inference",
+              "confidence": "inferred",
+              "confidenceLabel": "Inferred",
+              "pathText": ""
+            }
+          ],
+          "why": "Local Analytics Server validates Event Schema, so the map treats them as connected when following transforms behavior."
         }
       ],
       "relatedRisksAndUnknowns": [],
@@ -741,7 +1093,24 @@
           "type": "exposes",
           "label": "exposes",
           "status": "partial",
-          "description": ""
+          "description": "",
+          "evidence": [
+            "implementation-inference"
+          ],
+          "evidenceQualityLabels": [
+            "Inferred"
+          ],
+          "sources": [
+            {
+              "id": "implementation-inference",
+              "type": "conversation",
+              "title": "Generic analytics implementation inference",
+              "confidence": "inferred",
+              "confidenceLabel": "Inferred",
+              "pathText": ""
+            }
+          ],
+          "why": "Cloudflare Gateway exposes Collection Path, so the map treats them as connected when following exposes behavior."
         },
         {
           "id": "gateway-protects-collection",
@@ -752,7 +1121,24 @@
           "type": "protects",
           "label": "mediates",
           "status": "partial",
-          "description": ""
+          "description": "",
+          "evidence": [
+            "implementation-inference"
+          ],
+          "evidenceQualityLabels": [
+            "Inferred"
+          ],
+          "sources": [
+            {
+              "id": "implementation-inference",
+              "type": "conversation",
+              "title": "Generic analytics implementation inference",
+              "confidence": "inferred",
+              "confidenceLabel": "Inferred",
+              "pathText": ""
+            }
+          ],
+          "why": "Cloudflare Gateway mediates Collection Path, so the map treats them as connected when following protects behavior."
         }
       ],
       "relatedRisksAndUnknowns": [],
@@ -803,7 +1189,24 @@
           "type": "feeds",
           "label": "persists into",
           "status": "active",
-          "description": ""
+          "description": "",
+          "evidence": [
+            "implementation-inference"
+          ],
+          "evidenceQualityLabels": [
+            "Inferred"
+          ],
+          "sources": [
+            {
+              "id": "implementation-inference",
+              "type": "conversation",
+              "title": "Generic analytics implementation inference",
+              "confidence": "inferred",
+              "confidenceLabel": "Inferred",
+              "pathText": ""
+            }
+          ],
+          "why": "Event Schema persists into Reporting Store, so the map treats them as connected when following feeds behavior."
         }
       ],
       "outgoingRelationships": [
@@ -816,7 +1219,24 @@
           "type": "feeds",
           "label": "powers reports",
           "status": "active",
-          "description": ""
+          "description": "",
+          "evidence": [
+            "implementation-inference"
+          ],
+          "evidenceQualityLabels": [
+            "Inferred"
+          ],
+          "sources": [
+            {
+              "id": "implementation-inference",
+              "type": "conversation",
+              "title": "Generic analytics implementation inference",
+              "confidence": "inferred",
+              "confidenceLabel": "Inferred",
+              "pathText": ""
+            }
+          ],
+          "why": "Reporting Store powers reports Analytics Dashboard, so the map treats them as connected when following feeds behavior."
         }
       ],
       "relatedRisksAndUnknowns": [],
@@ -868,7 +1288,24 @@
           "type": "implements",
           "label": "implements",
           "status": "active",
-          "description": ""
+          "description": "",
+          "evidence": [
+            "implementation-inference"
+          ],
+          "evidenceQualityLabels": [
+            "Inferred"
+          ],
+          "sources": [
+            {
+              "id": "implementation-inference",
+              "type": "conversation",
+              "title": "Generic analytics implementation inference",
+              "confidence": "inferred",
+              "confidenceLabel": "Inferred",
+              "pathText": ""
+            }
+          ],
+          "why": "Analytics Code Area implements Local Analytics Server, so the map treats them as connected when following implements behavior."
         }
       ],
       "relatedRisksAndUnknowns": [],
@@ -920,7 +1357,24 @@
           "type": "risks",
           "label": "can distort",
           "status": "at_risk",
-          "description": ""
+          "description": "",
+          "evidence": [
+            "implementation-inference"
+          ],
+          "evidenceQualityLabels": [
+            "Inferred"
+          ],
+          "sources": [
+            {
+              "id": "implementation-inference",
+              "type": "conversation",
+              "title": "Generic analytics implementation inference",
+              "confidence": "inferred",
+              "confidenceLabel": "Inferred",
+              "pathText": ""
+            }
+          ],
+          "why": "Data Quality Coverage can distort Tracked Interactions, so the map treats them as connected when following risks behavior."
         }
       ],
       "relatedRisksAndUnknowns": [],
@@ -972,7 +1426,24 @@
           "type": "risks",
           "label": "needs verification for",
           "status": "unknown",
-          "description": ""
+          "description": "",
+          "evidence": [
+            "implementation-inference"
+          ],
+          "evidenceQualityLabels": [
+            "Inferred"
+          ],
+          "sources": [
+            {
+              "id": "implementation-inference",
+              "type": "conversation",
+              "title": "Generic analytics implementation inference",
+              "confidence": "inferred",
+              "confidenceLabel": "Inferred",
+              "pathText": ""
+            }
+          ],
+          "why": "Security Coverage Unknowns needs verification for Collection Path, so the map treats them as connected when following risks behavior."
         }
       ],
       "relatedRisksAndUnknowns": [],
@@ -994,6 +1465,8 @@
       "id": "dashboard-measures-interactions",
       "from": "dashboard-surface",
       "to": "tracked-interactions",
+      "fromLabel": "Analytics Dashboard",
+      "toLabel": "Tracked Interactions",
       "type": "measures",
       "label": "displays",
       "status": "active",
@@ -1001,6 +1474,20 @@
       "evidence": [
         "implementation-inference"
       ],
+      "evidenceQualityLabels": [
+        "Inferred"
+      ],
+      "sources": [
+        {
+          "id": "implementation-inference",
+          "type": "conversation",
+          "title": "Generic analytics implementation inference",
+          "confidence": "inferred",
+          "confidenceLabel": "Inferred",
+          "pathText": ""
+        }
+      ],
+      "why": "Analytics Dashboard displays Tracked Interactions, so the map treats them as connected when following measures behavior.",
       "classes": [
         "relationship-measures",
         "status-active"
@@ -1014,6 +1501,8 @@
       "id": "interactions-feed-pricing",
       "from": "tracked-interactions",
       "to": "pricing-insights",
+      "fromLabel": "Tracked Interactions",
+      "toLabel": "Pricing Insights",
       "type": "feeds",
       "label": "informs",
       "status": "partial",
@@ -1021,6 +1510,20 @@
       "evidence": [
         "implementation-inference"
       ],
+      "evidenceQualityLabels": [
+        "Inferred"
+      ],
+      "sources": [
+        {
+          "id": "implementation-inference",
+          "type": "conversation",
+          "title": "Generic analytics implementation inference",
+          "confidence": "inferred",
+          "confidenceLabel": "Inferred",
+          "pathText": ""
+        }
+      ],
+      "why": "Tracked Interactions informs Pricing Insights, so the map treats them as connected when following feeds behavior.",
       "classes": [
         "relationship-feeds",
         "status-partial"
@@ -1034,6 +1537,8 @@
       "id": "dashboard-uses-collection",
       "from": "dashboard-surface",
       "to": "collection-path",
+      "fromLabel": "Analytics Dashboard",
+      "toLabel": "Collection Path",
       "type": "uses",
       "label": "emits events through",
       "status": "active",
@@ -1041,6 +1546,20 @@
       "evidence": [
         "implementation-inference"
       ],
+      "evidenceQualityLabels": [
+        "Inferred"
+      ],
+      "sources": [
+        {
+          "id": "implementation-inference",
+          "type": "conversation",
+          "title": "Generic analytics implementation inference",
+          "confidence": "inferred",
+          "confidenceLabel": "Inferred",
+          "pathText": ""
+        }
+      ],
+      "why": "Analytics Dashboard emits events through Collection Path, so the map treats them as connected when following uses behavior.",
       "classes": [
         "relationship-uses",
         "status-active"
@@ -1054,6 +1573,8 @@
       "id": "collection-uses-server",
       "from": "collection-path",
       "to": "local-analytics-server",
+      "fromLabel": "Collection Path",
+      "toLabel": "Local Analytics Server",
       "type": "uses",
       "label": "accepted by",
       "status": "active",
@@ -1061,6 +1582,20 @@
       "evidence": [
         "implementation-inference"
       ],
+      "evidenceQualityLabels": [
+        "Inferred"
+      ],
+      "sources": [
+        {
+          "id": "implementation-inference",
+          "type": "conversation",
+          "title": "Generic analytics implementation inference",
+          "confidence": "inferred",
+          "confidenceLabel": "Inferred",
+          "pathText": ""
+        }
+      ],
+      "why": "Collection Path accepted by Local Analytics Server, so the map treats them as connected when following uses behavior.",
       "classes": [
         "relationship-uses",
         "status-active"
@@ -1074,6 +1609,8 @@
       "id": "collection-exposes-gateway",
       "from": "cloudflare-gateway",
       "to": "collection-path",
+      "fromLabel": "Cloudflare Gateway",
+      "toLabel": "Collection Path",
       "type": "exposes",
       "label": "exposes",
       "status": "partial",
@@ -1081,6 +1618,20 @@
       "evidence": [
         "implementation-inference"
       ],
+      "evidenceQualityLabels": [
+        "Inferred"
+      ],
+      "sources": [
+        {
+          "id": "implementation-inference",
+          "type": "conversation",
+          "title": "Generic analytics implementation inference",
+          "confidence": "inferred",
+          "confidenceLabel": "Inferred",
+          "pathText": ""
+        }
+      ],
+      "why": "Cloudflare Gateway exposes Collection Path, so the map treats them as connected when following exposes behavior.",
       "classes": [
         "relationship-exposes",
         "status-partial"
@@ -1094,6 +1645,8 @@
       "id": "server-transforms-schema",
       "from": "local-analytics-server",
       "to": "event-schema",
+      "fromLabel": "Local Analytics Server",
+      "toLabel": "Event Schema",
       "type": "transforms",
       "label": "validates",
       "status": "active",
@@ -1101,6 +1654,20 @@
       "evidence": [
         "implementation-inference"
       ],
+      "evidenceQualityLabels": [
+        "Inferred"
+      ],
+      "sources": [
+        {
+          "id": "implementation-inference",
+          "type": "conversation",
+          "title": "Generic analytics implementation inference",
+          "confidence": "inferred",
+          "confidenceLabel": "Inferred",
+          "pathText": ""
+        }
+      ],
+      "why": "Local Analytics Server validates Event Schema, so the map treats them as connected when following transforms behavior.",
       "classes": [
         "relationship-transforms",
         "status-active"
@@ -1114,6 +1681,8 @@
       "id": "schema-feeds-store",
       "from": "event-schema",
       "to": "reporting-store",
+      "fromLabel": "Event Schema",
+      "toLabel": "Reporting Store",
       "type": "feeds",
       "label": "persists into",
       "status": "active",
@@ -1121,6 +1690,20 @@
       "evidence": [
         "implementation-inference"
       ],
+      "evidenceQualityLabels": [
+        "Inferred"
+      ],
+      "sources": [
+        {
+          "id": "implementation-inference",
+          "type": "conversation",
+          "title": "Generic analytics implementation inference",
+          "confidence": "inferred",
+          "confidenceLabel": "Inferred",
+          "pathText": ""
+        }
+      ],
+      "why": "Event Schema persists into Reporting Store, so the map treats them as connected when following feeds behavior.",
       "classes": [
         "relationship-feeds",
         "status-active"
@@ -1134,6 +1717,8 @@
       "id": "code-implements-server",
       "from": "analytics-code",
       "to": "local-analytics-server",
+      "fromLabel": "Analytics Code Area",
+      "toLabel": "Local Analytics Server",
       "type": "implements",
       "label": "implements",
       "status": "active",
@@ -1141,6 +1726,20 @@
       "evidence": [
         "implementation-inference"
       ],
+      "evidenceQualityLabels": [
+        "Inferred"
+      ],
+      "sources": [
+        {
+          "id": "implementation-inference",
+          "type": "conversation",
+          "title": "Generic analytics implementation inference",
+          "confidence": "inferred",
+          "confidenceLabel": "Inferred",
+          "pathText": ""
+        }
+      ],
+      "why": "Analytics Code Area implements Local Analytics Server, so the map treats them as connected when following implements behavior.",
       "classes": [
         "relationship-implements",
         "status-active"
@@ -1154,6 +1753,8 @@
       "id": "store-feeds-dashboard",
       "from": "reporting-store",
       "to": "dashboard-surface",
+      "fromLabel": "Reporting Store",
+      "toLabel": "Analytics Dashboard",
       "type": "feeds",
       "label": "powers reports",
       "status": "active",
@@ -1161,6 +1762,20 @@
       "evidence": [
         "implementation-inference"
       ],
+      "evidenceQualityLabels": [
+        "Inferred"
+      ],
+      "sources": [
+        {
+          "id": "implementation-inference",
+          "type": "conversation",
+          "title": "Generic analytics implementation inference",
+          "confidence": "inferred",
+          "confidenceLabel": "Inferred",
+          "pathText": ""
+        }
+      ],
+      "why": "Reporting Store powers reports Analytics Dashboard, so the map treats them as connected when following feeds behavior.",
       "classes": [
         "relationship-feeds",
         "status-active"
@@ -1174,6 +1789,8 @@
       "id": "data-quality-risks-metrics",
       "from": "data-quality-risk",
       "to": "tracked-interactions",
+      "fromLabel": "Data Quality Coverage",
+      "toLabel": "Tracked Interactions",
       "type": "risks",
       "label": "can distort",
       "status": "at_risk",
@@ -1181,6 +1798,20 @@
       "evidence": [
         "implementation-inference"
       ],
+      "evidenceQualityLabels": [
+        "Inferred"
+      ],
+      "sources": [
+        {
+          "id": "implementation-inference",
+          "type": "conversation",
+          "title": "Generic analytics implementation inference",
+          "confidence": "inferred",
+          "confidenceLabel": "Inferred",
+          "pathText": ""
+        }
+      ],
+      "why": "Data Quality Coverage can distort Tracked Interactions, so the map treats them as connected when following risks behavior.",
       "classes": [
         "relationship-risks",
         "status-at_risk"
@@ -1194,6 +1825,8 @@
       "id": "gateway-protects-collection",
       "from": "cloudflare-gateway",
       "to": "collection-path",
+      "fromLabel": "Cloudflare Gateway",
+      "toLabel": "Collection Path",
       "type": "protects",
       "label": "mediates",
       "status": "partial",
@@ -1201,6 +1834,20 @@
       "evidence": [
         "implementation-inference"
       ],
+      "evidenceQualityLabels": [
+        "Inferred"
+      ],
+      "sources": [
+        {
+          "id": "implementation-inference",
+          "type": "conversation",
+          "title": "Generic analytics implementation inference",
+          "confidence": "inferred",
+          "confidenceLabel": "Inferred",
+          "pathText": ""
+        }
+      ],
+      "why": "Cloudflare Gateway mediates Collection Path, so the map treats them as connected when following protects behavior.",
       "classes": [
         "relationship-protects",
         "status-partial"
@@ -1214,6 +1861,8 @@
       "id": "security-risks-collection",
       "from": "security-coverage",
       "to": "collection-path",
+      "fromLabel": "Security Coverage Unknowns",
+      "toLabel": "Collection Path",
       "type": "risks",
       "label": "needs verification for",
       "status": "unknown",
@@ -1221,6 +1870,20 @@
       "evidence": [
         "implementation-inference"
       ],
+      "evidenceQualityLabels": [
+        "Inferred"
+      ],
+      "sources": [
+        {
+          "id": "implementation-inference",
+          "type": "conversation",
+          "title": "Generic analytics implementation inference",
+          "confidence": "inferred",
+          "confidenceLabel": "Inferred",
+          "pathText": ""
+        }
+      ],
+      "why": "Security Coverage Unknowns needs verification for Collection Path, so the map treats them as connected when following risks behavior.",
       "classes": [
         "relationship-risks",
         "status-unknown"
@@ -1476,6 +2139,7 @@
         "evidence": [
           "implementation-inference"
         ],
+        "why": "Analytics Dashboard displays Tracked Interactions, so the map treats them as connected when following measures behavior.",
         "lineStyle": "solid",
         "opacity": 1
       },
@@ -1494,6 +2158,7 @@
         "evidence": [
           "implementation-inference"
         ],
+        "why": "Tracked Interactions informs Pricing Insights, so the map treats them as connected when following feeds behavior.",
         "lineStyle": "dashed",
         "opacity": 0.92
       },
@@ -1512,6 +2177,7 @@
         "evidence": [
           "implementation-inference"
         ],
+        "why": "Analytics Dashboard emits events through Collection Path, so the map treats them as connected when following uses behavior.",
         "lineStyle": "solid",
         "opacity": 1
       },
@@ -1530,6 +2196,7 @@
         "evidence": [
           "implementation-inference"
         ],
+        "why": "Collection Path accepted by Local Analytics Server, so the map treats them as connected when following uses behavior.",
         "lineStyle": "solid",
         "opacity": 1
       },
@@ -1548,6 +2215,7 @@
         "evidence": [
           "implementation-inference"
         ],
+        "why": "Cloudflare Gateway exposes Collection Path, so the map treats them as connected when following exposes behavior.",
         "lineStyle": "dashed",
         "opacity": 0.92
       },
@@ -1566,6 +2234,7 @@
         "evidence": [
           "implementation-inference"
         ],
+        "why": "Local Analytics Server validates Event Schema, so the map treats them as connected when following transforms behavior.",
         "lineStyle": "solid",
         "opacity": 1
       },
@@ -1584,6 +2253,7 @@
         "evidence": [
           "implementation-inference"
         ],
+        "why": "Event Schema persists into Reporting Store, so the map treats them as connected when following feeds behavior.",
         "lineStyle": "solid",
         "opacity": 1
       },
@@ -1602,6 +2272,7 @@
         "evidence": [
           "implementation-inference"
         ],
+        "why": "Analytics Code Area implements Local Analytics Server, so the map treats them as connected when following implements behavior.",
         "lineStyle": "solid",
         "opacity": 1
       },
@@ -1620,6 +2291,7 @@
         "evidence": [
           "implementation-inference"
         ],
+        "why": "Reporting Store powers reports Analytics Dashboard, so the map treats them as connected when following feeds behavior.",
         "lineStyle": "solid",
         "opacity": 1
       },
@@ -1638,6 +2310,7 @@
         "evidence": [
           "implementation-inference"
         ],
+        "why": "Data Quality Coverage can distort Tracked Interactions, so the map treats them as connected when following risks behavior.",
         "lineStyle": "dashed",
         "opacity": 1
       },
@@ -1656,6 +2329,7 @@
         "evidence": [
           "implementation-inference"
         ],
+        "why": "Cloudflare Gateway mediates Collection Path, so the map treats them as connected when following protects behavior.",
         "lineStyle": "dashed",
         "opacity": 0.92
       },
@@ -1674,6 +2348,7 @@
         "evidence": [
           "implementation-inference"
         ],
+        "why": "Security Coverage Unknowns needs verification for Collection Path, so the map treats them as connected when following risks behavior.",
         "lineStyle": "dashed",
         "opacity": 0.78
       },
@@ -1780,16 +2455,57 @@ var Xr=function(e){if(!(this instanceof Xr))return new Xr(e);this.id="Thenable/1
             "target-arrow-color": "#0b7285",
             "width": 4
           }
+        },
+        {
+          selector: ".trace-dim",
+          style: {
+            "opacity": 0.18
+          }
+        },
+        {
+          selector: "node.trace-highlight",
+          style: {
+            "border-color": "#c2410c",
+            "border-width": 5,
+            "opacity": 1
+          }
+        },
+        {
+          selector: "edge.trace-highlight",
+          style: {
+            "line-color": "#c2410c",
+            "target-arrow-color": "#c2410c",
+            "width": 5,
+            "opacity": 1
+          }
         }
       ]
     });
 
     const detailPanel = document.getElementById("map-detail-panel");
+    mapData.relationshipsById = Object.fromEntries(mapData.relationships.map((relationship) => [relationship.id, relationship]));
+    mapData.tracesById = Object.fromEntries(mapData.derivedTraces.map((trace) => [trace.id, trace]));
+    renderEmptyDetails();
 
     cy.on("tap", "node", (event) => {
       const node = event.target;
       renderNodeDetails(node.id());
     });
+
+    cy.on("tap", "edge", (event) => {
+      const edge = event.target;
+      renderRelationshipDetails(edge.id());
+    });
+
+    function renderEmptyDetails() {
+      detailPanel.innerHTML = [
+        '<p class="detail-eyebrow">Map Detail Panel</p>',
+        '<h2 class="detail-title">Select a node or relationship</h2>',
+        '<p class="detail-empty">Choose a mapped thing or connector to inspect evidence quality, relationship explanations, risks, unknowns, and generated child map navigation.</p>',
+        renderTracePanel(null)
+      ].join("");
+      wireTraceButtons();
+    }
 
     function renderNodeDetails(nodeId) {
       const node = mapData.nodesById[nodeId];
@@ -1807,8 +2523,28 @@ var Xr=function(e){if(!(this instanceof Xr))return new Xr(e);this.id="Thenable/1
         renderRelationships("Incoming relationships", node.incomingRelationships, "fromLabel"),
         renderRelationships("Outgoing relationships", node.outgoingRelationships, "toLabel"),
         renderRelatedRisks(node.relatedRisksAndUnknowns),
-        renderChildMap(node.childMap)
+        renderChildMap(node.childMap),
+        renderTracePanel(null)
       ].join("");
+      wireTraceButtons();
+    }
+
+    function renderRelationshipDetails(relationshipId) {
+      const relationship = mapData.relationshipsById[relationshipId];
+      if (!relationship) {
+        return;
+      }
+
+      detailPanel.innerHTML = [
+        '<p class="detail-eyebrow">Relationship Explanation</p>',
+        '<h2 class="detail-title">' + escapeDetailHtml(relationship.fromLabel) + ' -> ' + escapeDetailHtml(relationship.toLabel) + '</h2>',
+        '<p class="detail-meta">' + escapeDetailHtml(relationship.type) + ' / ' + escapeDetailHtml(relationship.label) + ' / ' + escapeDetailHtml(relationship.status) + '</p>',
+        '<p class="detail-description">' + escapeDetailHtml(relationship.why) + '</p>',
+        renderDetailPills("Evidence quality", relationship.evidenceQualityLabels),
+        renderSources(relationship.sources),
+        renderTracePanel(relationshipId)
+      ].join("");
+      wireTraceButtons();
     }
 
     function renderDetailPills(title, labels) {
@@ -1833,7 +2569,8 @@ var Xr=function(e){if(!(this instanceof Xr))return new Xr(e);this.id="Thenable/1
       return '<section class="detail-section"><h3>' + title + '</h3>' +
         renderList(relationships, (relationship) => [
           '<strong>' + escapeDetailHtml(relationship[labelKey]) + '</strong>',
-          '<div class="detail-source-meta">' + escapeDetailHtml(relationship.label) + ' / ' + escapeDetailHtml(relationship.type) + ' / ' + escapeDetailHtml(relationship.status) + '</div>'
+          '<div class="detail-source-meta">' + escapeDetailHtml(relationship.label) + ' / ' + escapeDetailHtml(relationship.type) + ' / ' + escapeDetailHtml(relationship.status) + '</div>',
+          '<div>' + escapeDetailHtml(relationship.why) + '</div>'
         ].join("")) +
         '</section>';
     }
@@ -1859,6 +2596,59 @@ var Xr=function(e){if(!(this instanceof Xr))return new Xr(e);this.id="Thenable/1
         '</section>';
     }
 
+    function renderTracePanel(selectedRelationshipId) {
+      const traces = mapData.derivedTraces || [];
+      const matchingTraces = selectedRelationshipId
+        ? traces.filter((trace) => trace.relationshipIds.includes(selectedRelationshipId))
+        : traces;
+      const buttons = matchingTraces.map((trace) => [
+        '<button class="trace-button" type="button" data-trace-id="' + escapeDetailAttribute(trace.id) + '">',
+        escapeDetailHtml(trace.title),
+        '<div class="trace-path">' + escapeDetailHtml(trace.layerPath.join(" -> ")) + '</div>',
+        '</button>'
+      ].join("")).join("");
+
+      return '<section id="trace-mode-panel" class="detail-section" data-trace-count="' + traces.length + '">' +
+        '<h3>Trace Mode</h3>' +
+        '<p class="detail-empty">Highlight a derived cross-layer path from existing relationships.</p>' +
+        '<div class="trace-controls" aria-label="Trace controls">' +
+        (buttons || '<p class="detail-empty">No derived traces include this relationship.</p>') +
+        '</div>' +
+        '</section>';
+    }
+
+    function wireTraceButtons() {
+      for (const button of detailPanel.querySelectorAll("[data-trace-id]")) {
+        button.addEventListener("click", () => highlightTrace(button.dataset.traceId));
+      }
+    }
+
+    function highlightTrace(traceId) {
+      const trace = mapData.tracesById[traceId];
+      if (!trace) {
+        return;
+      }
+
+      cy.elements().removeClass("trace-highlight trace-dim");
+      cy.elements().addClass("trace-dim");
+      let highlighted = cy.collection();
+      for (const nodeId of trace.nodeIds) {
+        highlighted = highlighted.union(cy.getElementById(nodeId));
+      }
+      for (const relationshipId of trace.relationshipIds) {
+        highlighted = highlighted.union(cy.getElementById(relationshipId));
+      }
+      highlighted.removeClass("trace-dim").addClass("trace-highlight");
+
+      const summary = document.createElement("p");
+      summary.className = "trace-path";
+      summary.textContent = trace.description;
+      const panel = detailPanel.querySelector("#trace-mode-panel");
+      panel?.querySelector(".trace-path[data-active-summary]")?.remove();
+      summary.dataset.activeSummary = "true";
+      panel?.append(summary);
+    }
+
     function renderList(items, renderItem) {
       if (!items || items.length === 0) {
         return '<p class="detail-empty">None recorded.</p>';
@@ -1879,7 +2669,7 @@ var Xr=function(e){if(!(this instanceof Xr))return new Xr(e);this.id="Thenable/1
       return escapeDetailHtml(value).replaceAll("'", "&#39;");
     }
 
-    window.systemMapView = { mapData, cy, renderNodeDetails };
+    window.systemMapView = { mapData, cy, renderNodeDetails, renderRelationshipDetails, highlightTrace };
   </script>
 </body>
 </html>
