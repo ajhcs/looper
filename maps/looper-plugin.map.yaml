@@ -1,0 +1,632 @@
+version: 1
+id: looper-plugin
+title: Looper Plugin Current-State Map
+kind: current_state
+domain: Looper Plugin
+depth: 0
+summary: Current-state map of the Looper Codex plugin, covering its user-facing skill surfaces, workflow knowledge, typed map data, plugin/runtime components, code areas, and known risks.
+layers:
+  - Product
+  - Knowledge
+  - Data
+  - System
+  - Code
+  - Work
+sources:
+  - id: readme
+    type: doc
+    title: Looper README
+    path: ../README.md
+    confidence: verified
+  - id: context-doc
+    type: doc
+    title: Looper context language
+    path: ../CONTEXT.md
+    confidence: verified
+  - id: root-looper-skill
+    type: doc
+    title: Root Looper skill
+    path: ../SKILL.md
+    confidence: verified
+  - id: plugin-looper-skill
+    type: doc
+    title: Plugin Looper skill
+    path: ../skills/looper/SKILL.md
+    confidence: verified
+  - id: system-mapper-skill
+    type: doc
+    title: System Mapper skill
+    path: ../skills/system-mapper/SKILL.md
+    confidence: verified
+  - id: beadwriter-skill
+    type: doc
+    title: Beadwriter skill
+    path: ../skills/beadwriter/SKILL.md
+    confidence: verified
+  - id: phone-swe-skill
+    type: doc
+    title: Phone-A-SWE skill
+    path: ../skills/phone-a-swe/SKILL.md
+    confidence: verified
+  - id: plugin-manifest
+    type: code
+    title: Codex plugin manifest
+    path: ../.codex-plugin/plugin.json
+    confidence: verified
+  - id: agent-metadata
+    type: code
+    title: Agent metadata files
+    path: ../agents/openai.yaml
+    confidence: verified
+  - id: map-schema
+    type: code
+    title: System map JSON Schema
+    path: ../schemas/system-map.schema.json
+    confidence: verified
+  - id: map-toolchain
+    type: code
+    title: System map CLI and renderers
+    path: ../scripts/system-map.mjs
+    confidence: verified
+  - id: package-scripts
+    type: code
+    title: Package scripts
+    path: ../package.json
+    confidence: verified
+  - id: map-tests
+    type: code
+    title: System map tests
+    path: ../tests/system-map.test.mjs
+    confidence: verified
+  - id: mapper-docs
+    type: doc
+    title: System Mapper docs
+    path: ../docs/system-mapper.md
+    confidence: verified
+  - id: mapper-beads
+    type: doc
+    title: System Mapper bead plan
+    path: ../docs/beads/system-mapper.md
+    confidence: verified
+  - id: mapper-checkpoint
+    type: doc
+    title: System Mapper checkpoint
+    path: ../docs/beads/system-mapper-checkpoint.md
+    confidence: verified
+  - id: preflight-runtime
+    type: runtime
+    title: npm run maps:preflight output on 2026-07-06
+    confidence: verified
+  - id: git-status-runtime
+    type: runtime
+    title: git status --short output on 2026-07-06
+    confidence: verified
+nodes:
+  - id: codex-skill-surface
+    label: Codex Skill Surface
+    layer: Product
+    type: Surface
+    status: active
+    description: User-facing plugin entrypoints exposed through Looper default prompts and named skills.
+    evidence:
+      - readme
+      - plugin-manifest
+      - agent-metadata
+  - id: current-system-mapping-workflow
+    label: Current-System Mapping Workflow
+    layer: Product
+    type: Workflow
+    status: active
+    description: The System Mapper workflow inspects the current system, creates a typed Map Source, validates it, and renders an Interactive Map View plus an optional Mermaid preview.
+    evidence:
+      - system-mapper-skill
+      - mapper-docs
+  - id: planning-orchestration-workflow
+    label: Planning And Orchestration Workflow
+    layer: Product
+    type: Workflow
+    status: active
+    description: Looper chooses slices, delegates implementation/review lanes, checks evidence, adapts, and returns compact progress packets.
+    evidence:
+      - root-looper-skill
+      - plugin-looper-skill
+  - id: bead-decomposition-workflow
+    label: Bead Decomposition Workflow
+    layer: Product
+    type: Workflow
+    status: active
+    description: Beadwriter decomposes parent beads, PRDs, and plans into commit-sized childbeads with proof surfaces.
+    evidence:
+      - beadwriter-skill
+      - readme
+  - id: decision-research-workflow
+    label: Decision Research Workflow
+    layer: Product
+    type: Workflow
+    status: active
+    description: Phone-A-SWE researches technical decisions from local evidence and current primary sources when needed.
+    evidence:
+      - phone-swe-skill
+      - readme
+  - id: system-understanding-concept
+    label: System Understanding
+    layer: Knowledge
+    type: Concept
+    status: active
+    description: "The core mental model: understand current surfaces, data, systems, code, risks, and decisions before planning."
+    evidence:
+      - context-doc
+      - readme
+  - id: traceability-concept
+    label: Traceability
+    layer: Knowledge
+    type: Concept
+    status: active
+    description: Relationships can be followed across Product, Knowledge, Data, System, and Code layers with evidence.
+    evidence:
+      - context-doc
+      - system-mapper-skill
+  - id: controlled-map-vocabulary
+    label: Controlled Map Vocabulary
+    layer: Knowledge
+    type: Concept
+    status: active
+    description: Layers, node types, relationship types, statuses, and confidence values are validated against a strict vocabulary.
+    evidence:
+      - context-doc
+      - map-schema
+      - map-toolchain
+  - id: atomic-childbeads-concept
+    label: Atomic Childbeads
+    layer: Knowledge
+    type: Concept
+    status: active
+    description: Work is split into childbeads that are close to one atomic commit with one proof surface.
+    evidence:
+      - beadwriter-skill
+      - mapper-beads
+  - id: evidence-confidence-metric
+    label: Evidence Confidence
+    layer: Knowledge
+    type: Metric
+    status: active
+    description: Claims are labeled as verified, inferred, or unknown so planning does not hide uncertainty.
+    evidence:
+      - system-mapper-skill
+      - phone-swe-skill
+      - map-schema
+  - id: map-source-data
+    label: Typed Map Sources
+    layer: Data
+    type: Data Source
+    status: active
+    description: YAML Map Sources are canonical for system maps and generate visual renderers.
+    evidence:
+      - map-schema
+      - mapper-docs
+      - mapper-beads
+  - id: generated-renderer-data
+    label: Generated Renderer Artifacts
+    layer: Data
+    type: Data Source
+    status: active
+    description: Interactive HTML views and optional Mermaid previews are generated review artifacts, not canonical map state.
+    evidence:
+      - mapper-docs
+      - map-toolchain
+      - mapper-checkpoint
+  - id: skill-doc-data
+    label: Skill Instruction Files
+    layer: Data
+    type: Data Source
+    status: active
+    description: Skill markdown files carry operational instructions for Looper, System Mapper, Beadwriter, and Phone-A-SWE.
+    evidence:
+      - root-looper-skill
+      - plugin-looper-skill
+      - system-mapper-skill
+      - beadwriter-skill
+      - phone-swe-skill
+  - id: plugin-metadata-data
+    label: Plugin Metadata
+    layer: Data
+    type: Data Source
+    status: active
+    description: Plugin manifest and agent metadata expose names, descriptions, prompts, skills path, icon, and dependency messaging.
+    evidence:
+      - plugin-manifest
+      - agent-metadata
+  - id: bead-planning-data
+    label: Bead And Checkpoint Docs
+    layer: Data
+    type: Data Source
+    status: active
+    description: Bead plan and checkpoint docs record implementation sequence, verification evidence, current status, and residual risk.
+    evidence:
+      - mapper-beads
+      - mapper-checkpoint
+  - id: codex-plugin-package
+    label: Codex Plugin Package
+    layer: System
+    type: System Component
+    status: active
+    description: The local plugin bundle contains skills, metadata, agents, assets, map tooling, docs, and examples.
+    evidence:
+      - readme
+      - plugin-manifest
+  - id: system-map-toolchain
+    label: System Map Toolchain
+    layer: System
+    type: System Component
+    status: active
+    description: Node-based CLI validates Map Sources, renders self-contained Cytoscape HTML views, renders optional Mermaid previews, and runs preflight checks.
+    evidence:
+      - map-toolchain
+      - package-scripts
+      - preflight-runtime
+  - id: interactive-html-renderer
+    label: Interactive HTML Renderer
+    layer: System
+    type: System Component
+    status: active
+    description: Cytoscape-backed HTML renderer generates local Interactive Map Views from validated Map Sources.
+    evidence:
+      - map-toolchain
+      - package-scripts
+      - mapper-checkpoint
+  - id: matt-skills-dependency
+    label: Matt Pocock Skills Dependency
+    layer: System
+    type: Interface
+    status: partial
+    description: Looper's default implementation and review lanes require the Matt Pocock Skills plugin.
+    evidence:
+      - root-looper-skill
+      - plugin-looper-skill
+      - plugin-manifest
+  - id: repo-worktree
+    label: Local Git Worktree
+    layer: System
+    type: System Component
+    status: at_risk
+    description: The current worktree has modified and untracked files, so map changes should preserve unrelated user work.
+    evidence:
+      - git-status-runtime
+  - id: skill-code-area
+    label: Skill Docs Code Area
+    layer: Code
+    type: Code Area
+    status: active
+    description: Markdown skill files define the behavior of each Looper capability.
+    evidence:
+      - root-looper-skill
+      - plugin-looper-skill
+      - system-mapper-skill
+      - beadwriter-skill
+      - phone-swe-skill
+  - id: map-schema-code-area
+    label: Map Schema Code Area
+    layer: Code
+    type: Code Area
+    status: active
+    description: JSON Schema defines the typed Map Source contract.
+    evidence:
+      - map-schema
+  - id: map-cli-code-area
+    label: Map CLI Code Area
+    layer: Code
+    type: Code Area
+    status: active
+    description: The Node CLI implements validation, semantic checks, Interactive HTML rendering, optional Mermaid rendering, and preflight.
+    evidence:
+      - map-toolchain
+      - package-scripts
+  - id: map-test-code-area
+    label: Map Test Code Area
+    layer: Code
+    type: Code Area
+    status: active
+    description: Node tests verify valid fixtures, invalid diagnostics, renderer output, preflight reporting, and docs/plugin consistency.
+    evidence:
+      - map-tests
+  - id: plugin-metadata-code-area
+    label: Plugin Metadata Code Area
+    layer: Code
+    type: Code Area
+    status: active
+    description: Manifest and agent YAML wire the plugin into Codex UI surfaces.
+    evidence:
+      - plugin-manifest
+      - agent-metadata
+  - id: renderer-coupling-risk
+    label: Renderer Coupling Risk
+    layer: Code
+    type: Risk
+    status: at_risk
+    description: Interactive HTML and optional Mermaid previews must remain generated artifacts so renderer limitations do not become canonical model constraints.
+    evidence:
+      - mapper-docs
+      - map-toolchain
+      - context-doc
+  - id: external-lane-availability-unknown
+    label: External Lane Availability
+    layer: System
+    type: Unknown
+    status: unknown
+    description: The repo documents the Matt Pocock Skills dependency, but this map did not verify plugin availability through a lane invocation.
+    evidence:
+      - root-looper-skill
+      - plugin-manifest
+  - id: packaging-status-work
+    label: Packaging And Commit Work
+    layer: Work
+    type: Workflow
+    status: partial
+    description: The System Mapper checkpoint says implementation is complete and the next action is commit/PR packaging.
+    evidence:
+      - mapper-checkpoint
+      - git-status-runtime
+relationships:
+  - id: surface-exposes-mapping
+    from: codex-skill-surface
+    to: current-system-mapping-workflow
+    type: exposes
+    label: exposes
+    status: active
+    evidence:
+      - plugin-manifest
+      - agent-metadata
+  - id: surface-exposes-looping
+    from: codex-skill-surface
+    to: planning-orchestration-workflow
+    type: exposes
+    label: exposes
+    status: active
+    evidence:
+      - plugin-manifest
+      - readme
+  - id: surface-exposes-beadwriter
+    from: codex-skill-surface
+    to: bead-decomposition-workflow
+    type: exposes
+    label: exposes
+    status: active
+    evidence:
+      - plugin-manifest
+      - readme
+  - id: surface-exposes-phone-swe
+    from: codex-skill-surface
+    to: decision-research-workflow
+    type: exposes
+    label: exposes
+    status: active
+    evidence:
+      - plugin-manifest
+      - readme
+  - id: mapping-uses-system-understanding
+    from: current-system-mapping-workflow
+    to: system-understanding-concept
+    type: uses
+    label: grounds planning in
+    status: active
+    evidence:
+      - system-mapper-skill
+      - context-doc
+  - id: mapping-measures-evidence-confidence
+    from: current-system-mapping-workflow
+    to: evidence-confidence-metric
+    type: measures
+    label: labels claims with
+    status: active
+    evidence:
+      - system-mapper-skill
+      - map-schema
+  - id: understanding-depends-on-traceability
+    from: system-understanding-concept
+    to: traceability-concept
+    type: depends_on
+    label: depends on
+    status: active
+    evidence:
+      - context-doc
+      - system-mapper-skill
+  - id: traceability-uses-vocabulary
+    from: traceability-concept
+    to: controlled-map-vocabulary
+    type: uses
+    label: constrained by
+    status: active
+    evidence:
+      - context-doc
+      - map-schema
+  - id: vocabulary-defines-map-source
+    from: controlled-map-vocabulary
+    to: map-source-data
+    type: implements
+    label: defines
+    status: active
+    evidence:
+      - map-schema
+      - mapper-docs
+  - id: map-source-feeds-renderers
+    from: map-source-data
+    to: generated-renderer-data
+    type: feeds
+    label: generates
+    status: active
+    evidence:
+      - map-toolchain
+      - mapper-docs
+  - id: mapping-uses-toolchain
+    from: current-system-mapping-workflow
+    to: system-map-toolchain
+    type: uses
+    label: validates and renders through
+    status: active
+    evidence:
+      - system-mapper-skill
+      - package-scripts
+  - id: toolchain-uses-schema
+    from: system-map-toolchain
+    to: map-schema-code-area
+    type: uses
+    label: validates with
+    status: active
+    evidence:
+      - map-toolchain
+      - map-schema
+  - id: cli-implements-toolchain
+    from: map-cli-code-area
+    to: system-map-toolchain
+    type: implements
+    label: implements
+    status: active
+    evidence:
+      - map-toolchain
+      - package-scripts
+  - id: schema-code-implements-source
+    from: map-schema-code-area
+    to: map-source-data
+    type: implements
+    label: specifies
+    status: active
+    evidence:
+      - map-schema
+  - id: toolchain-uses-html-renderer
+    from: system-map-toolchain
+    to: interactive-html-renderer
+    type: uses
+    label: renders Interactive Map Views with
+    status: active
+    evidence:
+      - map-toolchain
+      - package-scripts
+  - id: tests-protect-toolchain
+    from: map-test-code-area
+    to: system-map-toolchain
+    type: protects
+    label: tests
+    status: active
+    evidence:
+      - map-tests
+      - mapper-checkpoint
+  - id: skill-files-feed-surface
+    from: skill-doc-data
+    to: codex-skill-surface
+    type: feeds
+    label: defines prompts for
+    status: active
+    evidence:
+      - readme
+      - plugin-manifest
+  - id: skill-code-implements-skill-data
+    from: skill-code-area
+    to: skill-doc-data
+    type: implements
+    label: carries instructions in
+    status: active
+    evidence:
+      - root-looper-skill
+      - system-mapper-skill
+      - beadwriter-skill
+      - phone-swe-skill
+  - id: metadata-data-feeds-package
+    from: plugin-metadata-data
+    to: codex-plugin-package
+    type: feeds
+    label: configures
+    status: active
+    evidence:
+      - plugin-manifest
+      - agent-metadata
+  - id: metadata-code-implements-metadata
+    from: plugin-metadata-code-area
+    to: plugin-metadata-data
+    type: implements
+    label: implements
+    status: active
+    evidence:
+      - plugin-manifest
+      - agent-metadata
+  - id: package-contains-toolchain
+    from: codex-plugin-package
+    to: system-map-toolchain
+    type: contains
+    label: contains
+    status: active
+    evidence:
+      - readme
+      - package-scripts
+  - id: looping-uses-beads
+    from: planning-orchestration-workflow
+    to: atomic-childbeads-concept
+    type: uses
+    label: slices work by
+    status: active
+    evidence:
+      - root-looper-skill
+      - beadwriter-skill
+  - id: beadwriter-transforms-plans
+    from: bead-decomposition-workflow
+    to: bead-planning-data
+    type: transforms
+    label: produces and updates
+    status: active
+    evidence:
+      - beadwriter-skill
+      - mapper-beads
+      - mapper-checkpoint
+  - id: phone-swe-feeds-planning
+    from: decision-research-workflow
+    to: planning-orchestration-workflow
+    type: feeds
+    label: informs decisions for
+    status: active
+    evidence:
+      - phone-swe-skill
+      - root-looper-skill
+  - id: looper-depends-on-matt-skills
+    from: planning-orchestration-workflow
+    to: matt-skills-dependency
+    type: depends_on
+    label: default lanes require
+    status: partial
+    evidence:
+      - root-looper-skill
+      - plugin-looper-skill
+      - plugin-manifest
+  - id: missing-lane-risks-looping
+    from: external-lane-availability-unknown
+    to: planning-orchestration-workflow
+    type: risks
+    label: can block
+    status: unknown
+    evidence:
+      - root-looper-skill
+      - plugin-manifest
+  - id: renderer-risk-risks-source
+    from: renderer-coupling-risk
+    to: map-source-data
+    type: risks
+    label: can distort
+    status: at_risk
+    evidence:
+      - mapper-docs
+      - context-doc
+  - id: worktree-risks-packaging
+    from: repo-worktree
+    to: packaging-status-work
+    type: risks
+    label: requires careful staging for
+    status: at_risk
+    evidence:
+      - git-status-runtime
+      - mapper-checkpoint
+  - id: checkpoint-feeds-packaging
+    from: bead-planning-data
+    to: packaging-status-work
+    type: feeds
+    label: identifies next action
+    status: partial
+    evidence:
+      - mapper-checkpoint

@@ -420,7 +420,6 @@ export function renderHtml(mapSource) {
     const cy = cytoscape({
       container: document.getElementById("system-map-graph"),
       elements: mapData.elements,
-      wheelSensitivity: 0.22,
       layout: {
         name: "breadthfirst",
         directed: true,
