@@ -53,4 +53,34 @@ The preflight checks Node.js, installed npm dependencies, and renderer prerequis
 
 ## Map Brief
 
-After creating or updating a map, return a compact Map Brief instead of renderer jargon. Point to the canonical Map Source and openable Interactive Map View, summarize the most important understanding and evidence gaps, and state the next action.
+After creating or updating a map, return a compact Map Brief instead of renderer jargon. It should read like a useful map handoff: what was mapped, what can be opened, what the map says, where the evidence is weak, where deeper mapping would help, and what should happen next.
+
+Use this response shape:
+
+- `Mapped Domains`: the domain or domains covered by the Current-State Map.
+- `Interactive Map View`: an openable generated HTML path.
+- `Map Source`: the canonical typed YAML or JSON path.
+- `Validation`: the validation command and result.
+- `Key Findings`: the most important operational understanding from the map.
+- `Important Traces`: one or more cross-layer paths through product, knowledge, data, system, and code nodes.
+- `Evidence Gaps`: unknown, inferred, or under-supported claims that affect confidence.
+- `Deepening Recommendations`: focused follow-up maps that would improve understanding.
+- `Next Action`: the single best next step for the user or agent.
+
+Deepening Recommendations belong in the Map Brief after analysis. Do not persist them into the Map Source unless the user asks System Mapper to create the deeper map.
+
+Example brief for `maps/examples/analytics.map.yaml`:
+
+```markdown
+**Map Brief**
+
+- `Mapped Domains`: Analytics.
+- `Interactive Map View`: `maps/examples/generated/analytics.html`.
+- `Map Source`: `maps/examples/analytics.map.yaml`.
+- `Validation`: `npm run maps:validate -- maps/examples/analytics.map.yaml` passed.
+- `Key Findings`: The Analytics Dashboard depends on tracked interactions, the collection path, local analytics server validation, the event schema, and the reporting store. Pricing insight is only partially supported because the fixture marks the relationship from tracked interactions to pricing insight as partial.
+- `Important Traces`: Analytics Dashboard -> Collection Path -> Local Analytics Server -> Event Schema -> Reporting Store -> Analytics Dashboard; Data Quality Coverage -> Tracked Interactions -> Pricing Insights.
+- `Evidence Gaps`: Most analytics implementation claims are inferred from `implementation-inference`; Security Coverage Unknowns still needs verification for auth, retention, and privacy coverage around the collection path.
+- `Deepening Recommendations`: Create a child map for the Analytics Event Pipeline if the next decision depends on payload validation, edge mediation, or reporting-store behavior.
+- `Next Action`: Verify the inferred implementation evidence against real analytics code before planning instrumentation or reporting changes.
+```

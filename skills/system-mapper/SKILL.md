@@ -42,7 +42,25 @@ Unknowns and risks are first-class nodes, not hidden commentary.
 5. Generate an Interactive Map View with `npm run maps:render:html -- <map-source> <output.html>` or `node scripts/system-map.mjs render-html <map-source> <output.html>`.
 6. Generate Mermaid only as an optional rough compatibility preview with `npm run maps:render:mermaid` or `node scripts/system-map.mjs render-mermaid <map-source> <output.mmd>`.
 7. Create deeper maps only when progressive visual disclosure helps: a crowded node, unclear relationship, risky subsystem, or user request. Declare the child map in `child_maps` and reference it with `child_map_ref`.
-8. Return a compact Map Brief with the typed source path, validation result, openable Interactive Map View path, important findings or gaps, and next action.
+8. Return a compact Map Brief that includes mapped domains, the typed Map Source path, validation result, openable Interactive Map View path, key findings, important traces, evidence gaps, Deepening Recommendations, and next action.
+
+## Map Brief Output Contract
+
+The Map Brief is the chat handoff after mapping. It must read like system understanding, not a renderer artifact dump.
+
+Include these fields:
+
+- `Mapped Domains`: the domain or domains covered by the Current-State Map.
+- `Interactive Map View`: the generated HTML path the user can open.
+- `Map Source`: the canonical typed YAML or JSON path.
+- `Validation`: the validation command and result.
+- `Key Findings`: the most important operational understanding from the map.
+- `Important Traces`: one or more cross-layer paths through mapped nodes.
+- `Evidence Gaps`: unknown, inferred, or under-supported claims that affect confidence.
+- `Deepening Recommendations`: focused follow-up maps that would improve understanding.
+- `Next Action`: the single best next step.
+
+Keep Deepening Recommendations in the Map Brief. Do not persist them into the Map Source unless the user asks you to create the deeper map.
 
 ## Map Source Rules
 
@@ -67,4 +85,4 @@ Expected behavior:
 5. Generate an Interactive Map View from the Map Source.
 6. Generate Mermaid only as an optional rough preview.
 7. Add a child map only for dense or risky areas, not by default.
-8. Return a compact Map Brief with the openable view, validation result, most important finding or evidence gap, and next action.
+8. Return a compact Map Brief with mapped domains, the openable view, Map Source, validation result, key findings, important traces, evidence gaps, Deepening Recommendations, and next action.
