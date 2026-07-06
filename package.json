@@ -5,8 +5,6 @@
   "type": "module",
   "scripts": {
     "maps:validate": "node scripts/system-map.mjs validate",
-    "maps:render:d2": "node scripts/system-map.mjs render-d2 maps/examples/analytics.map.yaml maps/examples/generated/analytics.d2",
-    "maps:render:svg": "npm run maps:render:d2 && node scripts/system-map.mjs render-svg maps/examples/generated/analytics.d2 maps/examples/generated/analytics.svg",
     "maps:render:html": "node scripts/system-map.mjs render-html",
     "maps:render:mermaid": "node scripts/system-map.mjs render-mermaid maps/examples/analytics.map.yaml maps/examples/generated/analytics.mmd",
     "maps:preflight": "node scripts/system-map.mjs preflight",

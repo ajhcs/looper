@@ -1,8 +1,7 @@
 import Ajv2020 from "ajv/dist/2020.js";
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
-import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import YAML from "yaml";
 
@@ -22,20 +21,6 @@ const allowedLayerTypes = new Map([
   ["Work", new Set(["Workflow", "Risk", "Unknown"])]
 ]);
 
-const shapeByType = {
-  Surface: "rectangle",
-  Workflow: "step",
-  Concept: "oval",
-  Metric: "circle",
-  "Data Source": "cylinder",
-  Transformation: "queue",
-  "System Component": "hexagon",
-  Interface: "cloud",
-  "Code Area": "package",
-  Risk: "diamond",
-  Unknown: "callout"
-};
-
 const classByLayer = {
   Product: "product",
   Knowledge: "knowledge",
@@ -44,16 +29,6 @@ const classByLayer = {
   Code: "code",
   Business: "business",
   Work: "work"
-};
-
-const d2ClassBlocks = {
-  product: { fill: "#D8F3DC", stroke: "#2D6A4F" },
-  knowledge: { fill: "#FFF3B0", stroke: "#9A6700" },
-  data: { fill: "#D7E8FF", stroke: "#2457A6" },
-  system: { fill: "#E8DDFF", stroke: "#6741D9" },
-  code: { fill: "#E9ECEF", stroke: "#495057" },
-  business: { fill: "#FFE8CC", stroke: "#D9480F" },
-  work: { fill: "#FFE3E3", stroke: "#C92A2A" }
 };
 
 const htmlLayerStyles = {
@@ -169,65 +144,6 @@ export function validateFile(filePath) {
   const { data } = loadMapSource(filePath);
   const result = validateMapSource(data);
   return { filePath, data, ...result };
-}
-
-export function renderD2(mapSource) {
-  const childMaps = new Map((mapSource.child_maps ?? []).map((child) => [child.id, child]));
-  const lines = [
-    `# Generated from ${mapSource.id}. Do not edit by hand.`,
-    "direction: right",
-    "classes: {"
-  ];
-
-  for (const [className, style] of Object.entries(d2ClassBlocks)) {
-    lines.push(`  ${className}: {`);
-    lines.push("    style: {");
-    lines.push(`      fill: "${style.fill}"`);
-    lines.push(`      stroke: "${style.stroke}"`);
-    lines.push("    }");
-    lines.push("  }");
-  }
-
-  lines.push("}");
-  lines.push("");
-  lines.push(`${d2Id(mapSource.id)}_title: ${d2Quote(mapSource.title)} {`);
-  lines.push("  shape: text");
-  lines.push("  near: top-center");
-  lines.push("}");
-  lines.push("");
-
-  for (const node of mapSource.nodes) {
-    const nodeId = d2Id(node.id);
-    const className = classByLayer[node.layer] ?? "knowledge";
-    const label = [node.label, `${node.layer} / ${node.type}`, `status: ${node.status}`].join("\\n");
-    lines.push(`${nodeId}: ${d2Quote(label)} {`);
-    lines.push(`  shape: ${shapeByType[node.type] ?? "rectangle"}`);
-    lines.push(`  class: ${className}`);
-    lines.push(`  tooltip: ${d2Quote(node.description ?? `${node.layer} ${node.type}`)}`);
-    if (node.child_map_ref) {
-      const childMap = childMaps.get(node.child_map_ref);
-      if (childMap) {
-        lines.push(`  link: ${d2Quote(childMap.path)}`);
-      }
-    }
-    if (node.status === "at_risk" || node.status === "unknown") {
-      lines.push("  style.stroke-dash: 4");
-    }
-    lines.push("}");
-    lines.push("");
-  }
-
-  for (const relationship of mapSource.relationships) {
-    const label = relationship.label || relationship.type;
-    lines.push(`${d2Id(relationship.from)} -> ${d2Id(relationship.to)}: ${d2Quote(label)} {`);
-    lines.push(`  tooltip: ${d2Quote(`${relationship.type}; status: ${relationship.status}`)}`);
-    if (relationship.status === "at_risk" || relationship.status === "unknown") {
-      lines.push("  style.stroke-dash: 4");
-    }
-    lines.push("}");
-  }
-
-  return `${lines.join("\n")}\n`;
 }
 
 export function renderMermaid(mapSource) {
@@ -1072,24 +988,13 @@ export function runPreflight() {
   const npmCheck = runCommand("npm", ["--version"]);
   lines.push(npmCheck.status === 0 ? `npm: ${npmCheck.stdout.trim()}` : "npm: missing");
 
-  const depsOk = existsSync(resolve("node_modules/ajv")) && existsSync(resolve("node_modules/yaml"));
-  lines.push(depsOk ? "schema runtime: ok (ajv, yaml installed)" : "schema runtime: missing (run npm install)");
+  lines.push(existsSync(schemaPath) ? "schema: ok" : "schema: missing (schemas/system-map.schema.json)");
 
-  const d2Command = resolveD2Command();
-  const d2Check = d2Command ? runCommand(d2Command, ["--version"]) : { status: 1, stdout: "", stderr: "" };
-  if (d2Command && d2Check.status === 0) {
-    lines.push(`d2: ${d2Check.stdout.trim() || d2Check.stderr.trim()}`);
-    const smokeDir = mkdtempSync(join(tmpdir(), "system-map-preflight-"));
-    const smokeD2 = join(smokeDir, "preflight-smoke.d2");
-    const smokeSvg = join(smokeDir, "preflight-smoke.svg");
-    writeFileSync(smokeD2, "x: System Mapper\nx -> y: smoke\ny: SVG\n", "utf8");
-    const smoke = runCommand(d2Command, [smokeD2, smokeSvg]);
-    lines.push(smoke.status === 0 ? `d2 svg smoke: ok (${smokeSvg})` : `d2 svg smoke: failed (${smoke.stderr.trim()})`);
-  } else {
-    lines.push("d2: missing");
-    lines.push("Windows install: winget install Terrastruct.D2 or use the installer from https://d2lang.com/");
-    lines.push("Linux/plumbob install: install the d2 CLI in the image or bootstrap script before render smoke checks run.");
-  }
+  const schemaRuntimeOk = dependencyInstalled("ajv/dist/2020.js") && dependencyInstalled("yaml");
+  lines.push(schemaRuntimeOk ? "schema runtime: ok (ajv, yaml installed)" : "schema runtime: missing (run npm install)");
+
+  const htmlRendererOk = dependencyInstalled("cytoscape/dist/cytoscape.min.js");
+  lines.push(htmlRendererOk ? "html renderer: ok (cytoscape installed)" : "html renderer: missing (run npm install)");
 
   return lines.join("\n");
 }
@@ -1098,14 +1003,6 @@ function formatAjvError(error) {
   const path = error.instancePath || "/";
   const detail = error.params?.allowedValues ? ` (${error.params.allowedValues.join(", ")})` : "";
   return `${path} ${error.message}${detail}`;
-}
-
-function d2Id(id) {
-  return id.replaceAll("-", "_");
-}
-
-function d2Quote(value) {
-  return JSON.stringify(String(value));
 }
 
 function mermaidId(id) {
@@ -1138,30 +1035,13 @@ function runCommand(command, args) {
   return spawnSync(command, args, { encoding: "utf8", shell: useShell });
 }
 
-function resolveD2Command() {
-  const candidates = ["d2"];
-
-  if (process.env.D2_BIN) {
-    candidates.unshift(process.env.D2_BIN);
+function dependencyInstalled(specifier) {
+  try {
+    require.resolve(specifier);
+    return true;
+  } catch {
+    return false;
   }
-
-  if (process.platform === "win32") {
-    candidates.push("C:\\Program Files\\D2\\d2.exe");
-    candidates.push("C:\\Program Files (x86)\\D2\\d2.exe");
-  }
-
-  for (const candidate of candidates) {
-    if (candidate.includes("\\") && !existsSync(candidate)) {
-      continue;
-    }
-
-    const result = runCommand(candidate, ["--version"]);
-    if (result.status === 0) {
-      return candidate;
-    }
-  }
-
-  return null;
 }
 
 function printValidation(result) {
@@ -1188,7 +1068,7 @@ async function main(argv) {
     process.exit(results.every((result) => result.ok) ? 0 : 1);
   }
 
-  if (command === "render-d2" || command === "render-mermaid" || command === "render-html") {
+  if (command === "render-mermaid" || command === "render-html") {
     const [inputPath, outputPath] = args;
     if (!inputPath || !outputPath) {
       console.error(`usage: system-map.mjs ${command} <input.map.yaml> <output>`);
@@ -1201,37 +1081,11 @@ async function main(argv) {
       process.exit(1);
     }
 
-    const output = command === "render-d2"
-      ? renderD2(result.data)
-      : command === "render-mermaid"
+    const output = command === "render-mermaid"
         ? renderMermaid(result.data)
         : renderHtml(result.data);
     writeOutput(resolve(outputPath), output);
     console.log(`WROTE ${outputPath}`);
-    return;
-  }
-
-  if (command === "render-svg") {
-    const [inputPath, outputPath] = args;
-    if (!inputPath || !outputPath) {
-      console.error("usage: system-map.mjs render-svg <input.d2> <output.svg>");
-      process.exit(2);
-    }
-
-    const d2Command = resolveD2Command();
-    if (!d2Command) {
-      console.error("D2 CLI is missing. Run npm run maps:preflight for install guidance.");
-      process.exit(1);
-    }
-
-    mkdirSync(dirname(resolve(outputPath)), { recursive: true });
-    const result = runCommand(d2Command, [resolve(inputPath), resolve(outputPath)]);
-    if (result.status !== 0) {
-      console.error(result.stderr.trim() || result.stdout.trim());
-      process.exit(result.status ?? 1);
-    }
-
-    console.log(result.stdout.trim() || `WROTE ${outputPath}`);
     return;
   }
 
@@ -1240,7 +1094,7 @@ async function main(argv) {
     return;
   }
 
-  console.error("usage: system-map.mjs <validate|render-d2|render-mermaid|render-html|render-svg|preflight>");
+  console.error("usage: system-map.mjs <validate|render-mermaid|render-html|preflight>");
   process.exit(2);
 }
 

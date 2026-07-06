@@ -4,7 +4,6 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import {
   loadMapSource,
-  renderD2,
   renderHtml,
   renderMermaid,
   runPreflight,
@@ -43,14 +42,6 @@ describe("System Map Source validation", () => {
 
 describe("System Map renderers", () => {
   const analytics = loadMapSource(resolve("maps/examples/analytics.map.yaml")).data;
-
-  it("generates D2 from typed source without making D2 canonical", () => {
-    const d2 = renderD2(analytics);
-    assert.match(d2, /# Generated from analytics-domain\. Do not edit by hand\./);
-    assert.match(d2, /dashboard_surface -> tracked_interactions: "displays"/);
-    assert.match(d2, /link: "\.\/analytics-events\.map\.yaml"/);
-    assert.match(d2, /class: product/);
-  });
 
   it("generates readable Mermaid compatibility output", () => {
     const mermaid = renderMermaid(analytics);
@@ -148,20 +139,9 @@ describe("System Map renderers", () => {
     const preflight = runPreflight();
     assert.match(preflight, /System Mapper preflight/);
     assert.match(preflight, /node: v/);
+    assert.match(preflight, /schema: ok/);
     assert.match(preflight, /schema runtime:/);
-    assert.match(preflight, /d2 svg smoke: ok|Windows install:/);
-  });
-});
-
-describe("Generated artifacts", () => {
-  it("keeps generated D2 marked as non-canonical when present", () => {
-    const generated = resolve("maps/examples/generated/analytics.d2");
-    try {
-      const text = readFileSync(generated, "utf8");
-      assert.match(text, /Do not edit by hand/);
-    } catch (error) {
-      assert.equal(error.code, "ENOENT");
-    }
+    assert.match(preflight, /html renderer:/);
   });
 });
 
