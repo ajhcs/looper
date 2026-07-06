@@ -1,0 +1,21 @@
+version: 1
+id: invalid-drilldown
+title: Invalid Drilldown
+kind: current_state
+domain: Invalid
+depth: 0
+layers: [Product, Knowledge, Data, System, Code]
+sources:
+  - id: context-doc
+    type: doc
+    title: Context
+    confidence: verified
+nodes:
+  - id: product-surface
+    label: Product Surface
+    layer: Product
+    type: Surface
+    status: active
+    child_map_ref: absent-child
+    evidence: [context-doc]
+relationships: []

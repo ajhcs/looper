@@ -1,0 +1,20 @@
+version: 1
+id: invalid-node-type
+title: Invalid Node Type
+kind: current_state
+domain: Invalid
+depth: 0
+layers: [Product, Knowledge, Data, System, Code]
+sources:
+  - id: context-doc
+    type: doc
+    title: Context
+    confidence: verified
+nodes:
+  - id: product-surface
+    label: Product Surface
+    layer: Product
+    type: Widget
+    status: active
+    evidence: [context-doc]
+relationships: []
