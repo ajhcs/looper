@@ -301,6 +301,12 @@ export function renderHtml(mapSource) {
       min-height: 100vh;
     }
 
+    .map-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      min-height: 0;
+    }
+
     .map-header {
       display: flex;
       align-items: center;
@@ -346,6 +352,95 @@ export function renderHtml(mapSource) {
       height: calc(100vh - 78px);
       background: #fbfcfd;
     }
+
+    .map-detail-panel {
+      height: calc(100vh - 78px);
+      overflow: auto;
+      padding: 18px;
+      background: var(--panel);
+      border-left: 1px solid var(--line);
+    }
+
+    .detail-eyebrow,
+    .detail-meta,
+    .detail-empty,
+    .detail-source-meta {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .detail-title {
+      margin: 4px 0 10px;
+      font-size: 20px;
+      line-height: 1.2;
+    }
+
+    .detail-description {
+      margin: 0 0 14px;
+    }
+
+    .detail-section {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+    }
+
+    .detail-section h3 {
+      margin: 0 0 8px;
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    .detail-list {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .detail-list li {
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fbfcfd;
+    }
+
+    .detail-pill {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      margin: 0 6px 6px 0;
+      padding: 3px 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fbfcfd;
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .detail-link {
+      color: var(--accent);
+      font-weight: 650;
+      text-decoration-thickness: 1px;
+    }
+
+    @media (max-width: 900px) {
+      .map-body {
+        grid-template-columns: 1fr;
+      }
+
+      #system-map-graph,
+      .map-detail-panel {
+        height: auto;
+        min-height: 420px;
+      }
+
+      .map-detail-panel {
+        border-left: 0;
+        border-top: 1px solid var(--line);
+      }
+    }
   </style>
 </head>
 <body>
@@ -361,12 +456,20 @@ export function renderHtml(mapSource) {
         <span>${rendererData.relationships.length} relationships</span>
       </div>
     </header>
-    <div id="system-map-graph" aria-label="Interactive system map graph"></div>
+    <section class="map-body">
+      <div id="system-map-graph" aria-label="Interactive system map graph"></div>
+      <aside id="map-detail-panel" class="map-detail-panel" aria-live="polite">
+        <p class="detail-eyebrow">Map Detail Panel</p>
+        <h2 class="detail-title">Select a node</h2>
+        <p class="detail-empty">Choose a mapped thing to inspect evidence quality, relationships, risks, unknowns, and generated child map navigation.</p>
+      </aside>
+    </section>
   </main>
   <script id="system-map-data" type="application/json">${serializedData}</script>
   <script>${cytoscapeSource}</script>
   <script>
     const mapData = JSON.parse(document.getElementById("system-map-data").textContent);
+    mapData.nodesById = Object.fromEntries(mapData.nodes.map((node) => [node.id, node]));
     const cy = cytoscape({
       container: document.getElementById("system-map-graph"),
       elements: mapData.elements,
@@ -435,7 +538,102 @@ export function renderHtml(mapSource) {
       ]
     });
 
-    window.systemMapView = { mapData, cy };
+    const detailPanel = document.getElementById("map-detail-panel");
+
+    cy.on("tap", "node", (event) => {
+      const node = event.target;
+      renderNodeDetails(node.id());
+    });
+
+    function renderNodeDetails(nodeId) {
+      const node = mapData.nodesById[nodeId];
+      if (!node) {
+        return;
+      }
+
+      detailPanel.innerHTML = [
+        '<p class="detail-eyebrow">Map Detail Panel</p>',
+        '<h2 class="detail-title">' + escapeDetailHtml(node.label) + '</h2>',
+        '<p class="detail-meta">' + escapeDetailHtml(node.layer) + ' / ' + escapeDetailHtml(node.type) + ' / ' + escapeDetailHtml(node.status) + '</p>',
+        '<p class="detail-description">' + escapeDetailHtml(node.description || "No description provided.") + '</p>',
+        renderDetailPills("Evidence quality", node.evidenceQualityLabels),
+        renderSources(node.sources),
+        renderRelationships("Incoming relationships", node.incomingRelationships, "fromLabel"),
+        renderRelationships("Outgoing relationships", node.outgoingRelationships, "toLabel"),
+        renderRelatedRisks(node.relatedRisksAndUnknowns),
+        renderChildMap(node.childMap)
+      ].join("");
+    }
+
+    function renderDetailPills(title, labels) {
+      return '<section class="detail-section"><h3>' + title + '</h3>' +
+        (labels.length > 0
+          ? labels.map((label) => '<span class="detail-pill">' + escapeDetailHtml(label) + '</span>').join("")
+          : '<p class="detail-empty">No evidence quality recorded.</p>') +
+        '</section>';
+    }
+
+    function renderSources(sources) {
+      return '<section class="detail-section"><h3>Evidence references</h3>' +
+        renderList(sources, (source) => [
+          '<strong>' + escapeDetailHtml(source.title) + '</strong>',
+          '<div class="detail-source-meta">Readable evidence reference text: ' + escapeDetailHtml(source.type) + ' / ' + escapeDetailHtml(source.confidenceLabel) + '</div>',
+          source.pathText ? '<div class="detail-source-meta">' + escapeDetailHtml(source.pathText) + '</div>' : ''
+        ].join("")) +
+        '</section>';
+    }
+
+    function renderRelationships(title, relationships, labelKey) {
+      return '<section class="detail-section"><h3>' + title + '</h3>' +
+        renderList(relationships, (relationship) => [
+          '<strong>' + escapeDetailHtml(relationship[labelKey]) + '</strong>',
+          '<div class="detail-source-meta">' + escapeDetailHtml(relationship.label) + ' / ' + escapeDetailHtml(relationship.type) + ' / ' + escapeDetailHtml(relationship.status) + '</div>'
+        ].join("")) +
+        '</section>';
+    }
+
+    function renderRelatedRisks(items) {
+      return '<section class="detail-section"><h3>Related risks and unknowns</h3>' +
+        renderList(items, (item) => [
+          '<strong>' + escapeDetailHtml(item.label) + '</strong>',
+          '<div class="detail-source-meta">' + escapeDetailHtml(item.type) + ' / ' + escapeDetailHtml(item.status) + '</div>',
+          '<div>' + escapeDetailHtml(item.description) + '</div>'
+        ].join("")) +
+        '</section>';
+    }
+
+    function renderChildMap(childMap) {
+      if (!childMap) {
+        return "";
+      }
+
+      return '<section class="detail-section"><h3>Generated child map</h3>' +
+        '<a class="detail-link" href="' + escapeDetailAttribute(childMap.generatedHtmlPath) + '">' + escapeDetailHtml(childMap.title) + '</a>' +
+        '<div class="detail-source-meta">depth ' + escapeDetailHtml(childMap.depth) + '</div>' +
+        '</section>';
+    }
+
+    function renderList(items, renderItem) {
+      if (!items || items.length === 0) {
+        return '<p class="detail-empty">None recorded.</p>';
+      }
+
+      return '<ul class="detail-list">' + items.map((item) => '<li>' + renderItem(item) + '</li>').join("") + '</ul>';
+    }
+
+    function escapeDetailHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    function escapeDetailAttribute(value) {
+      return escapeDetailHtml(value).replaceAll("'", "&#39;");
+    }
+
+    window.systemMapView = { mapData, cy, renderNodeDetails };
   </script>
 </body>
 </html>
@@ -443,9 +641,45 @@ export function renderHtml(mapSource) {
 }
 
 function buildHtmlRendererData(mapSource) {
+  const sourcesById = new Map((mapSource.sources ?? []).map((source) => [source.id, {
+    id: source.id,
+    type: source.type,
+    title: source.title,
+    confidence: source.confidence,
+    confidenceLabel: evidenceQualityLabel(source.confidence),
+    pathText: source.path ? `Reference: ${source.path}` : ""
+  }]));
+  const childMapsById = new Map((mapSource.child_maps ?? []).map((childMap) => [childMap.id, {
+    id: childMap.id,
+    title: childMap.title,
+    depth: childMap.depth,
+    generatedHtmlPath: generatedChildHtmlPath(childMap.path)
+  }]));
+  const rawNodesById = new Map((mapSource.nodes ?? []).map((node) => [node.id, node]));
+  const rawRelationships = mapSource.relationships ?? [];
+
   const nodes = (mapSource.nodes ?? []).map((node) => {
     const layerStyle = htmlLayerStyles[node.layer] ?? htmlLayerStyles.Knowledge;
     const statusStyle = htmlStatusStyles[node.status] ?? htmlStatusStyles.unknown;
+    const sourceRefs = (node.evidence ?? []).map((sourceId) => sourcesById.get(sourceId)).filter(Boolean);
+    const incomingRelationships = rawRelationships
+      .filter((relationship) => relationship.to === node.id)
+      .map((relationship) => summarizeRelationship(relationship, rawNodesById));
+    const outgoingRelationships = rawRelationships
+      .filter((relationship) => relationship.from === node.id)
+      .map((relationship) => summarizeRelationship(relationship, rawNodesById));
+    const relatedRisksAndUnknowns = [...incomingRelationships, ...outgoingRelationships]
+      .map((relationship) => relationship.from === node.id ? relationship.to : relationship.from)
+      .map((relatedNodeId) => rawNodesById.get(relatedNodeId))
+      .filter((relatedNode) => relatedNode?.type === "Risk" || relatedNode?.type === "Unknown")
+      .map((relatedNode) => ({
+        id: relatedNode.id,
+        label: relatedNode.label,
+        type: relatedNode.type,
+        status: relatedNode.status,
+        description: relatedNode.description ?? ""
+      }));
+
     return {
       id: node.id,
       label: node.label,
@@ -454,7 +688,13 @@ function buildHtmlRendererData(mapSource) {
       status: node.status,
       description: node.description ?? "",
       evidence: node.evidence ?? [],
+      evidenceQualityLabels: uniqueLabels(sourceRefs.map((source) => source.confidenceLabel)),
+      sources: sourceRefs,
       childMapRef: node.child_map_ref ?? null,
+      childMap: node.child_map_ref ? childMapsById.get(node.child_map_ref) ?? null : null,
+      incomingRelationships,
+      outgoingRelationships,
+      relatedRisksAndUnknowns,
       classes: [classByLayer[node.layer] ?? "knowledge", `status-${node.status}`],
       style: {
         backgroundColor: layerStyle.background,
@@ -493,6 +733,8 @@ function buildHtmlRendererData(mapSource) {
     depth: mapSource.depth,
     summary: mapSource.summary ?? "",
     layers: mapSource.layers ?? [],
+    sources: [...sourcesById.values()],
+    childMaps: [...childMapsById.values()],
     nodes,
     relationships,
     elements: [
@@ -533,6 +775,38 @@ function buildHtmlRendererData(mapSource) {
       }))
     ]
   };
+}
+
+function summarizeRelationship(relationship, nodesById) {
+  return {
+    id: relationship.id,
+    from: relationship.from,
+    to: relationship.to,
+    fromLabel: nodesById.get(relationship.from)?.label ?? relationship.from,
+    toLabel: nodesById.get(relationship.to)?.label ?? relationship.to,
+    type: relationship.type,
+    label: relationship.label || relationship.type,
+    status: relationship.status,
+    description: relationship.description ?? ""
+  };
+}
+
+function generatedChildHtmlPath(childPath) {
+  return String(childPath).replace(/(?:\.map)?\.ya?ml$/i, ".html");
+}
+
+function evidenceQualityLabel(value) {
+  if (value === "verified") {
+    return "Verified";
+  }
+  if (value === "inferred") {
+    return "Inferred";
+  }
+  return "Unknown";
+}
+
+function uniqueLabels(labels) {
+  return [...new Set(labels)];
 }
 
 export function discoverExampleMaps() {

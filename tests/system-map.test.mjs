@@ -65,13 +65,39 @@ describe("System Map renderers", () => {
     assert.match(html, /Generated from analytics-domain\. Do not edit by hand\./);
     assert.match(html, /<script id="system-map-data" type="application\/json">/);
     assert.match(html, /<div id="system-map-graph"/);
+    assert.match(html, /<aside id="map-detail-panel"/);
     assert.match(html, /cytoscape\(\{/);
+    assert.match(html, /renderNodeDetails\(node\.id\(\)\)/);
     assert.match(html, /"id": "dashboard-surface"/);
     assert.match(html, /"id": "dashboard-measures-interactions"/);
     assert.match(html, /"layer": "Product"/);
     assert.match(html, /"status": "at_risk"/);
     assert.doesNotMatch(html, /href="\.\.\/\.\.\/CONTEXT\.md"/);
     assert.doesNotMatch(html, /href="\.\.\/\.\.\/docs\//);
+  });
+
+  it("adds operational node detail data without exposing repository file anchors", () => {
+    const html = renderHtml(analytics);
+    assert.match(html, /Map Detail Panel/);
+    assert.match(html, /Evidence quality/);
+    assert.match(html, /Verified/);
+    assert.match(html, /Inferred/);
+    assert.match(html, /Looper context language/);
+    assert.match(html, /Generic analytics implementation inference/);
+    assert.match(html, /Readable evidence reference text/);
+    assert.doesNotMatch(html, /href="[^"]*(?:CONTEXT\.md|docs\/adr|\.map\.yaml)"/);
+  });
+
+  it("adds relationship summaries, related risks and unknowns, and generated child map links", () => {
+    const html = renderHtml(analytics);
+    assert.match(html, /Incoming relationships/);
+    assert.match(html, /Outgoing relationships/);
+    assert.match(html, /Related risks and unknowns/);
+    assert.match(html, /Data Quality Coverage/);
+    assert.match(html, /Security Coverage Unknowns/);
+    assert.match(html, /"generatedHtmlPath": "\.\/analytics-events\.html"/);
+    assert.match(html, /href="' \+ escapeDetailAttribute\(childMap\.generatedHtmlPath\)/);
+    assert.doesNotMatch(html, /href="\.\/analytics-events\.map\.yaml"/);
   });
 
   it("reports preflight state", () => {

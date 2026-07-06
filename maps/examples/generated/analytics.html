@@ -33,6 +33,12 @@
       min-height: 100vh;
     }
 
+    .map-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      min-height: 0;
+    }
+
     .map-header {
       display: flex;
       align-items: center;
@@ -78,6 +84,95 @@
       height: calc(100vh - 78px);
       background: #fbfcfd;
     }
+
+    .map-detail-panel {
+      height: calc(100vh - 78px);
+      overflow: auto;
+      padding: 18px;
+      background: var(--panel);
+      border-left: 1px solid var(--line);
+    }
+
+    .detail-eyebrow,
+    .detail-meta,
+    .detail-empty,
+    .detail-source-meta {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .detail-title {
+      margin: 4px 0 10px;
+      font-size: 20px;
+      line-height: 1.2;
+    }
+
+    .detail-description {
+      margin: 0 0 14px;
+    }
+
+    .detail-section {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+    }
+
+    .detail-section h3 {
+      margin: 0 0 8px;
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    .detail-list {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .detail-list li {
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fbfcfd;
+    }
+
+    .detail-pill {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      margin: 0 6px 6px 0;
+      padding: 3px 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fbfcfd;
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .detail-link {
+      color: var(--accent);
+      font-weight: 650;
+      text-decoration-thickness: 1px;
+    }
+
+    @media (max-width: 900px) {
+      .map-body {
+        grid-template-columns: 1fr;
+      }
+
+      #system-map-graph,
+      .map-detail-panel {
+        height: auto;
+        min-height: 420px;
+      }
+
+      .map-detail-panel {
+        border-left: 0;
+        border-top: 1px solid var(--line);
+      }
+    }
   </style>
 </head>
 <body>
@@ -93,7 +188,14 @@
         <span>12 relationships</span>
       </div>
     </header>
-    <div id="system-map-graph" aria-label="Interactive system map graph"></div>
+    <section class="map-body">
+      <div id="system-map-graph" aria-label="Interactive system map graph"></div>
+      <aside id="map-detail-panel" class="map-detail-panel" aria-live="polite">
+        <p class="detail-eyebrow">Map Detail Panel</p>
+        <h2 class="detail-title">Select a node</h2>
+        <p class="detail-empty">Choose a mapped thing to inspect evidence quality, relationships, risks, unknowns, and generated child map navigation.</p>
+      </aside>
+    </section>
   </main>
   <script id="system-map-data" type="application/json">{
   "id": "analytics-domain",
@@ -109,6 +211,40 @@
     "System",
     "Code"
   ],
+  "sources": [
+    {
+      "id": "context-doc",
+      "type": "doc",
+      "title": "Looper context language",
+      "confidence": "verified",
+      "confidenceLabel": "Verified",
+      "pathText": "Reference: ../../CONTEXT.md"
+    },
+    {
+      "id": "adr-typed-source",
+      "type": "doc",
+      "title": "Render System Maps From A Typed Source",
+      "confidence": "verified",
+      "confidenceLabel": "Verified",
+      "pathText": "Reference: ../../docs/adr/0001-render-system-maps-from-a-typed-source.md"
+    },
+    {
+      "id": "implementation-inference",
+      "type": "conversation",
+      "title": "Generic analytics implementation inference",
+      "confidence": "inferred",
+      "confidenceLabel": "Inferred",
+      "pathText": ""
+    }
+  ],
+  "childMaps": [
+    {
+      "id": "analytics-events",
+      "title": "Analytics Event Pipeline",
+      "depth": 2,
+      "generatedHtmlPath": "./analytics-events.html"
+    }
+  ],
   "nodes": [
     {
       "id": "dashboard-surface",
@@ -120,7 +256,59 @@
       "evidence": [
         "implementation-inference"
       ],
+      "evidenceQualityLabels": [
+        "Inferred"
+      ],
+      "sources": [
+        {
+          "id": "implementation-inference",
+          "type": "conversation",
+          "title": "Generic analytics implementation inference",
+          "confidence": "inferred",
+          "confidenceLabel": "Inferred",
+          "pathText": ""
+        }
+      ],
       "childMapRef": null,
+      "childMap": null,
+      "incomingRelationships": [
+        {
+          "id": "store-feeds-dashboard",
+          "from": "reporting-store",
+          "to": "dashboard-surface",
+          "fromLabel": "Reporting Store",
+          "toLabel": "Analytics Dashboard",
+          "type": "feeds",
+          "label": "powers reports",
+          "status": "active",
+          "description": ""
+        }
+      ],
+      "outgoingRelationships": [
+        {
+          "id": "dashboard-measures-interactions",
+          "from": "dashboard-surface",
+          "to": "tracked-interactions",
+          "fromLabel": "Analytics Dashboard",
+          "toLabel": "Tracked Interactions",
+          "type": "measures",
+          "label": "displays",
+          "status": "active",
+          "description": ""
+        },
+        {
+          "id": "dashboard-uses-collection",
+          "from": "dashboard-surface",
+          "to": "collection-path",
+          "fromLabel": "Analytics Dashboard",
+          "toLabel": "Collection Path",
+          "type": "uses",
+          "label": "emits events through",
+          "status": "active",
+          "description": ""
+        }
+      ],
+      "relatedRisksAndUnknowns": [],
       "classes": [
         "product",
         "status-active"
@@ -143,7 +331,36 @@
       "evidence": [
         "implementation-inference"
       ],
+      "evidenceQualityLabels": [
+        "Inferred"
+      ],
+      "sources": [
+        {
+          "id": "implementation-inference",
+          "type": "conversation",
+          "title": "Generic analytics implementation inference",
+          "confidence": "inferred",
+          "confidenceLabel": "Inferred",
+          "pathText": ""
+        }
+      ],
       "childMapRef": null,
+      "childMap": null,
+      "incomingRelationships": [
+        {
+          "id": "interactions-feed-pricing",
+          "from": "tracked-interactions",
+          "to": "pricing-insights",
+          "fromLabel": "Tracked Interactions",
+          "toLabel": "Pricing Insights",
+          "type": "feeds",
+          "label": "informs",
+          "status": "partial",
+          "description": ""
+        }
+      ],
+      "outgoingRelationships": [],
+      "relatedRisksAndUnknowns": [],
       "classes": [
         "knowledge",
         "status-partial"
@@ -166,7 +383,67 @@
       "evidence": [
         "implementation-inference"
       ],
+      "evidenceQualityLabels": [
+        "Inferred"
+      ],
+      "sources": [
+        {
+          "id": "implementation-inference",
+          "type": "conversation",
+          "title": "Generic analytics implementation inference",
+          "confidence": "inferred",
+          "confidenceLabel": "Inferred",
+          "pathText": ""
+        }
+      ],
       "childMapRef": null,
+      "childMap": null,
+      "incomingRelationships": [
+        {
+          "id": "dashboard-measures-interactions",
+          "from": "dashboard-surface",
+          "to": "tracked-interactions",
+          "fromLabel": "Analytics Dashboard",
+          "toLabel": "Tracked Interactions",
+          "type": "measures",
+          "label": "displays",
+          "status": "active",
+          "description": ""
+        },
+        {
+          "id": "data-quality-risks-metrics",
+          "from": "data-quality-risk",
+          "to": "tracked-interactions",
+          "fromLabel": "Data Quality Coverage",
+          "toLabel": "Tracked Interactions",
+          "type": "risks",
+          "label": "can distort",
+          "status": "at_risk",
+          "description": ""
+        }
+      ],
+      "outgoingRelationships": [
+        {
+          "id": "interactions-feed-pricing",
+          "from": "tracked-interactions",
+          "to": "pricing-insights",
+          "fromLabel": "Tracked Interactions",
+          "toLabel": "Pricing Insights",
+          "type": "feeds",
+          "label": "informs",
+          "status": "partial",
+          "description": ""
+        }
+      ],
+      "relatedRisksAndUnknowns": [
+        {
+          "id": "data-quality-risk",
+          "label": "Data Quality Coverage",
+          "type": "Risk",
+          "status": "at_risk",
+          "description": "Gaps in instrumentation or validation can make metrics misleading."
+        }
+      ],
       "classes": [
         "knowledge",
         "status-active"
@@ -189,7 +466,48 @@
       "evidence": [
         "implementation-inference"
       ],
+      "evidenceQualityLabels": [
+        "Inferred"
+      ],
+      "sources": [
+        {
+          "id": "implementation-inference",
+          "type": "conversation",
+          "title": "Generic analytics implementation inference",
+          "confidence": "inferred",
+          "confidenceLabel": "Inferred",
+          "pathText": ""
+        }
+      ],
       "childMapRef": null,
+      "childMap": null,
+      "incomingRelationships": [
+        {
+          "id": "server-transforms-schema",
+          "from": "local-analytics-server",
+          "to": "event-schema",
+          "fromLabel": "Local Analytics Server",
+          "toLabel": "Event Schema",
+          "type": "transforms",
+          "label": "validates",
+          "status": "active",
+          "description": ""
+        }
+      ],
+      "outgoingRelationships": [
+        {
+          "id": "schema-feeds-store",
+          "from": "event-schema",
+          "to": "reporting-store",
+          "fromLabel": "Event Schema",
+          "toLabel": "Reporting Store",
+          "type": "feeds",
+          "label": "persists into",
+          "status": "active",
+          "description": ""
+        }
+      ],
+      "relatedRisksAndUnknowns": [],
       "classes": [
         "data",
         "status-active"
@@ -212,7 +530,94 @@
       "evidence": [
         "implementation-inference"
       ],
+      "evidenceQualityLabels": [
+        "Inferred"
+      ],
+      "sources": [
+        {
+          "id": "implementation-inference",
+          "type": "conversation",
+          "title": "Generic analytics implementation inference",
+          "confidence": "inferred",
+          "confidenceLabel": "Inferred",
+          "pathText": ""
+        }
+      ],
       "childMapRef": "analytics-events",
+      "childMap": {
+        "id": "analytics-events",
+        "title": "Analytics Event Pipeline",
+        "depth": 2,
+        "generatedHtmlPath": "./analytics-events.html"
+      },
+      "incomingRelationships": [
+        {
+          "id": "dashboard-uses-collection",
+          "from": "dashboard-surface",
+          "to": "collection-path",
+          "fromLabel": "Analytics Dashboard",
+          "toLabel": "Collection Path",
+          "type": "uses",
+          "label": "emits events through",
+          "status": "active",
+          "description": ""
+        },
+        {
+          "id": "collection-exposes-gateway",
+          "from": "cloudflare-gateway",
+          "to": "collection-path",
+          "fromLabel": "Cloudflare Gateway",
+          "toLabel": "Collection Path",
+          "type": "exposes",
+          "label": "exposes",
+          "status": "partial",
+          "description": ""
+        },
+        {
+          "id": "gateway-protects-collection",
+          "from": "cloudflare-gateway",
+          "to": "collection-path",
+          "fromLabel": "Cloudflare Gateway",
+          "toLabel": "Collection Path",
+          "type": "protects",
+          "label": "mediates",
+          "status": "partial",
+          "description": ""
+        },
+        {
+          "id": "security-risks-collection",
+          "from": "security-coverage",
+          "to": "collection-path",
+          "fromLabel": "Security Coverage Unknowns",
+          "toLabel": "Collection Path",
+          "type": "risks",
+          "label": "needs verification for",
+          "status": "unknown",
+          "description": ""
+        }
+      ],
+      "outgoingRelationships": [
+        {
+          "id": "collection-uses-server",
+          "from": "collection-path",
+          "to": "local-analytics-server",
+          "fromLabel": "Collection Path",
+          "toLabel": "Local Analytics Server",
+          "type": "uses",
+          "label": "accepted by",
+          "status": "active",
+          "description": ""
+        }
+      ],
+      "relatedRisksAndUnknowns": [
+        {
+          "id": "security-coverage",
+          "label": "Security Coverage Unknowns",
+          "type": "Unknown",
+          "status": "unknown",
+          "description": "Auth, retention, and privacy coverage need verification in a real system."
+        }
+      ],
       "classes": [
         "system",
         "status-active"
@@ -235,7 +640,59 @@
       "evidence": [
         "implementation-inference"
       ],
+      "evidenceQualityLabels": [
+        "Inferred"
+      ],
+      "sources": [
+        {
+          "id": "implementation-inference",
+          "type": "conversation",
+          "title": "Generic analytics implementation inference",
+          "confidence": "inferred",
+          "confidenceLabel": "Inferred",
+          "pathText": ""
+        }
+      ],
       "childMapRef": null,
+      "childMap": null,
+      "incomingRelationships": [
+        {
+          "id": "collection-uses-server",
+          "from": "collection-path",
+          "to": "local-analytics-server",
+          "fromLabel": "Collection Path",
+          "toLabel": "Local Analytics Server",
+          "type": "uses",
+          "label": "accepted by",
+          "status": "active",
+          "description": ""
+        },
+        {
+          "id": "code-implements-server",
+          "from": "analytics-code",
+          "to": "local-analytics-server",
+          "fromLabel": "Analytics Code Area",
+          "toLabel": "Local Analytics Server",
+          "type": "implements",
+          "label": "implements",
+          "status": "active",
+          "description": ""
+        }
+      ],
+      "outgoingRelationships": [
+        {
+          "id": "server-transforms-schema",
+          "from": "local-analytics-server",
+          "to": "event-schema",
+          "fromLabel": "Local Analytics Server",
+          "toLabel": "Event Schema",
+          "type": "transforms",
+          "label": "validates",
+          "status": "active",
+          "description": ""
+        }
+      ],
+      "relatedRisksAndUnknowns": [],
       "classes": [
         "system",
         "status-active"
@@ -258,7 +715,47 @@
       "evidence": [
         "implementation-inference"
       ],
+      "evidenceQualityLabels": [
+        "Inferred"
+      ],
+      "sources": [
+        {
+          "id": "implementation-inference",
+          "type": "conversation",
+          "title": "Generic analytics implementation inference",
+          "confidence": "inferred",
+          "confidenceLabel": "Inferred",
+          "pathText": ""
+        }
+      ],
       "childMapRef": null,
+      "childMap": null,
+      "incomingRelationships": [],
+      "outgoingRelationships": [
+        {
+          "id": "collection-exposes-gateway",
+          "from": "cloudflare-gateway",
+          "to": "collection-path",
+          "fromLabel": "Cloudflare Gateway",
+          "toLabel": "Collection Path",
+          "type": "exposes",
+          "label": "exposes",
+          "status": "partial",
+          "description": ""
+        },
+        {
+          "id": "gateway-protects-collection",
+          "from": "cloudflare-gateway",
+          "to": "collection-path",
+          "fromLabel": "Cloudflare Gateway",
+          "toLabel": "Collection Path",
+          "type": "protects",
+          "label": "mediates",
+          "status": "partial",
+          "description": ""
+        }
+      ],
+      "relatedRisksAndUnknowns": [],
       "classes": [
         "system",
         "status-partial"
@@ -281,7 +778,48 @@
       "evidence": [
         "implementation-inference"
       ],
+      "evidenceQualityLabels": [
+        "Inferred"
+      ],
+      "sources": [
+        {
+          "id": "implementation-inference",
+          "type": "conversation",
+          "title": "Generic analytics implementation inference",
+          "confidence": "inferred",
+          "confidenceLabel": "Inferred",
+          "pathText": ""
+        }
+      ],
       "childMapRef": null,
+      "childMap": null,
+      "incomingRelationships": [
+        {
+          "id": "schema-feeds-store",
+          "from": "event-schema",
+          "to": "reporting-store",
+          "fromLabel": "Event Schema",
+          "toLabel": "Reporting Store",
+          "type": "feeds",
+          "label": "persists into",
+          "status": "active",
+          "description": ""
+        }
+      ],
+      "outgoingRelationships": [
+        {
+          "id": "store-feeds-dashboard",
+          "from": "reporting-store",
+          "to": "dashboard-surface",
+          "fromLabel": "Reporting Store",
+          "toLabel": "Analytics Dashboard",
+          "type": "feeds",
+          "label": "powers reports",
+          "status": "active",
+          "description": ""
+        }
+      ],
+      "relatedRisksAndUnknowns": [],
       "classes": [
         "data",
         "status-active"
@@ -304,7 +842,36 @@
       "evidence": [
         "implementation-inference"
       ],
+      "evidenceQualityLabels": [
+        "Inferred"
+      ],
+      "sources": [
+        {
+          "id": "implementation-inference",
+          "type": "conversation",
+          "title": "Generic analytics implementation inference",
+          "confidence": "inferred",
+          "confidenceLabel": "Inferred",
+          "pathText": ""
+        }
+      ],
       "childMapRef": null,
+      "childMap": null,
+      "incomingRelationships": [],
+      "outgoingRelationships": [
+        {
+          "id": "code-implements-server",
+          "from": "analytics-code",
+          "to": "local-analytics-server",
+          "fromLabel": "Analytics Code Area",
+          "toLabel": "Local Analytics Server",
+          "type": "implements",
+          "label": "implements",
+          "status": "active",
+          "description": ""
+        }
+      ],
+      "relatedRisksAndUnknowns": [],
       "classes": [
         "code",
         "status-active"
@@ -327,7 +894,36 @@
       "evidence": [
         "implementation-inference"
       ],
+      "evidenceQualityLabels": [
+        "Inferred"
+      ],
+      "sources": [
+        {
+          "id": "implementation-inference",
+          "type": "conversation",
+          "title": "Generic analytics implementation inference",
+          "confidence": "inferred",
+          "confidenceLabel": "Inferred",
+          "pathText": ""
+        }
+      ],
       "childMapRef": null,
+      "childMap": null,
+      "incomingRelationships": [],
+      "outgoingRelationships": [
+        {
+          "id": "data-quality-risks-metrics",
+          "from": "data-quality-risk",
+          "to": "tracked-interactions",
+          "fromLabel": "Data Quality Coverage",
+          "toLabel": "Tracked Interactions",
+          "type": "risks",
+          "label": "can distort",
+          "status": "at_risk",
+          "description": ""
+        }
+      ],
+      "relatedRisksAndUnknowns": [],
       "classes": [
         "knowledge",
         "status-at_risk"
@@ -350,7 +946,36 @@
       "evidence": [
         "implementation-inference"
       ],
+      "evidenceQualityLabels": [
+        "Inferred"
+      ],
+      "sources": [
+        {
+          "id": "implementation-inference",
+          "type": "conversation",
+          "title": "Generic analytics implementation inference",
+          "confidence": "inferred",
+          "confidenceLabel": "Inferred",
+          "pathText": ""
+        }
+      ],
       "childMapRef": null,
+      "childMap": null,
+      "incomingRelationships": [],
+      "outgoingRelationships": [
+        {
+          "id": "security-risks-collection",
+          "from": "security-coverage",
+          "to": "collection-path",
+          "fromLabel": "Security Coverage Unknowns",
+          "toLabel": "Collection Path",
+          "type": "risks",
+          "label": "needs verification for",
+          "status": "unknown",
+          "description": ""
+        }
+      ],
+      "relatedRisksAndUnknowns": [],
       "classes": [
         "system",
         "status-unknown"
@@ -1090,6 +1715,7 @@ var Xr=function(e){if(!(this instanceof Xr))return new Xr(e);this.id="Thenable/1
 </script>
   <script>
     const mapData = JSON.parse(document.getElementById("system-map-data").textContent);
+    mapData.nodesById = Object.fromEntries(mapData.nodes.map((node) => [node.id, node]));
     const cy = cytoscape({
       container: document.getElementById("system-map-graph"),
       elements: mapData.elements,
@@ -1158,7 +1784,102 @@ var Xr=function(e){if(!(this instanceof Xr))return new Xr(e);this.id="Thenable/1
       ]
     });
 
-    window.systemMapView = { mapData, cy };
+    const detailPanel = document.getElementById("map-detail-panel");
+
+    cy.on("tap", "node", (event) => {
+      const node = event.target;
+      renderNodeDetails(node.id());
+    });
+
+    function renderNodeDetails(nodeId) {
+      const node = mapData.nodesById[nodeId];
+      if (!node) {
+        return;
+      }
+
+      detailPanel.innerHTML = [
+        '<p class="detail-eyebrow">Map Detail Panel</p>',
+        '<h2 class="detail-title">' + escapeDetailHtml(node.label) + '</h2>',
+        '<p class="detail-meta">' + escapeDetailHtml(node.layer) + ' / ' + escapeDetailHtml(node.type) + ' / ' + escapeDetailHtml(node.status) + '</p>',
+        '<p class="detail-description">' + escapeDetailHtml(node.description || "No description provided.") + '</p>',
+        renderDetailPills("Evidence quality", node.evidenceQualityLabels),
+        renderSources(node.sources),
+        renderRelationships("Incoming relationships", node.incomingRelationships, "fromLabel"),
+        renderRelationships("Outgoing relationships", node.outgoingRelationships, "toLabel"),
+        renderRelatedRisks(node.relatedRisksAndUnknowns),
+        renderChildMap(node.childMap)
+      ].join("");
+    }
+
+    function renderDetailPills(title, labels) {
+      return '<section class="detail-section"><h3>' + title + '</h3>' +
+        (labels.length > 0
+          ? labels.map((label) => '<span class="detail-pill">' + escapeDetailHtml(label) + '</span>').join("")
+          : '<p class="detail-empty">No evidence quality recorded.</p>') +
+        '</section>';
+    }
+
+    function renderSources(sources) {
+      return '<section class="detail-section"><h3>Evidence references</h3>' +
+        renderList(sources, (source) => [
+          '<strong>' + escapeDetailHtml(source.title) + '</strong>',
+          '<div class="detail-source-meta">Readable evidence reference text: ' + escapeDetailHtml(source.type) + ' / ' + escapeDetailHtml(source.confidenceLabel) + '</div>',
+          source.pathText ? '<div class="detail-source-meta">' + escapeDetailHtml(source.pathText) + '</div>' : ''
+        ].join("")) +
+        '</section>';
+    }
+
+    function renderRelationships(title, relationships, labelKey) {
+      return '<section class="detail-section"><h3>' + title + '</h3>' +
+        renderList(relationships, (relationship) => [
+          '<strong>' + escapeDetailHtml(relationship[labelKey]) + '</strong>',
+          '<div class="detail-source-meta">' + escapeDetailHtml(relationship.label) + ' / ' + escapeDetailHtml(relationship.type) + ' / ' + escapeDetailHtml(relationship.status) + '</div>'
+        ].join("")) +
+        '</section>';
+    }
+
+    function renderRelatedRisks(items) {
+      return '<section class="detail-section"><h3>Related risks and unknowns</h3>' +
+        renderList(items, (item) => [
+          '<strong>' + escapeDetailHtml(item.label) + '</strong>',
+          '<div class="detail-source-meta">' + escapeDetailHtml(item.type) + ' / ' + escapeDetailHtml(item.status) + '</div>',
+          '<div>' + escapeDetailHtml(item.description) + '</div>'
+        ].join("")) +
+        '</section>';
+    }
+
+    function renderChildMap(childMap) {
+      if (!childMap) {
+        return "";
+      }
+
+      return '<section class="detail-section"><h3>Generated child map</h3>' +
+        '<a class="detail-link" href="' + escapeDetailAttribute(childMap.generatedHtmlPath) + '">' + escapeDetailHtml(childMap.title) + '</a>' +
+        '<div class="detail-source-meta">depth ' + escapeDetailHtml(childMap.depth) + '</div>' +
+        '</section>';
+    }
+
+    function renderList(items, renderItem) {
+      if (!items || items.length === 0) {
+        return '<p class="detail-empty">None recorded.</p>';
+      }
+
+      return '<ul class="detail-list">' + items.map((item) => '<li>' + renderItem(item) + '</li>').join("") + '</ul>';
+    }
+
+    function escapeDetailHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    function escapeDetailAttribute(value) {
+      return escapeDetailHtml(value).replaceAll("'", "&#39;");
+    }
+
+    window.systemMapView = { mapData, cy, renderNodeDetails };
   </script>
 </body>
 </html>
