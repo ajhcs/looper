@@ -34,6 +34,9 @@ describe("System Mapper skill and docs", () => {
     assert.match(docs, /Interactive Map View/);
     assert.match(docs, /Current-State Maps by default/);
     assert.match(docs, /npm run maps:render:html -- <map-source> <output\.html>/);
+    assert.match(docs, /Track the canonical Map Source/);
+    assert.match(docs, /curated generated HTML examples/);
+    assert.match(docs, /disposable local artifacts/);
     assert.match(docs, /Optionally generate a rough Mermaid preview/);
     assert.match(docs, /Map Brief/);
   });

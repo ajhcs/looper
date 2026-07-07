@@ -1,1 +1,4 @@
 node_modules/
+maps/**/generated/*.d2
+maps/**/generated/*.mmd
+maps/**/generated/*.svg
