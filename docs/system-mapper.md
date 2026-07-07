@@ -33,6 +33,8 @@ npm run maps:render:html -- <map-source> <output.html>
 
 Generated HTML files are review artifacts, not sources of truth. Use them to inspect clickable nodes, relationship explanations, trace mode, detail panels, evidence quality, and generated child-map navigation.
 
+Track the canonical Map Source and intentionally curated generated HTML examples that support review or tests. Treat generated Mermaid previews and retired static renderer outputs as disposable local artifacts; regenerate them when needed instead of committing them.
+
 Optionally generate a rough Mermaid preview:
 
 ```powershell

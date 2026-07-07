@@ -7,7 +7,7 @@ description: Looper writes tight Codex orchestration loops over plans, beads, ch
 
 Write loops for capable agents. Assume the model can reason, inspect artifacts, use tools, and recover from uncertainty. Do not teach the agent how to think.
 
-Looper is for planned work. If the bead list or plan is too vague to choose slices, lanes, and proof, the loop should stop and ask for planning instead of inventing implementation scope.
+Looper is for planned work. If the current system is not understood well enough to choose slices, invoke `system-mapper` first. If the bead list or plan is too vague to choose slices, lanes, and proof, the loop should stop and ask for planning instead of inventing implementation scope.
 
 Default length: target 1200-2000 characters and stay under 2600 unless the user asks for more detail. Prefer outcome-first instructions, compact state, and evidence checks over process-heavy scaffolding.
 
@@ -86,6 +86,7 @@ Default code slice:
 
 Use specialist lanes only when the bead names the domain or the proof requires it:
 
+- current-system understanding, traceability, map validation, or progressive visual disclosure: `system-mapper`
 - decomposing a parent bead, PRD, issue brief, or grill-with-docs output into commit-sized childbeads: `beadwriter`
 - software decision, architecture option, library/API/framework choice, MCP/skill choice, current best practice, or codebase tradeoff research: `phone-a-swe`
 - security boundary, exploit, auth, input, permission, secret, or data-flow work
