@@ -1,0 +1,38 @@
+version: 1
+id: duplicate-relationship-id
+title: Duplicate Relationship ID
+kind: current_state
+domain: Invalid
+depth: 0
+layers: [Product, Knowledge, Data, System, Code]
+sources:
+  - id: context-doc
+    type: doc
+    title: Context
+    confidence: verified
+nodes:
+  - id: product-surface
+    label: Product Surface
+    layer: Product
+    type: Surface
+    status: active
+    evidence: [context-doc]
+  - id: app-code
+    label: App Code
+    layer: Code
+    type: Code Area
+    status: active
+    evidence: [context-doc]
+relationships:
+  - id: duplicated-edge
+    from: app-code
+    to: product-surface
+    type: implements
+    status: active
+    evidence: [context-doc]
+  - id: duplicated-edge
+    from: product-surface
+    to: app-code
+    type: uses
+    status: active
+    evidence: [context-doc]

@@ -29,7 +29,9 @@ describe("System Map Source validation", () => {
       ["maps/examples/invalid/invalid-layer-type.map.yaml", "node product-code type Code Area is not allowed in layer Product"],
       ["maps/examples/invalid/invalid-evidence-status.map.yaml", "must be equal to one of the allowed values"],
       ["maps/examples/invalid/invalid-subtype.map.yaml", "must be object"],
-      ["maps/examples/invalid/unresolved-drilldown.map.yaml", "node product-surface child_map_ref absent-child does not match any child_maps id"]
+      ["maps/examples/invalid/unresolved-drilldown.map.yaml", "node product-surface child_map_ref absent-child does not match any child_maps id"],
+      ["maps/examples/invalid/duplicate-relationship-id.map.yaml", "relationship duplicated-edge is duplicated"],
+      ["maps/examples/invalid/non-map-child-path.map.yaml", "child_map source-doc path must point to a local map YAML file"]
     ];
 
     for (const [filePath, expected] of cases) {
@@ -89,6 +91,9 @@ describe("System Map renderers", () => {
     assert.match(html, /"generatedHtmlPath": "\.\/analytics-events\.html"/);
     assert.match(html, /href="' \+ escapeDetailAttribute\(childMap\.generatedHtmlPath\)/);
     assert.doesNotMatch(html, /href="\.\/analytics-events\.map\.yaml"/);
+    assert.doesNotMatch(html, /"generatedHtmlPath": "[^"]*\.map\.ya?ml"/);
+    assert.doesNotMatch(html, /"generatedHtmlPath": "[^"]*docs\//);
+    assert.doesNotMatch(html, /"generatedHtmlPath": "(?:https?:|javascript:|\/\/)/);
   });
 
   it("adds relationship explanation UI hooks and inspectable edge data", () => {

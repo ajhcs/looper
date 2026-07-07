@@ -73,6 +73,7 @@ export function validateMapSource(data) {
   const nodeIds = new Set();
   const sourceIds = new Set();
   const childMapIds = new Set();
+  const relationshipIds = new Set();
 
   for (const source of data.sources ?? []) {
     if (source?.id) {
@@ -89,6 +90,9 @@ export function validateMapSource(data) {
         diagnostics.push(`child_map ${childMap.id} is duplicated`);
       }
       childMapIds.add(childMap.id);
+    }
+    if (childMap?.path && !isLocalMapYamlPath(childMap.path)) {
+      diagnostics.push(`child_map ${childMap.id ?? "(missing id)"} path must point to a local map YAML file`);
     }
   }
 
@@ -121,6 +125,11 @@ export function validateMapSource(data) {
     if (!relationship?.id) {
       continue;
     }
+    if (relationshipIds.has(relationship.id)) {
+      diagnostics.push(`relationship ${relationship.id} is duplicated`);
+    }
+    relationshipIds.add(relationship.id);
+
     if (relationship.from && !nodeIds.has(relationship.from)) {
       diagnostics.push(`relationship ${relationship.id} source ${relationship.from} does not match any node id`);
     }
@@ -954,7 +963,15 @@ function findNearestPath(startNodeId, nodesById, relationships, predicate) {
 }
 
 function generatedChildHtmlPath(childPath) {
+  if (!isLocalMapYamlPath(childPath)) {
+    throw new Error(`child map path must point to a local map YAML file: ${childPath}`);
+  }
   return String(childPath).replace(/(?:\.map)?\.ya?ml$/i, ".html");
+}
+
+function isLocalMapYamlPath(childPath) {
+  const path = String(childPath ?? "");
+  return /(?:\.map)?\.ya?ml$/i.test(path) && !/^[A-Za-z][A-Za-z0-9+.-]*:/.test(path) && !path.startsWith("//");
 }
 
 function evidenceQualityLabel(value) {

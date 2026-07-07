@@ -1,0 +1,26 @@
+version: 1
+id: non-map-child-path
+title: Non Map Child Path
+kind: current_state
+domain: Invalid
+depth: 0
+layers: [Product, Knowledge, Data, System, Code]
+sources:
+  - id: context-doc
+    type: doc
+    title: Context
+    confidence: verified
+child_maps:
+  - id: source-doc
+    title: Source Document
+    path: ../docs/foo.md
+    depth: 1
+nodes:
+  - id: product-surface
+    label: Product Surface
+    layer: Product
+    type: Surface
+    status: active
+    child_map_ref: source-doc
+    evidence: [context-doc]
+relationships: []
