@@ -1,0 +1,20 @@
+version: 1
+id: invalid-evidence-status
+title: Invalid Evidence And Status
+kind: current_state
+domain: Invalid
+depth: 0
+layers: [Product, Knowledge, Data, System, Code]
+sources:
+  - id: context-doc
+    type: doc
+    title: Context
+    confidence: certain
+nodes:
+  - id: product-surface
+    label: Product Surface
+    layer: Product
+    type: Surface
+    status: done
+    evidence: [context-doc]
+relationships: []

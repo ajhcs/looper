@@ -1,0 +1,43 @@
+version: 1
+id: minimal-system
+title: Minimal System Map
+kind: current_state
+domain: Minimal
+depth: 0
+summary: Minimal valid map used as a schema smoke fixture.
+layers:
+  - Product
+  - Knowledge
+  - Data
+  - System
+  - Code
+sources:
+  - id: context-doc
+    type: doc
+    title: Context language
+    path: ../../CONTEXT.md
+    confidence: verified
+nodes:
+  - id: user-surface
+    label: User Surface
+    layer: Product
+    type: Surface
+    status: active
+    evidence:
+      - context-doc
+  - id: app-code
+    label: App Code
+    layer: Code
+    type: Code Area
+    status: active
+    evidence:
+      - context-doc
+relationships:
+  - id: surface-implemented-by-code
+    from: app-code
+    to: user-surface
+    type: implements
+    label: implements
+    status: active
+    evidence:
+      - context-doc

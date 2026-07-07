@@ -1,7 +1,7 @@
 {
   "name": "looper",
   "version": "0.3.0",
-  "description": "Decompose beads, write tight Codex orchestration loops, and phone a senior SWE for research-backed decisions.",
+  "description": "Map systems, decompose beads, write tight Codex orchestration loops, and phone a senior SWE for research-backed decisions.",
   "author": {
     "name": "Colet"
   },
@@ -15,13 +15,14 @@
     "decomposition",
     "matt-pocock-skills",
     "software-engineering",
+    "system-mapping",
     "research"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Looper",
-    "shortDescription": "Decompose beads, write loops, phone a SWE.",
-    "longDescription": "Looper writes compact Codex orchestration loops over plans, beads, slices, subagents, review/fix passes, and proof. It also includes Beadwriter for decomposing parent beads, PRDs, issue briefs, and grill-with-docs output into commit-sized childbeads, plus Phone-A-SWE for research-backed software decisions in systems-engineering terms. Looper's default code lanes require Matt Pocock Skills because they call matt-pocock-skills:implement and matt-pocock-skills:code-review.",
+    "shortDescription": "Map systems, decompose beads, write loops.",
+    "longDescription": "Looper writes compact Codex orchestration loops over plans, beads, slices, subagents, review/fix passes, and proof. It also includes System Mapper for typed current-state System Understanding Maps, Beadwriter for decomposing parent beads, PRDs, issue briefs, and grill-with-docs output into commit-sized childbeads, plus Phone-A-SWE for research-backed software decisions in systems-engineering terms. Looper's default code lanes require Matt Pocock Skills because they call matt-pocock-skills:implement and matt-pocock-skills:code-review.",
     "developerName": "Colet",
     "category": "Productivity",
     "capabilities": [
@@ -29,6 +30,7 @@
       "Write"
     ],
     "defaultPrompt": [
+      "Use System Mapper to map this current system.",
       "Use Looper to write a Codex loop.",
       "Use Beadwriter to decompose this bead.",
       "Turn this plan into implementation slices.",

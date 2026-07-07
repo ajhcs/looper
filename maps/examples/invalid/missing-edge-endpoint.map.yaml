@@ -1,0 +1,26 @@
+version: 1
+id: invalid-edge-endpoint
+title: Invalid Edge Endpoint
+kind: current_state
+domain: Invalid
+depth: 0
+layers: [Product, Knowledge, Data, System, Code]
+sources:
+  - id: context-doc
+    type: doc
+    title: Context
+    confidence: verified
+nodes:
+  - id: product-surface
+    label: Product Surface
+    layer: Product
+    type: Surface
+    status: active
+    evidence: [context-doc]
+relationships:
+  - id: missing-target
+    from: product-surface
+    to: absent-node
+    type: uses
+    status: active
+    evidence: [context-doc]

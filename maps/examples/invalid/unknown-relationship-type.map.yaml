@@ -1,0 +1,32 @@
+version: 1
+id: invalid-relationship-type
+title: Invalid Relationship Type
+kind: current_state
+domain: Invalid
+depth: 0
+layers: [Product, Knowledge, Data, System, Code]
+sources:
+  - id: context-doc
+    type: doc
+    title: Context
+    confidence: verified
+nodes:
+  - id: product-surface
+    label: Product Surface
+    layer: Product
+    type: Surface
+    status: active
+    evidence: [context-doc]
+  - id: code-area
+    label: Code Area
+    layer: Code
+    type: Code Area
+    status: active
+    evidence: [context-doc]
+relationships:
+  - id: code-invents-surface
+    from: code-area
+    to: product-surface
+    type: invents
+    status: active
+    evidence: [context-doc]

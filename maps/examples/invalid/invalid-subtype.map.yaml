@@ -1,0 +1,21 @@
+version: 1
+id: invalid-subtype
+title: Invalid Subtype
+kind: current_state
+domain: Invalid
+depth: 0
+layers: [Product, Knowledge, Data, System, Code]
+sources:
+  - id: context-doc
+    type: doc
+    title: Context
+    confidence: verified
+nodes:
+  - id: product-surface
+    label: Product Surface
+    layer: Product
+    type: Surface
+    subtype: event metric
+    status: active
+    evidence: [context-doc]
+relationships: []

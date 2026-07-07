@@ -1,0 +1,223 @@
+version: 1
+id: analytics-domain
+title: Analytics Domain Map
+kind: current_state
+domain: Analytics
+depth: 1
+summary: Current-state analytics map showing traceability from product surfaces through metrics, data, systems, and code.
+layers:
+  - Product
+  - Knowledge
+  - Data
+  - System
+  - Code
+sources:
+  - id: context-doc
+    type: doc
+    title: Looper context language
+    path: ../../CONTEXT.md
+    confidence: verified
+  - id: adr-typed-source
+    type: doc
+    title: Render System Maps From A Typed Source
+    path: ../../docs/adr/0001-render-system-maps-from-a-typed-source.md
+    confidence: verified
+  - id: implementation-inference
+    type: conversation
+    title: Generic analytics implementation inference
+    confidence: inferred
+child_maps:
+  - id: analytics-events
+    title: Analytics Event Pipeline
+    path: ./analytics-events.map.yaml
+    depth: 2
+nodes:
+  - id: dashboard-surface
+    label: Analytics Dashboard
+    layer: Product
+    type: Surface
+    status: active
+    description: Product surface where operators inspect usage and quality signals.
+    evidence:
+      - implementation-inference
+  - id: pricing-insights
+    label: Pricing Insights
+    layer: Knowledge
+    type: Concept
+    status: partial
+    description: Understanding derived from usage and conversion metrics.
+    evidence:
+      - implementation-inference
+  - id: tracked-interactions
+    label: Tracked Interactions
+    layer: Knowledge
+    type: Metric
+    subtype:
+      namespace: analytics
+      value: event-metric
+    status: active
+    description: Named interaction counts and funnels used to explain behavior.
+    evidence:
+      - implementation-inference
+  - id: event-schema
+    label: Event Schema
+    layer: Data
+    type: Data Source
+    status: active
+    description: Shared event payload shape for analytics capture.
+    evidence:
+      - implementation-inference
+  - id: collection-path
+    label: Collection Path
+    layer: System
+    type: Interface
+    status: active
+    description: Browser-to-service path that accepts analytics events.
+    child_map_ref: analytics-events
+    evidence:
+      - implementation-inference
+  - id: local-analytics-server
+    label: Local Analytics Server
+    layer: System
+    type: System Component
+    status: active
+    description: Local service that receives and validates event payloads.
+    evidence:
+      - implementation-inference
+  - id: cloudflare-gateway
+    label: Cloudflare Gateway
+    layer: System
+    type: System Component
+    status: partial
+    description: Edge gateway used for deployed analytics ingestion.
+    evidence:
+      - implementation-inference
+  - id: reporting-store
+    label: Reporting Store
+    layer: Data
+    type: Data Source
+    status: active
+    description: Queryable store used by reporting views.
+    evidence:
+      - implementation-inference
+  - id: analytics-code
+    label: Analytics Code Area
+    layer: Code
+    type: Code Area
+    status: active
+    description: Client and server code that emits, receives, and reports analytics.
+    evidence:
+      - implementation-inference
+  - id: data-quality-risk
+    label: Data Quality Coverage
+    layer: Knowledge
+    type: Risk
+    status: at_risk
+    description: Gaps in instrumentation or validation can make metrics misleading.
+    evidence:
+      - implementation-inference
+  - id: security-coverage
+    label: Security Coverage Unknowns
+    layer: System
+    type: Unknown
+    status: unknown
+    description: Auth, retention, and privacy coverage need verification in a real system.
+    evidence:
+      - implementation-inference
+relationships:
+  - id: dashboard-measures-interactions
+    from: dashboard-surface
+    to: tracked-interactions
+    type: measures
+    label: displays
+    status: active
+    evidence:
+      - implementation-inference
+  - id: interactions-feed-pricing
+    from: tracked-interactions
+    to: pricing-insights
+    type: feeds
+    label: informs
+    status: partial
+    evidence:
+      - implementation-inference
+  - id: dashboard-uses-collection
+    from: dashboard-surface
+    to: collection-path
+    type: uses
+    label: emits events through
+    status: active
+    evidence:
+      - implementation-inference
+  - id: collection-uses-server
+    from: collection-path
+    to: local-analytics-server
+    type: uses
+    label: accepted by
+    status: active
+    evidence:
+      - implementation-inference
+  - id: collection-exposes-gateway
+    from: cloudflare-gateway
+    to: collection-path
+    type: exposes
+    label: exposes
+    status: partial
+    evidence:
+      - implementation-inference
+  - id: server-transforms-schema
+    from: local-analytics-server
+    to: event-schema
+    type: transforms
+    label: validates
+    status: active
+    evidence:
+      - implementation-inference
+  - id: schema-feeds-store
+    from: event-schema
+    to: reporting-store
+    type: feeds
+    label: persists into
+    status: active
+    evidence:
+      - implementation-inference
+  - id: code-implements-server
+    from: analytics-code
+    to: local-analytics-server
+    type: implements
+    label: implements
+    status: active
+    evidence:
+      - implementation-inference
+  - id: store-feeds-dashboard
+    from: reporting-store
+    to: dashboard-surface
+    type: feeds
+    label: powers reports
+    status: active
+    evidence:
+      - implementation-inference
+  - id: data-quality-risks-metrics
+    from: data-quality-risk
+    to: tracked-interactions
+    type: risks
+    label: can distort
+    status: at_risk
+    evidence:
+      - implementation-inference
+  - id: gateway-protects-collection
+    from: cloudflare-gateway
+    to: collection-path
+    type: protects
+    label: mediates
+    status: partial
+    evidence:
+      - implementation-inference
+  - id: security-risks-collection
+    from: security-coverage
+    to: collection-path
+    type: risks
+    label: needs verification for
+    status: unknown
+    evidence:
+      - implementation-inference

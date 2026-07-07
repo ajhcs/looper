@@ -1,0 +1,20 @@
+version: 1
+id: invalid-layer-type
+title: Invalid Layer Type Pairing
+kind: current_state
+domain: Invalid
+depth: 0
+layers: [Product, Knowledge, Data, System, Code]
+sources:
+  - id: context-doc
+    type: doc
+    title: Context
+    confidence: verified
+nodes:
+  - id: product-code
+    label: Product Code
+    layer: Product
+    type: Code Area
+    status: active
+    evidence: [context-doc]
+relationships: []

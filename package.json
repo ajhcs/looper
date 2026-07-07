@@ -1,0 +1,18 @@
+{
+  "name": "looper-system-mapper",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "maps:validate": "node scripts/system-map.mjs validate",
+    "maps:render:html": "node scripts/system-map.mjs render-html",
+    "maps:render:mermaid": "node scripts/system-map.mjs render-mermaid maps/examples/analytics.map.yaml maps/examples/generated/analytics.mmd",
+    "maps:preflight": "node scripts/system-map.mjs preflight",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "cytoscape": "^3.34.0",
+    "yaml": "^2.5.1"
+  }
+}

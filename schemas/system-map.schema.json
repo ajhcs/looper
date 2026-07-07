@@ -1,0 +1,325 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://looper.local/schemas/system-map.schema.json",
+  "title": "System Understanding Map Source",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "id",
+    "title",
+    "kind",
+    "domain",
+    "depth",
+    "layers",
+    "sources",
+    "nodes",
+    "relationships"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "id": {
+      "$ref": "#/$defs/id"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "kind": {
+      "enum": [
+        "current_state",
+        "future_state",
+        "reference"
+      ]
+    },
+    "domain": {
+      "type": "string",
+      "minLength": 1
+    },
+    "depth": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "summary": {
+      "type": "string"
+    },
+    "layers": {
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 5,
+      "items": {
+        "$ref": "#/$defs/layer"
+      },
+      "allOf": [
+        { "contains": { "const": "Product" } },
+        { "contains": { "const": "Knowledge" } },
+        { "contains": { "const": "Data" } },
+        { "contains": { "const": "System" } },
+        { "contains": { "const": "Code" } }
+      ]
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/source"
+      }
+    },
+    "child_maps": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/childMap"
+      },
+      "default": []
+    },
+    "nodes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/node"
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/relationship"
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "layer": {
+      "enum": [
+        "Product",
+        "Knowledge",
+        "Data",
+        "System",
+        "Code",
+        "Business",
+        "Work"
+      ]
+    },
+    "nodeType": {
+      "enum": [
+        "Surface",
+        "Workflow",
+        "Concept",
+        "Metric",
+        "Data Source",
+        "Transformation",
+        "System Component",
+        "Interface",
+        "Code Area",
+        "Risk",
+        "Unknown"
+      ]
+    },
+    "relationshipType": {
+      "enum": [
+        "contains",
+        "uses",
+        "feeds",
+        "transforms",
+        "implements",
+        "exposes",
+        "measures",
+        "depends_on",
+        "protects",
+        "risks",
+        "unknown"
+      ]
+    },
+    "status": {
+      "enum": [
+        "active",
+        "planned",
+        "partial",
+        "deprecated",
+        "at_risk",
+        "unknown"
+      ]
+    },
+    "sourceType": {
+      "enum": [
+        "doc",
+        "code",
+        "runtime",
+        "conversation",
+        "web",
+        "unknown"
+      ]
+    },
+    "confidence": {
+      "enum": [
+        "verified",
+        "inferred",
+        "unknown"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "type",
+        "title",
+        "confidence"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "type": {
+          "$ref": "#/$defs/sourceType"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "confidence": {
+          "$ref": "#/$defs/confidence"
+        }
+      }
+    },
+    "subtype": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "namespace",
+        "value"
+      ],
+      "properties": {
+        "namespace": {
+          "$ref": "#/$defs/id"
+        },
+        "value": {
+          "$ref": "#/$defs/id"
+        }
+      }
+    },
+    "childMap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "path",
+        "depth"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "depth": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "label",
+        "layer",
+        "type",
+        "status",
+        "evidence"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "layer": {
+          "$ref": "#/$defs/layer"
+        },
+        "type": {
+          "$ref": "#/$defs/nodeType"
+        },
+        "subtype": {
+          "$ref": "#/$defs/subtype"
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "description": {
+          "type": "string"
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "child_map_ref": {
+          "$ref": "#/$defs/id"
+        }
+      }
+    },
+    "relationship": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "from",
+        "to",
+        "type",
+        "status",
+        "evidence"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "from": {
+          "$ref": "#/$defs/id"
+        },
+        "to": {
+          "$ref": "#/$defs/id"
+        },
+        "type": {
+          "$ref": "#/$defs/relationshipType"
+        },
+        "label": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "description": {
+          "type": "string"
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        }
+      }
+    }
+  }
+}

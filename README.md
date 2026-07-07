@@ -5,16 +5,25 @@
 <h1 align="center">Looper</h1>
 
 <p align="center">
-  My personal Codex skills for bead decomposition, tight agent loops, and senior SWE decision research.
+  My personal Codex skills for system mapping, bead decomposition, tight agent loops, and senior SWE decision research.
 </p>
 
-Looper is the orchestration skill I use personally when work needs more structure than a single prompt, but less ceremony than a project management system. It helps Codex break planned work into slices, choose useful subagent lanes, verify progress with evidence, and stop cleanly when the work is done, waiting, or genuinely blocked.
+Looper is the orchestration skill I use personally when work needs more structure than a single prompt, but less ceremony than a project management system. It helps Codex understand the current system first, break planned work into slices, choose useful subagent lanes, verify progress with evidence, and stop cleanly when the work is done, waiting, or genuinely blocked.
 
-This plugin also includes Beadwriter for decomposing parent beads into commit-sized childbeads, and Phone-A-SWE for technical decisions that need current sources, codebase context, and systems-engineering translation.
+This plugin also includes System Mapper for typed current-state maps, Beadwriter for decomposing parent beads into commit-sized childbeads, and Phone-A-SWE for technical decisions that need current sources, codebase context, and systems-engineering translation.
 
 It is intentionally compact. The point is not to teach an agent how to think; it is to give a capable agent a reliable control loop that can keep working across pauses, fresh context windows, queued checks, and partial failures.
 
 ## What It Is For
+
+### System Mapper
+
+- Creating System Understanding Maps from typed YAML Map Sources.
+- Validating Product, Knowledge, Data, System, and Code traceability before planning work.
+- Rendering Interactive Map Views as the primary output and Mermaid only as an optional rough preview.
+- Preserving the Map Source as canonical while generated renderer files stay disposable.
+- Returning compact Map Briefs that summarize openable views, evidence gaps, and next action.
+- Marking evidence quality, risks, unknowns, and drilldown child maps explicitly.
 
 ### Looper
 
@@ -74,6 +83,7 @@ For plugin installs, use the plugin-native copy under `skills/looper/SKILL.md`; 
 Then invoke it in Codex with:
 
 ```text
+$system-mapper
 $looper
 $beadwriter
 $phone-a-swe
@@ -83,8 +93,10 @@ $phone-a-swe
 
 - `SKILL.md` contains the direct local Looper skill instructions.
 - `skills/looper/SKILL.md` contains the plugin-native copy of the same skill.
+- `skills/system-mapper/SKILL.md` contains the System Mapper skill.
 - `skills/beadwriter/SKILL.md` contains the bead decomposition and childbead writing skill.
 - `skills/phone-a-swe/SKILL.md` contains the Phone-A-SWE decision research skill.
+- `schemas/system-map.schema.json`, `scripts/system-map.mjs`, and `maps/examples/` contain the typed map toolchain.
 - `.codex-plugin/plugin.json` contains plugin metadata and documents the Matt Pocock Skills dependency.
 - `agents/openai.yaml` contains the agent metadata for the plugin.
 - `assets/LooperIcon.png` is the icon I use for the project.
