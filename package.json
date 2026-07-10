@@ -8,6 +8,8 @@
     "maps:render:html": "node scripts/system-map.mjs render-html",
     "maps:render:mermaid": "node scripts/system-map.mjs render-mermaid maps/examples/analytics.map.yaml maps/examples/generated/analytics.mmd",
     "maps:preflight": "node scripts/system-map.mjs preflight",
+    "artifacts:validate": "node scripts/artifacts.mjs validate",
+    "artifacts:preflight": "node scripts/artifacts.mjs preflight",
     "test": "node --test tests/*.test.mjs"
   },
   "dependencies": {
