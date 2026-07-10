@@ -1,4 +1,4 @@
 interface:
   display_name: "Looper"
-  short_description: "Map systems, decompose beads, write loops"
-  default_prompt: "Use $system-mapper to understand a current system, $beadwriter to decompose a parent bead, $looper to write a Codex loop, or $phone-a-swe to research a software decision."
+  short_description: "Map systems, write and clean beads, run loops"
+  default_prompt: "Use $system-mapper to map a system, $beadwriter to decompose work, $bead-cleaner to prune a backlog, $looper to orchestrate it, or $phone-a-swe to research a decision."

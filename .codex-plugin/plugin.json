@@ -1,7 +1,7 @@
 {
   "name": "looper",
-  "version": "0.3.0",
-  "description": "Map systems, decompose beads, write tight Codex orchestration loops, and phone a senior SWE for research-backed decisions.",
+  "version": "0.4.0",
+  "description": "Map systems, write and clean beads, orchestrate GPT-5.6 work, and research software decisions.",
   "author": {
     "name": "Colet"
   },
@@ -13,6 +13,8 @@
     "agents",
     "beads",
     "decomposition",
+    "cleanup",
+    "gpt-5.6",
     "matt-pocock-skills",
     "software-engineering",
     "system-mapping",
@@ -21,8 +23,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Looper",
-    "shortDescription": "Map systems, decompose beads, write loops.",
-    "longDescription": "Looper writes compact Codex orchestration loops over plans, beads, slices, subagents, review/fix passes, and proof. It also includes System Mapper for typed current-state System Understanding Maps, Beadwriter for decomposing parent beads, PRDs, issue briefs, and grill-with-docs output into commit-sized childbeads, plus Phone-A-SWE for research-backed software decisions in systems-engineering terms. Looper's default code lanes require Matt Pocock Skills because they call matt-pocock-skills:implement and matt-pocock-skills:code-review.",
+    "shortDescription": "Map systems, write and clean beads, run loops.",
+    "longDescription": "Looper writes compact GPT-5.6-aware Codex orchestration loops over plans, beads, bounded execution, review/fix passes, and proof. It includes System Mapper for typed current-state maps, Beadwriter for commit-sized execution packets, Bead Cleaner for safe bd backlog cleanup, and Phone-A-SWE for research-backed software decisions. Default code lanes require Matt Pocock Skills for matt-pocock-skills:implement and matt-pocock-skills:code-review.",
     "developerName": "Colet",
     "category": "Productivity",
     "capabilities": [
@@ -33,6 +35,7 @@
       "Use System Mapper to map this current system.",
       "Use Looper to write a Codex loop.",
       "Use Beadwriter to decompose this bead.",
+      "Use Bead Cleaner to audit and safely prune open beads.",
       "Turn this plan into implementation slices.",
       "Write a loop using Matt Pocock skill lanes.",
       "Use Phone-A-SWE to research this technical decision."

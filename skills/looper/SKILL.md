@@ -1,157 +1,65 @@
 ---
 name: looper
-description: Looper writes tight Codex orchestration loops over plans, beads, childbeads, implementation slices, review/fix passes, and parallel subagents. Use when the user asks for a loop, agent loop, workflow loop, Codex loop, retry loop, self-improvement loop, multi-agent loop, parallel subagent loop, evaluator loop, or orchestration prompt.
+description: Write compact Codex orchestration loops over accepted plans, beads, implementation slices, review/fix passes, and selective subagents. Use when the user asks for a loop, agent loop, workflow loop, Codex loop, retry loop, evaluator loop, multi-agent loop, or orchestration prompt.
 ---
 
 # Looper
 
-Write loops for capable agents. Assume the model can reason, inspect artifacts, use tools, and recover from uncertainty. Do not teach the agent how to think.
+Turn an accepted plan into an executable control loop. Preserve authority, proof, stop conditions, material caveats, and next action; trim repetition and optional explanation first.
 
-Looper is for planned work. If the current system is not understood well enough to choose slices, invoke `system-mapper` first. If the bead list or plan is too vague to choose slices, lanes, and proof, the loop should stop and ask for planning instead of inventing implementation scope.
+Use `system-mapper` when current-system evidence is insufficient and `beadwriter` when no provable slice exists. Do not invent implementation scope.
 
-Default length: target 1200-2000 characters and stay under 2600 unless the user asks for more detail. Prefer outcome-first instructions, compact state, and evidence checks over process-heavy scaffolding.
+## Role Policy
 
-Prompt for newer agents like an engineer: define the job, constraints, proof, stop conditions, and handoff shape; leave routine pathfinding to the lane agent. Omit rationale, motivation, and repeated cautions unless they change behavior.
+This is the user's local routing policy, not a universal optimum:
 
-Requirement: Matt Pocock Skills must be installed as the `matt-pocock-skills` plugin. Looper's default code lanes depend on `matt-pocock-skills:implement` and `matt-pocock-skills:code-review`; if those skills are unavailable, stop and report the missing dependency instead of falling back to generic implementation or review lanes.
+- Terra High owns normal judgment, coordination, acceptance, and synthesis.
+- Sol Medium receives a decision packet only when ambiguity, consequence, architecture, or repeated non-progress requires replanning.
+- Luna xhigh receives sealed, focused execution packets only.
 
-## Loop Shape
+Record semantic role and preferred runtime separately. Verify that the active surface can select the requested model and effort; otherwise preserve the role, use the closest available runtime, and report what actually ran. Do not force a Terra-Sol-Luna chain or use Max by default.
 
-Every looper loop must include, in compact form:
+## Loop Contract
 
-1. **State**: the compact variables the loop carries forward, such as `goal`, `plan`, `beads`, `slice`, `lanes`, `evidence`, `changes`, `risks`, `tests`, `open_questions`, and `stop_reason`.
-2. **Cycle**: the repeated action, written as a short numbered loop or pseudocode block.
-3. **Critic**: a check that compares the current result against the goal and evidence, not against vibes.
-4. **Adaptation**: how the loop changes strategy, slice size, lane mix, proof surface, or checkpoint when progress stalls or evidence fails.
-5. **Stop**: exact success, budget, or blocked conditions.
-6. **Output**: the artifact the loop returns.
+Carry `goal`, accepted `plan_revision`, current `slice`, `proof`, `ledger`, `risks`, `next_action`, and `status`.
 
-Completion criterion: the loop can be executed by another Codex instance without inventing missing control flow.
+1. Re-enter from the checkpoint and choose one dependency-ready, provable slice.
+2. Assign one write owner. Delegate only independent work that protects parent context or improves wall-clock time.
+3. Merge lane returns into evidence, not raw transcript history.
+4. Critic: compare the result with the goal, slice contract, tests, regressions, and open risks.
+5. If the critic fails, narrow or split the slice, widen evidence, change the lane, or send a decision packet to Sol.
+6. Checkpoint decisions, evidence references, changed surfaces, risks, and next action.
 
-For long-running loops, add only the durable pieces needed: checkpoint state, progress ledger, heartbeat cadence, and re-entry rule.
+Stop with:
 
-## Beads And Slices
+- `complete`: all requirements and proof pass.
+- `waiting`: an external check or job is still progressing.
+- `blocked`: required external input is unavailable or the same failure persists across three evidence-changing attempts.
 
-Treat epics and parent beads as planning containers by default. Use childbeads or explicit implementation tasks as candidate slices unless the parent bead itself contains a clear implementation task.
+## Delegation Contract
 
-Default slice: one logical concern, ideally 50-250 changed lines.
+Use a manager pattern: Terra retains acceptance and final synthesis. Parallelize read-heavy exploration, tests, triage, or research when scopes are independent; avoid overlapping writers.
 
-Warning slice: 250-500 changed lines only with a clear description and tests.
-
-Split required: unrelated concerns, vague proof surface, or expected size above 500 changed lines.
-
-Commit rule: each commit must be atomic and explainable in one sentence. Squash "oops", typo, lint, and review-fix noise before merge.
-
-## Use Parallel Subagents
-
-The parent loop is an orchestrator, not the main worker. Keep parent context clean: read enough plan and result context to choose slices, lanes, and next actions; prefer subagents for deep implementation, review, investigation, or advice.
-
-Use parallel subagents only for independent work:
-
-- independent slices from different childbeads or concerns
-- discovery across different files, sources, hypotheses, variants, or test surfaces
-- adversarial review of a candidate answer or patch
-- independent implementation sketches before choosing one
-- reducer-style synthesis after workers return raw findings
-
-Do not send subagents the intended answer. Give them the artifact, goal, constraints, and their lane. The parent loop owns synthesis and final judgment.
-
-For a normal code slice, use a sequential lane:
-
-1. Implementor subagent: use `matt-pocock-skills:implement` with medium thinking.
-2. Reviewer/fixer subagent: use `matt-pocock-skills:code-review` with high thinking on the resulting diff and evidence.
-3. Parent: merge the compact progress packet, verify only what is needed for the next decision, then continue, split, or stop.
-
-Do not parallelize inside a normal slice. Add extra lanes only for unusual uncertainty, such as security, visual QA, architecture options, flaky tests, unclear ownership, or missing evidence.
-
-When writing a parallel loop, include:
-
-- worker count or lane names
-- per-worker prompt shape
-- return format
-- merge rule
-- conflict rule
-- parent verification step
-
-Worker returns should be decision-useful, not full reasoning dumps: changed/learned, evidence, risk/blocker, next action. Reviewer/fixer returns should say merge-ready or not, fixes made, and highest remaining risk.
-
-## Skill Selection
-
-Use specialized skills sparingly. Classify the bead quickly, then choose the smallest lane set that can prove the slice.
-
-Default code slice:
-
-- implementor: `matt-pocock-skills:implement`, medium thinking
-- reviewer/fixer: `matt-pocock-skills:code-review`, high thinking
-
-Use specialist lanes only when the bead names the domain or the proof requires it:
-
-- current-system understanding, traceability, map validation, or progressive visual disclosure: `system-mapper`
-- decomposing a parent bead, PRD, issue brief, or grill-with-docs output into commit-sized childbeads: `beadwriter`
-- software decision, architecture option, library/API/framework choice, MCP/skill choice, current best practice, or codebase tradeoff research: `phone-a-swe`
-- security boundary, exploit, auth, input, permission, secret, or data-flow work
-- visual design, screenshots, UI polish, or rendered frontend proof
-- CI, failing tests, flaky tests, or deployment failure
-- ambiguous architecture, ownership, or planning decisions
-
-If specialist work seems necessary but was not planned, stop and report the planning gap instead of silently expanding scope.
-
-## Codex Loop Defaults
-
-Prefer loops that:
-
-- inspect local context before deciding
-- use `rg` for search and `apply_patch` for manual edits
-- preserve user changes
-- checkpoint decisions, evidence, current slice, next action, and last-progress timestamp
-- run focused verification before declaring success
-- report `waiting` progress when CI, checks, or external jobs are queued or in progress and still making progress
-- report blocked states only with the exact missing user/provider input, or with a non-progressing condition observed across three checks
-- adapt by narrowing scope, widening evidence, changing lanes, or replanning the slice before declaring failure
-- compress obvious mechanics into short imperatives
-
-Avoid loops that:
-
-- ask for clarification before doing discoverable legwork
-- split tiny tasks into many fake phases
-- make subagents coordinate with each other
-- treat consensus as proof
-- use "reflect" as a substitute for a concrete critic
-- hard-code a fixed number of retries when progress can be measured
-- explain why ordinary engineering steps matter
-
-## Template
-
-Use this skeleton unless the user asks for a different format. Keep fields one line when possible.
+Give Luna only:
 
 ```text
-State:
-- goal / slice / proof:
-- lanes:
-- ledger / checkpoint / status:
-
-Loop:
-1. Re-enter from checkpoint; choose the next provable slice.
-2. Default lanes: `matt-pocock-skills:implement` medium, then `matt-pocock-skills:code-review` high. Add specialists only for proof gaps.
-3. Require compact returns: changed, evidence, risk, next_action.
-4. Critic: compare result to goal, slice proof, regressions, and open risks.
-5. If critic fails, narrow/split, widen evidence, change lanes, or replan; record the decision.
-6. Checkpoint status, evidence, files, risks, next action, and timestamp.
-7. Return `waiting` for queued/progressing checks; `blocked` only for required input or repeated non-progress.
-
-Parallel branch, when useful:
-- Dispatch independent lanes with separate scopes and compact returns.
-- Merge by evidence strength; resolve conflicts from source artifacts.
-- Parent performs final verification.
-
-Return:
-- final artifact
-- verification evidence
-- residual risks or blockers
-- progress packet status: `complete`, `waiting`, or `blocked`
-- commit/PR recommendation
+outcome:
+context_refs:
+scope_and_allowed_actions:
+invariants:
+required_proof:
+return_schema:
+stop_or_escalate_when:
 ```
 
-## Style
+Give Sol the unresolved decision, goals, constraints, alternatives, consequences, failed evidence, and required planning artifact. Do not replay settled decisions or the full transcript.
 
-Write the loop as operational instructions, not motivational prose. Keep it compact enough to paste into a prompt or skill, normally under 2600 characters. Use concrete nouns for state, concrete verbs for steps, and checkable stop conditions.
+For a bounded code slice, prefer `matt-pocock-skills:implement`, followed by `matt-pocock-skills:code-review` against the pre-slice fixed point and originating bead/spec. Report a missing required skill instead of silently substituting it.
+
+Lane returns should contain only `changed_or_learned`, `evidence`, `risk_or_blocker`, and `next_action`. Use a machine schema only when software parses the return.
+
+## Output
+
+Return the executable loop, cross-bead verification contract, uncovered residual risks, status rules, and commit or PR recommendation. Reference the accepted plan, bead IDs, and checkpoint artifacts; do not list their descriptions or copy their scope, invariants, proof, or risk checklists into the loop. Emit the executor packet fields only when the loop actually dispatches Luna. Name only the roles actually used; do not repeat the routing policy.
+
+Aim for one screen and roughly 2,600 characters or less. Exceed that soft target only when authority, proof, adaptation, stop conditions, or a material caveat would otherwise be lost.

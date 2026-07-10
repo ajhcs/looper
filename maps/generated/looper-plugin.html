@@ -215,8 +215,8 @@
         <p class="map-meta">Looper Plugin / current_state / depth 0</p>
       </div>
       <div class="map-counts" aria-label="Map counts">
-        <span>28 nodes</span>
-        <span>29 relationships</span>
+        <span>29 nodes</span>
+        <span>31 relationships</span>
       </div>
     </header>
     <section class="map-body">
@@ -291,6 +291,14 @@
       "confidence": "verified",
       "confidenceLabel": "Verified",
       "pathText": "Reference: ../skills/beadwriter/SKILL.md"
+    },
+    {
+      "id": "bead-cleaner-skill",
+      "type": "doc",
+      "title": "Bead Cleaner skill",
+      "confidence": "verified",
+      "confidenceLabel": "Verified",
+      "pathText": "Reference: ../skills/bead-cleaner/SKILL.md"
     },
     {
       "id": "phone-swe-skill",
@@ -522,6 +530,42 @@
       "description": "Follows Bead Decomposition Workflow through Product, Data, Code, System, Knowledge and includes risk/unknown coverage: External Lane Availability."
     },
     {
+      "id": "trace-bead-cleanup-workflow",
+      "title": "Bead Cleanup Workflow cross-layer trace",
+      "anchorNodeId": "bead-cleanup-workflow",
+      "nodeIds": [
+        "bead-cleanup-workflow",
+        "codex-skill-surface",
+        "skill-doc-data",
+        "skill-code-area",
+        "current-system-mapping-workflow",
+        "system-map-toolchain",
+        "bead-planning-data",
+        "system-understanding-concept",
+        "planning-orchestration-workflow",
+        "external-lane-availability-unknown"
+      ],
+      "relationshipIds": [
+        "surface-exposes-bead-cleaner",
+        "skill-files-feed-surface",
+        "skill-code-implements-skill-data",
+        "surface-exposes-mapping",
+        "mapping-uses-toolchain",
+        "bead-cleaner-curates-plans",
+        "mapping-uses-system-understanding",
+        "surface-exposes-looping",
+        "missing-lane-risks-looping"
+      ],
+      "layerPath": [
+        "Product",
+        "Data",
+        "Code",
+        "System",
+        "Knowledge"
+      ],
+      "description": "Follows Bead Cleanup Workflow through Product, Data, Code, System, Knowledge and includes risk/unknown coverage: External Lane Availability."
+    },
+    {
       "id": "trace-decision-research-workflow",
       "title": "Decision Research Workflow cross-layer trace",
       "anchorNodeId": "decision-research-workflow",
@@ -748,6 +792,43 @@
             }
           ],
           "why": "Codex Skill Surface exposes Bead Decomposition Workflow, so the map treats them as connected when following exposes behavior."
+        },
+        {
+          "id": "surface-exposes-bead-cleaner",
+          "from": "codex-skill-surface",
+          "to": "bead-cleanup-workflow",
+          "fromLabel": "Codex Skill Surface",
+          "toLabel": "Bead Cleanup Workflow",
+          "type": "exposes",
+          "label": "exposes",
+          "status": "active",
+          "description": "",
+          "evidence": [
+            "plugin-manifest",
+            "readme"
+          ],
+          "evidenceQualityLabels": [
+            "Verified"
+          ],
+          "sources": [
+            {
+              "id": "plugin-manifest",
+              "type": "code",
+              "title": "Codex plugin manifest",
+              "confidence": "verified",
+              "confidenceLabel": "Verified",
+              "pathText": "Reference: ../.codex-plugin/plugin.json"
+            },
+            {
+              "id": "readme",
+              "type": "doc",
+              "title": "Looper README",
+              "confidence": "verified",
+              "confidenceLabel": "Verified",
+              "pathText": "Reference: ../README.md"
+            }
+          ],
+          "why": "Codex Skill Surface exposes Bead Cleanup Workflow, so the map treats them as connected when following exposes behavior."
         },
         {
           "id": "surface-exposes-phone-swe",
@@ -1371,6 +1452,131 @@
             }
           ],
           "why": "Bead Decomposition Workflow produces and updates Bead And Checkpoint Docs, so the map treats them as connected when following transforms behavior."
+        }
+      ],
+      "relatedRisksAndUnknowns": [],
+      "classes": [
+        "product",
+        "status-active"
+      ],
+      "style": {
+        "backgroundColor": "#D8F3DC",
+        "borderColor": "#2D6A4F",
+        "textColor": "#123B2A",
+        "borderStyle": "solid",
+        "opacity": 1
+      }
+    },
+    {
+      "id": "bead-cleanup-workflow",
+      "label": "Bead Cleanup Workflow",
+      "layer": "Product",
+      "type": "Workflow",
+      "status": "active",
+      "description": "Bead Cleaner audits bd backlog items against current direction and previews history-preserving cleanup before approved mutations.",
+      "evidence": [
+        "bead-cleaner-skill",
+        "readme"
+      ],
+      "evidenceQualityLabels": [
+        "Verified"
+      ],
+      "sources": [
+        {
+          "id": "bead-cleaner-skill",
+          "type": "doc",
+          "title": "Bead Cleaner skill",
+          "confidence": "verified",
+          "confidenceLabel": "Verified",
+          "pathText": "Reference: ../skills/bead-cleaner/SKILL.md"
+        },
+        {
+          "id": "readme",
+          "type": "doc",
+          "title": "Looper README",
+          "confidence": "verified",
+          "confidenceLabel": "Verified",
+          "pathText": "Reference: ../README.md"
+        }
+      ],
+      "childMapRef": null,
+      "childMap": null,
+      "incomingRelationships": [
+        {
+          "id": "surface-exposes-bead-cleaner",
+          "from": "codex-skill-surface",
+          "to": "bead-cleanup-workflow",
+          "fromLabel": "Codex Skill Surface",
+          "toLabel": "Bead Cleanup Workflow",
+          "type": "exposes",
+          "label": "exposes",
+          "status": "active",
+          "description": "",
+          "evidence": [
+            "plugin-manifest",
+            "readme"
+          ],
+          "evidenceQualityLabels": [
+            "Verified"
+          ],
+          "sources": [
+            {
+              "id": "plugin-manifest",
+              "type": "code",
+              "title": "Codex plugin manifest",
+              "confidence": "verified",
+              "confidenceLabel": "Verified",
+              "pathText": "Reference: ../.codex-plugin/plugin.json"
+            },
+            {
+              "id": "readme",
+              "type": "doc",
+              "title": "Looper README",
+              "confidence": "verified",
+              "confidenceLabel": "Verified",
+              "pathText": "Reference: ../README.md"
+            }
+          ],
+          "why": "Codex Skill Surface exposes Bead Cleanup Workflow, so the map treats them as connected when following exposes behavior."
+        }
+      ],
+      "outgoingRelationships": [
+        {
+          "id": "bead-cleaner-curates-plans",
+          "from": "bead-cleanup-workflow",
+          "to": "bead-planning-data",
+          "fromLabel": "Bead Cleanup Workflow",
+          "toLabel": "Bead And Checkpoint Docs",
+          "type": "transforms",
+          "label": "safely curates",
+          "status": "active",
+          "description": "",
+          "evidence": [
+            "bead-cleaner-skill",
+            "readme"
+          ],
+          "evidenceQualityLabels": [
+            "Verified"
+          ],
+          "sources": [
+            {
+              "id": "bead-cleaner-skill",
+              "type": "doc",
+              "title": "Bead Cleaner skill",
+              "confidence": "verified",
+              "confidenceLabel": "Verified",
+              "pathText": "Reference: ../skills/bead-cleaner/SKILL.md"
+            },
+            {
+              "id": "readme",
+              "type": "doc",
+              "title": "Looper README",
+              "confidence": "verified",
+              "confidenceLabel": "Verified",
+              "pathText": "Reference: ../README.md"
+            }
+          ],
+          "why": "Bead Cleanup Workflow safely curates Bead And Checkpoint Docs, so the map treats them as connected when following transforms behavior."
         }
       ],
       "relatedRisksAndUnknowns": [],
@@ -2393,6 +2599,7 @@
         "plugin-looper-skill",
         "system-mapper-skill",
         "beadwriter-skill",
+        "bead-cleaner-skill",
         "phone-swe-skill"
       ],
       "evidenceQualityLabels": [
@@ -2430,6 +2637,14 @@
           "confidence": "verified",
           "confidenceLabel": "Verified",
           "pathText": "Reference: ../skills/beadwriter/SKILL.md"
+        },
+        {
+          "id": "bead-cleaner-skill",
+          "type": "doc",
+          "title": "Bead Cleaner skill",
+          "confidence": "verified",
+          "confidenceLabel": "Verified",
+          "pathText": "Reference: ../skills/bead-cleaner/SKILL.md"
         },
         {
           "id": "phone-swe-skill",
@@ -2756,6 +2971,43 @@
             }
           ],
           "why": "Bead Decomposition Workflow produces and updates Bead And Checkpoint Docs, so the map treats them as connected when following transforms behavior."
+        },
+        {
+          "id": "bead-cleaner-curates-plans",
+          "from": "bead-cleanup-workflow",
+          "to": "bead-planning-data",
+          "fromLabel": "Bead Cleanup Workflow",
+          "toLabel": "Bead And Checkpoint Docs",
+          "type": "transforms",
+          "label": "safely curates",
+          "status": "active",
+          "description": "",
+          "evidence": [
+            "bead-cleaner-skill",
+            "readme"
+          ],
+          "evidenceQualityLabels": [
+            "Verified"
+          ],
+          "sources": [
+            {
+              "id": "bead-cleaner-skill",
+              "type": "doc",
+              "title": "Bead Cleaner skill",
+              "confidence": "verified",
+              "confidenceLabel": "Verified",
+              "pathText": "Reference: ../skills/bead-cleaner/SKILL.md"
+            },
+            {
+              "id": "readme",
+              "type": "doc",
+              "title": "Looper README",
+              "confidence": "verified",
+              "confidenceLabel": "Verified",
+              "pathText": "Reference: ../README.md"
+            }
+          ],
+          "why": "Bead Cleanup Workflow safely curates Bead And Checkpoint Docs, so the map treats them as connected when following transforms behavior."
         }
       ],
       "outgoingRelationships": [
@@ -4414,6 +4666,51 @@
       }
     },
     {
+      "id": "surface-exposes-bead-cleaner",
+      "from": "codex-skill-surface",
+      "to": "bead-cleanup-workflow",
+      "fromLabel": "Codex Skill Surface",
+      "toLabel": "Bead Cleanup Workflow",
+      "type": "exposes",
+      "label": "exposes",
+      "status": "active",
+      "description": "",
+      "evidence": [
+        "plugin-manifest",
+        "readme"
+      ],
+      "evidenceQualityLabels": [
+        "Verified"
+      ],
+      "sources": [
+        {
+          "id": "plugin-manifest",
+          "type": "code",
+          "title": "Codex plugin manifest",
+          "confidence": "verified",
+          "confidenceLabel": "Verified",
+          "pathText": "Reference: ../.codex-plugin/plugin.json"
+        },
+        {
+          "id": "readme",
+          "type": "doc",
+          "title": "Looper README",
+          "confidence": "verified",
+          "confidenceLabel": "Verified",
+          "pathText": "Reference: ../README.md"
+        }
+      ],
+      "why": "Codex Skill Surface exposes Bead Cleanup Workflow, so the map treats them as connected when following exposes behavior.",
+      "classes": [
+        "relationship-exposes",
+        "status-active"
+      ],
+      "style": {
+        "lineStyle": "solid",
+        "opacity": 1
+      }
+    },
+    {
       "id": "surface-exposes-phone-swe",
       "from": "codex-skill-surface",
       "to": "decision-research-workflow",
@@ -5332,6 +5629,51 @@
       }
     },
     {
+      "id": "bead-cleaner-curates-plans",
+      "from": "bead-cleanup-workflow",
+      "to": "bead-planning-data",
+      "fromLabel": "Bead Cleanup Workflow",
+      "toLabel": "Bead And Checkpoint Docs",
+      "type": "transforms",
+      "label": "safely curates",
+      "status": "active",
+      "description": "",
+      "evidence": [
+        "bead-cleaner-skill",
+        "readme"
+      ],
+      "evidenceQualityLabels": [
+        "Verified"
+      ],
+      "sources": [
+        {
+          "id": "bead-cleaner-skill",
+          "type": "doc",
+          "title": "Bead Cleaner skill",
+          "confidence": "verified",
+          "confidenceLabel": "Verified",
+          "pathText": "Reference: ../skills/bead-cleaner/SKILL.md"
+        },
+        {
+          "id": "readme",
+          "type": "doc",
+          "title": "Looper README",
+          "confidence": "verified",
+          "confidenceLabel": "Verified",
+          "pathText": "Reference: ../README.md"
+        }
+      ],
+      "why": "Bead Cleanup Workflow safely curates Bead And Checkpoint Docs, so the map treats them as connected when following transforms behavior.",
+      "classes": [
+        "relationship-transforms",
+        "status-active"
+      ],
+      "style": {
+        "lineStyle": "solid",
+        "opacity": 1
+      }
+    },
+    {
       "id": "phone-swe-feeds-planning",
       "from": "decision-research-workflow",
       "to": "planning-orchestration-workflow",
@@ -5695,6 +6037,28 @@
     {
       "group": "nodes",
       "data": {
+        "id": "bead-cleanup-workflow",
+        "label": "Bead Cleanup Workflow\nProduct / Workflow\nactive",
+        "layer": "Product",
+        "type": "Workflow",
+        "status": "active",
+        "description": "Bead Cleaner audits bd backlog items against current direction and previews history-preserving cleanup before approved mutations.",
+        "evidence": [
+          "bead-cleaner-skill",
+          "readme"
+        ],
+        "childMapRef": null,
+        "backgroundColor": "#D8F3DC",
+        "borderColor": "#2D6A4F",
+        "textColor": "#123B2A",
+        "borderStyle": "solid",
+        "opacity": 1
+      },
+      "classes": "product status-active"
+    },
+    {
+      "group": "nodes",
+      "data": {
         "id": "decision-research-workflow",
         "label": "Decision Research Workflow\nProduct / Workflow\nactive",
         "layer": "Product",
@@ -5886,6 +6250,7 @@
           "plugin-looper-skill",
           "system-mapper-skill",
           "beadwriter-skill",
+          "bead-cleaner-skill",
           "phone-swe-skill"
         ],
         "childMapRef": null,
@@ -6294,6 +6659,26 @@
     {
       "group": "edges",
       "data": {
+        "id": "surface-exposes-bead-cleaner",
+        "source": "codex-skill-surface",
+        "target": "bead-cleanup-workflow",
+        "label": "exposes",
+        "type": "exposes",
+        "status": "active",
+        "description": "",
+        "evidence": [
+          "plugin-manifest",
+          "readme"
+        ],
+        "why": "Codex Skill Surface exposes Bead Cleanup Workflow, so the map treats them as connected when following exposes behavior.",
+        "lineStyle": "solid",
+        "opacity": 1
+      },
+      "classes": "relationship-exposes status-active"
+    },
+    {
+      "group": "edges",
+      "data": {
         "id": "surface-exposes-phone-swe",
         "source": "codex-skill-surface",
         "target": "decision-research-workflow",
@@ -6688,6 +7073,26 @@
           "mapper-checkpoint"
         ],
         "why": "Bead Decomposition Workflow produces and updates Bead And Checkpoint Docs, so the map treats them as connected when following transforms behavior.",
+        "lineStyle": "solid",
+        "opacity": 1
+      },
+      "classes": "relationship-transforms status-active"
+    },
+    {
+      "group": "edges",
+      "data": {
+        "id": "bead-cleaner-curates-plans",
+        "source": "bead-cleanup-workflow",
+        "target": "bead-planning-data",
+        "label": "safely curates",
+        "type": "transforms",
+        "status": "active",
+        "description": "",
+        "evidence": [
+          "bead-cleaner-skill",
+          "readme"
+        ],
+        "why": "Bead Cleanup Workflow safely curates Bead And Checkpoint Docs, so the map treats them as connected when following transforms behavior.",
         "lineStyle": "solid",
         "opacity": 1
       },
