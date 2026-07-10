@@ -1,0 +1,31 @@
+{
+  "envelope_version": 1,
+  "shared_definitions_version": 2,
+  "artifact_id": "version-mismatch-artifact",
+  "artifact_type": "domain-model",
+  "contract_version": "1.0",
+  "title": "Version mismatch artifact",
+  "altitude": "4",
+  "scope": { "description": "An intentionally invalid fixture." },
+  "artifact_state": "Current State",
+  "created_at": "2026-07-10T12:00:00Z",
+  "updated_at": "2026-07-10T12:00:00Z",
+  "source_model_revision": { "model_id": "domain-model", "revision": "1" },
+  "freshness": { "status": "current", "checked_at": "2026-07-10T12:00:00Z" },
+  "evidence": [],
+  "assumptions": [],
+  "unknowns": [],
+  "risks": [],
+  "findings": [],
+  "trace_links": [],
+  "provenance": [
+    {
+      "source_id": "domain-doc",
+      "source_type": "doc",
+      "revision": "1",
+      "locator": "docs/domain.md",
+      "observed_at": "2026-07-10T12:00:00Z"
+    }
+  ],
+  "confidence": { "level": "unknown", "basis": "No claims have been assessed." }
+}

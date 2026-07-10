@@ -1,0 +1,131 @@
+{
+  "envelope_version": 1,
+  "shared_definitions_version": 1,
+  "artifact_id": "analytics-system-context",
+  "artifact_type": "c4-system-context",
+  "contract_version": "1.0",
+  "title": "Analytics system context",
+  "altitude": "1",
+  "scope": {
+    "description": "The analytics system and its immediate operating environment.",
+    "domain": "analytics"
+  },
+  "artifact_state": "Current State",
+  "created_at": "2026-07-10T12:00:00Z",
+  "updated_at": "2026-07-10T12:30:00Z",
+  "source_model_revision": {
+    "model_id": "analytics-ecosystem",
+    "revision": "git:9cfa93090a55786f529eda18486c421b53de2eab"
+  },
+  "freshness": {
+    "status": "current",
+    "checked_at": "2026-07-10T12:30:00Z",
+    "source_revisions": ["git:9cfa93090a55786f529eda18486c421b53de2eab"]
+  },
+  "evidence": [
+    {
+      "id": "analytics-context-doc",
+      "claim": "The analytics system receives tracked interactions from the collection service.",
+      "evidence_type": "direct",
+      "confidence": {
+        "level": "verified",
+        "basis": "The current source model records the collection relationship.",
+        "evidence_refs": ["analytics-context-doc"]
+      },
+      "provenance": [
+        {
+          "source_id": "analytics-map",
+          "source_type": "doc",
+          "revision": "git:9cfa93090a55786f529eda18486c421b53de2eab",
+          "locator": "maps/examples/analytics.map.yaml#relationships",
+          "observed_at": "2026-07-10T12:00:00Z",
+          "access": "available",
+          "sensitivity": "public"
+        }
+      ]
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "collection-operator-assumption",
+      "statement": "The collection service remains in the selected analytics scope.",
+      "confidence": {
+        "level": "inferred",
+        "basis": "The service is referenced by the current source model."
+      },
+      "impact": "A scope change would require refreshing this artifact."
+    }
+  ],
+  "unknowns": [
+    {
+      "id": "retention-policy-unknown",
+      "statement": "The retention policy for raw interaction events is not established.",
+      "status": "open",
+      "impact": "medium",
+      "evidence_refs": ["analytics-context-doc"]
+    }
+  ],
+  "risks": [
+    {
+      "id": "event-loss-risk",
+      "statement": "Collection failures could omit tracked interactions.",
+      "consequence": "Reports may understate product usage.",
+      "status": "open",
+      "severity": "medium",
+      "evidence_refs": ["analytics-context-doc"]
+    }
+  ],
+  "findings": [
+    {
+      "id": "retention-follow-up",
+      "scope": "Artifact-Wide",
+      "summary": "Retention policy is an unresolved operational concern.",
+      "consequence": "Data lifecycle decisions cannot yet be verified.",
+      "next_action": "Confirm retention ownership and policy evidence.",
+      "location": "analytics-system-context",
+      "severity": "warning",
+      "evidence_refs": ["analytics-context-doc"]
+    }
+  ],
+  "trace_links": [
+    {
+      "id": "context-uses-collection",
+      "source_element_id": "analytics-system",
+      "target_artifact_id": "analytics-ecosystem",
+      "target_element_id": "collection-service",
+      "relationship_type": "uses",
+      "inverse_label": "is used by",
+      "confidence": {
+        "level": "verified",
+        "basis": "The source model records the relationship.",
+        "evidence_refs": ["analytics-context-doc"]
+      },
+      "status": "active",
+      "evidence_refs": ["analytics-context-doc"],
+      "freshness": {
+        "status": "current",
+        "checked_at": "2026-07-10T12:30:00Z"
+      }
+    }
+  ],
+  "provenance": [
+    {
+      "source_id": "analytics-map",
+      "source_type": "doc",
+      "revision": "git:9cfa93090a55786f529eda18486c421b53de2eab",
+      "locator": "maps/examples/analytics.map.yaml",
+      "observed_at": "2026-07-10T12:00:00Z",
+      "access": "available",
+      "sensitivity": "public"
+    }
+  ],
+  "confidence": {
+    "level": "verified",
+    "basis": "Required context relationships are directly represented in the source model.",
+    "evidence_refs": ["analytics-context-doc"]
+  },
+  "value_gate": {
+    "rationale": "The focused context view resolves uncertainty about system boundaries.",
+    "value": "uncertainty_reduction"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "envelope_version": 1,
+  "shared_definitions_version": 1,
+  "artifact_id": "incomplete-artifact",
+  "artifact_type": "requirements-model",
+  "contract_version": "1.0",
+  "title": "Incomplete artifact",
+  "altitude": 2,
+  "scope": { "description": "An intentionally incomplete fixture." },
+  "created_at": "2026-07-10T12:00:00Z",
+  "updated_at": "2026-07-10T12:00:00Z",
+  "evidence": [],
+  "assumptions": [],
+  "unknowns": [],
+  "risks": [],
+  "findings": [],
+  "trace_links": [],
+  "provenance": [],
+  "confidence": {
+    "level": "unknown",
+    "basis": "Required metadata is missing."
+  }
+}

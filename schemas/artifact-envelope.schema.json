@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://looper.local/schemas/artifact-envelope.v1.schema.json",
+  "title": "System Understanding Artifact Envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "envelope_version",
+    "shared_definitions_version",
+    "artifact_id",
+    "artifact_type",
+    "contract_version",
+    "title",
+    "altitude",
+    "scope",
+    "artifact_state",
+    "created_at",
+    "updated_at",
+    "source_model_revision",
+    "freshness",
+    "evidence",
+    "assumptions",
+    "unknowns",
+    "risks",
+    "findings",
+    "trace_links",
+    "provenance",
+    "confidence"
+  ],
+  "properties": {
+    "envelope_version": { "const": 1 },
+    "shared_definitions_version": { "$ref": "artifact-definitions.v1.schema.json#/$defs/sharedDefinitionsVersion" },
+    "artifact_id": { "$ref": "artifact-definitions.v1.schema.json#/$defs/identifier" },
+    "artifact_type": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-z][a-z0-9-]*(?:\\.[a-z][a-z0-9-]*)*$"
+    },
+    "contract_version": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[0-9]+(?:\\.[0-9]+){0,2}$"
+    },
+    "title": { "$ref": "artifact-definitions.v1.schema.json#/$defs/nonEmptyString" },
+    "altitude": {
+      "oneOf": [
+        { "type": "integer", "minimum": 1, "maximum": 5 },
+        { "type": "string", "enum": ["0A", "0B", "1", "2", "3", "4", "5"] }
+      ]
+    },
+    "scope": { "$ref": "artifact-definitions.v1.schema.json#/$defs/scope" },
+    "artifact_state": {
+      "type": "string",
+      "enum": ["Current State", "Candidate Future State", "Accepted Future State"]
+    },
+    "created_at": { "$ref": "artifact-definitions.v1.schema.json#/$defs/rfc3339UtcTimestamp" },
+    "updated_at": { "$ref": "artifact-definitions.v1.schema.json#/$defs/rfc3339UtcTimestamp" },
+    "created_by": { "$ref": "artifact-definitions.v1.schema.json#/$defs/nonEmptyString" },
+    "updated_by": { "$ref": "artifact-definitions.v1.schema.json#/$defs/nonEmptyString" },
+    "source_model_revision": { "$ref": "artifact-definitions.v1.schema.json#/$defs/sourceModelRevision" },
+    "freshness": { "$ref": "artifact-definitions.v1.schema.json#/$defs/freshness" },
+    "evidence": {
+      "type": "array",
+      "items": { "$ref": "artifact-definitions.v1.schema.json#/$defs/evidence" },
+      "uniqueItems": true
+    },
+    "assumptions": {
+      "type": "array",
+      "items": { "$ref": "artifact-definitions.v1.schema.json#/$defs/assumption" },
+      "uniqueItems": true
+    },
+    "unknowns": {
+      "type": "array",
+      "items": { "$ref": "artifact-definitions.v1.schema.json#/$defs/unknown" },
+      "uniqueItems": true
+    },
+    "risks": {
+      "type": "array",
+      "items": { "$ref": "artifact-definitions.v1.schema.json#/$defs/risk" },
+      "uniqueItems": true
+    },
+    "findings": {
+      "type": "array",
+      "items": { "$ref": "artifact-definitions.v1.schema.json#/$defs/finding" },
+      "uniqueItems": true
+    },
+    "trace_links": {
+      "type": "array",
+      "items": { "$ref": "artifact-definitions.v1.schema.json#/$defs/traceReference" },
+      "uniqueItems": true
+    },
+    "provenance": {
+      "type": "array",
+      "items": { "$ref": "artifact-definitions.v1.schema.json#/$defs/provenance" },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "confidence": { "$ref": "artifact-definitions.v1.schema.json#/$defs/confidence" },
+    "related_artifacts": {
+      "type": "array",
+      "items": { "$ref": "artifact-definitions.v1.schema.json#/$defs/artifactReference" },
+      "uniqueItems": true
+    },
+    "value_gate": { "$ref": "artifact-definitions.v1.schema.json#/$defs/valueGate" }
+  }
+}

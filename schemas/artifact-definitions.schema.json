@@ -1,0 +1,220 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://looper.local/schemas/artifact-definitions.v1.schema.json",
+  "title": "Shared System Understanding Artifact Definitions",
+  "$defs": {
+    "sharedDefinitionsVersion": {
+      "const": 1
+    },
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z][A-Za-z0-9._:-]*$"
+    },
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "rfc3339UtcTimestamp": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$"
+    },
+    "identifierReferences": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/identifier" },
+      "uniqueItems": true
+    },
+    "confidenceLevel": {
+      "type": "string",
+      "enum": ["verified", "inferred", "unknown"]
+    },
+    "confidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "basis"],
+      "properties": {
+        "level": { "$ref": "#/$defs/confidenceLevel" },
+        "basis": { "$ref": "#/$defs/nonEmptyString" },
+        "evidence_refs": { "$ref": "#/$defs/identifierReferences" }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "source_type", "revision", "locator", "observed_at"],
+      "properties": {
+        "source_id": { "$ref": "#/$defs/identifier" },
+        "source_type": {
+          "type": "string",
+          "enum": ["doc", "code", "runtime", "conversation", "web", "unknown"]
+        },
+        "revision": { "$ref": "#/$defs/nonEmptyString" },
+        "digest": { "$ref": "#/$defs/nonEmptyString" },
+        "locator": { "$ref": "#/$defs/nonEmptyString" },
+        "observed_at": { "$ref": "#/$defs/rfc3339UtcTimestamp" },
+        "effective_at": { "$ref": "#/$defs/rfc3339UtcTimestamp" },
+        "access": {
+          "type": "string",
+          "enum": ["available", "restricted", "unavailable", "unknown"]
+        },
+        "sensitivity": {
+          "type": "string",
+          "enum": ["public", "internal", "confidential", "restricted", "unknown"]
+        },
+        "derived_from": { "$ref": "#/$defs/identifierReferences" }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "claim", "evidence_type", "confidence", "provenance"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "claim": { "$ref": "#/$defs/nonEmptyString" },
+        "evidence_type": {
+          "type": "string",
+          "enum": ["direct", "derived", "inference", "assumption", "unknown"]
+        },
+        "confidence": { "$ref": "#/$defs/confidence" },
+        "provenance": { "type": "array", "items": { "$ref": "#/$defs/provenance" }, "minItems": 1 },
+        "excerpt": { "type": "string" },
+        "title": { "type": "string", "minLength": 1 }
+      }
+    },
+    "assumption": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "statement", "confidence"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "statement": { "$ref": "#/$defs/nonEmptyString" },
+        "confidence": { "$ref": "#/$defs/confidence" },
+        "impact": { "type": "string", "minLength": 1 },
+        "evidence_refs": { "$ref": "#/$defs/identifierReferences" }
+      }
+    },
+    "unknown": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "statement", "status", "impact"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "statement": { "$ref": "#/$defs/nonEmptyString" },
+        "status": { "type": "string", "enum": ["open", "resolved", "deferred"] },
+        "impact": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+        "evidence_refs": { "$ref": "#/$defs/identifierReferences" }
+      }
+    },
+    "risk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "statement", "consequence", "status", "severity"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "statement": { "$ref": "#/$defs/nonEmptyString" },
+        "consequence": { "$ref": "#/$defs/nonEmptyString" },
+        "status": { "type": "string", "enum": ["open", "mitigated", "accepted", "closed", "unknown"] },
+        "severity": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+        "evidence_refs": { "$ref": "#/$defs/identifierReferences" }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "scope", "summary", "consequence", "next_action"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "scope": { "type": "string", "enum": ["Artifact-Wide", "Current-View", "Selected-Element"] },
+        "summary": { "$ref": "#/$defs/nonEmptyString" },
+        "consequence": { "$ref": "#/$defs/nonEmptyString" },
+        "next_action": { "$ref": "#/$defs/nonEmptyString" },
+        "location": { "$ref": "#/$defs/nonEmptyString" },
+        "severity": { "type": "string", "enum": ["info", "warning", "error"] },
+        "evidence_refs": { "$ref": "#/$defs/identifierReferences" }
+      }
+    },
+    "freshness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "checked_at"],
+      "properties": {
+        "status": { "type": "string", "enum": ["current", "stale", "unknown"] },
+        "checked_at": { "$ref": "#/$defs/rfc3339UtcTimestamp" },
+        "stale_reason": { "type": "string", "minLength": 1 },
+        "revalidate_before_use": { "type": "boolean" },
+        "source_revisions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonEmptyString" },
+          "uniqueItems": true
+        }
+      }
+    },
+    "traceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "source_element_id",
+        "target_artifact_id",
+        "target_element_id",
+        "relationship_type",
+        "inverse_label",
+        "confidence",
+        "status",
+        "freshness"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "source_element_id": { "$ref": "#/$defs/identifier" },
+        "target_artifact_id": { "$ref": "#/$defs/identifier" },
+        "target_element_id": { "$ref": "#/$defs/identifier" },
+        "relationship_type": { "$ref": "#/$defs/nonEmptyString" },
+        "inverse_label": { "$ref": "#/$defs/nonEmptyString" },
+        "confidence": { "$ref": "#/$defs/confidence" },
+        "status": { "type": "string", "enum": ["active", "proposed", "deprecated", "unknown"] },
+        "evidence_refs": { "$ref": "#/$defs/identifierReferences" },
+        "freshness": { "$ref": "#/$defs/freshness" }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["description"],
+      "properties": {
+        "description": { "$ref": "#/$defs/nonEmptyString" },
+        "domain": { "$ref": "#/$defs/nonEmptyString" },
+        "in_scope": { "type": "array", "items": { "$ref": "#/$defs/nonEmptyString" } },
+        "out_of_scope": { "type": "array", "items": { "$ref": "#/$defs/nonEmptyString" } }
+      }
+    },
+    "sourceModelRevision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model_id", "revision"],
+      "properties": {
+        "model_id": { "$ref": "#/$defs/identifier" },
+        "revision": { "$ref": "#/$defs/nonEmptyString" },
+        "digest": { "$ref": "#/$defs/nonEmptyString" },
+        "updated_at": { "$ref": "#/$defs/rfc3339UtcTimestamp" }
+      }
+    },
+    "artifactReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "relationship"],
+      "properties": {
+        "artifact_id": { "$ref": "#/$defs/identifier" },
+        "relationship": { "type": "string", "enum": ["parent", "child", "related", "supersedes", "superseded_by"] }
+      }
+    },
+    "valueGate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rationale"],
+      "properties": {
+        "rationale": { "$ref": "#/$defs/nonEmptyString" },
+        "value": { "type": "string", "enum": ["usability", "importance", "risk_reduction", "uncertainty_reduction", "decision_value"] }
+      }
+    }
+  }
+}
