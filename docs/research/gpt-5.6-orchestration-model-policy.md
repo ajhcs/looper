@@ -106,9 +106,10 @@ Measure task acceptance, evidence completeness, fix/retry count, wall-clock time
 
 After reviewing the tradeoffs, this plugin intentionally uses a custom usage-limit policy rather than the research baseline:
 
-- Terra High for everyday orchestration, judgment, implementation, and review.
-- Sol Medium when ambiguity, consequence, cross-cutting design, or repeated non-progress justifies escalation.
-- Luna xhigh for narrow execution packets with explicit scope and objective proof.
-- No default Max lane.
+- Choose the cheapest model and reasoning level likely to succeed on the first attempt.
+- Use Luna Medium for mechanical work and Luna High for bounded, well-specified implementation with clear validation.
+- Use Terra Medium for ordinary multi-file implementation, research, and review; use Terra High for complex debugging, cross-module changes, and edge-case-heavy review.
+- Keep ambiguous architecture, security-critical decisions, expensive-to-repeat work, and final synthesis on Sol Medium; use Sol High only for exceptionally difficult work.
+- Prefer moving up one model tier over using xhigh or max. Require validation, and escalate failures, low confidence, or wider scope one tier instead of repeating the same configuration.
 
-This is a user-selected operating policy, not an OpenAI-prescribed hierarchy. Tune it against acceptance rate, retry count, wall-clock time, and model usage; reduce Luna effort for bulk mechanical work if xhigh does not improve acceptance.
+This is a user-selected operating policy, not an OpenAI-prescribed hierarchy. Tune it against first-attempt acceptance, retry count, wall-clock time, and model usage.

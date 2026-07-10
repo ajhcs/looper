@@ -33,16 +33,18 @@ It is intentionally compact. The point is not to teach an agent how to think; it
 - Keeping the parent agent focused on synthesis and verification.
 - Leading with the executable loop while preserving authority, proof, stop conditions, material caveats, and next action.
 - Reporting progress without pretending that queued CI or in-progress external jobs are blocked.
-- Routing bounded implementation to Luna xhigh and the corresponding review/fix pass to Terra xhigh, without fixing a model or effort for other work.
+- Choosing the cheapest model and reasoning level likely to succeed first try: Luna Medium/High for mechanical or bounded work, Terra Medium/High for ordinary through complex multi-file work and review, and Sol Medium for ambiguous or high-consequence work and final synthesis.
+- Escalating failed, low-confidence, or unexpectedly broad work by one model tier instead of repeating the same configuration; reserving Sol High and xhigh/max reasoning for exceptional work.
+- Checkpointing and compacting or starting fresh when work changes phases, so the orchestrator carries decisions and evidence instead of transcript history.
 
 ### Beadwriter
 
 - Decomposing grill-with-docs output, PRDs, issue briefs, or parent beads into childbeads.
 - Keeping each childbead close to one atomic commit: one logical change, one proof surface, one commit sentence.
 - Using LOC as a sizing signal: 20-150 meaningful changed LOC per commit-sized childbead, with a soft cap around 200.
-- Preparing sealed executor packets with context references, allowed actions, invariants, proof, dependencies, and stop/escalate conditions.
+- Preparing stable executor packets with clear scope, success criteria, validation steps, dependencies, and stop/escalate conditions.
 - Marking a bead list ready for Looper only when it can be handed to an implementation loop without inventing scope.
-- Labeling execution fit so bounded Luna work stays separate from Terra judgment or Sol escalation.
+- Labeling execution fit and mandatory validation so failed, low-confidence, or widened work escalates cleanly.
 
 ### Bead Cleaner
 
