@@ -44,11 +44,15 @@ export function validateArtifactSource(source) {
     ? entry.compatibilityAdapter.adapt(source)
     : { source, envelope: source, compatibilityAdapter: null };
   const diagnostics = [];
+  const reviewGates = [];
 
   // The adapter makes the legacy exception explicit: legacy map sources have
   // no envelope and are not silently reinterpreted as one.
   if (adaptation.envelope) {
     diagnostics.push(...validateSharedEnvelope(adaptation.envelope));
+    const stateResult = validateArtifactState(adaptation.envelope);
+    diagnostics.push(...stateResult.diagnostics);
+    reviewGates.push(...stateResult.reviewGates);
   }
 
   diagnostics.push(...validateContract(entry, adaptation.source));
@@ -57,10 +61,56 @@ export function validateArtifactSource(source) {
   return {
     ok: diagnostics.length === 0,
     diagnostics: unique(diagnostics),
+    reviewGates,
     artifactType,
     compatibilityAdapter: adaptation.compatibilityAdapter,
     validationStages: ["shared-envelope", "artifact-contract", "semantic"]
   };
+}
+
+// Shared semantic seam for every envelope contract. This verifies authority
+// metadata without attempting to establish or authenticate an identity.
+export function validateArtifactState(envelope) {
+  const diagnostics = [];
+  const reviewGates = [];
+  const state = envelope?.artifact_state;
+  const acceptance = envelope?.acceptance;
+
+  if (state === "Accepted Future State") {
+    if (!isNonEmptyString(acceptance?.accepting_authority)) {
+      diagnostics.push("Accepted Future State requires accepting authority from an explicit human decision.");
+    }
+    if (!isUtcTimestamp(acceptance?.accepted_at)) {
+      diagnostics.push("Accepted Future State requires a UTC acceptance time.");
+    }
+    if (!isNonEmptyString(acceptance?.decision_or_evidence_ref)) {
+      diagnostics.push("Accepted Future State requires a supporting decision or evidence reference.");
+    }
+  } else if (state === "Current State") {
+    if (acceptance !== undefined) {
+      diagnostics.push("Current State must not include acceptance metadata; evidence, not approval, establishes current reality.");
+    }
+    const unresolved = (envelope?.current_state_conflicts ?? []).filter((conflict) => conflict?.status === "unresolved");
+    if (unresolved.length > 0) {
+      reviewGates.push({
+        code: "current-state-conflict",
+        message: "Credible Current State evidence conflicts and requires human adjudication.",
+        conflictIds: unresolved.map((conflict) => conflict.id)
+      });
+    }
+  } else if (state === "Candidate Future State") {
+    if (acceptance !== undefined) {
+      diagnostics.push("Candidate Future State must not include acceptance metadata; it remains a nonbinding proposal.");
+    }
+  } else {
+    diagnostics.push("Artifact State must be Current State, Candidate Future State, or Accepted Future State; unqualified Future State is invalid.");
+  }
+
+  if (state !== "Current State" && (envelope?.current_state_conflicts?.length ?? 0) > 0) {
+    diagnostics.push("Current-State Conflict Gate results are only valid for Current State artifacts.");
+  }
+
+  return { diagnostics: unique(diagnostics), reviewGates };
 }
 
 export function validateArtifactFile(filePath) {
@@ -165,6 +215,14 @@ function failed(artifactType, diagnostics) {
 
 function unique(values) {
   return [...new Set(values)];
+}
+
+function isNonEmptyString(value) {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+function isUtcTimestamp(value) {
+  return typeof value === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/.test(value);
 }
 
 function printValidation(result) {

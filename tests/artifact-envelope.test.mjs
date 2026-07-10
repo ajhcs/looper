@@ -76,4 +76,24 @@ describe("Artifact Envelope schemas", () => {
       assert.equal(validate(candidate), true, `${altitude}: ${formatDiagnostics(validate)}`);
     }
   });
+
+  it("enforces state-specific acceptance metadata in the shared envelope", () => {
+    const validate = loadValidator();
+    const current = JSON.parse(readFileSync(resolve("schemas/fixtures/artifact-envelope.valid.json"), "utf8"));
+    const accepted = {
+      ...current,
+      artifact_state: "Accepted Future State",
+      acceptance: {
+        accepting_authority: "Architecture Council",
+        accepted_at: "2026-07-10T12:00:00Z",
+        decision_or_evidence_ref: "decision-42"
+      }
+    };
+
+    assert.equal(validate(accepted), true, formatDiagnostics(validate));
+    assert.equal(validate({ ...current, artifact_state: "Accepted Future State" }), false);
+    assert.match(formatDiagnostics(validate), /acceptance/);
+    assert.equal(validate({ ...current, acceptance: accepted.acceptance }), false);
+    assert.match(formatDiagnostics(validate), /acceptance/);
+  });
 });

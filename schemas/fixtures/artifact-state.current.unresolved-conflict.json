@@ -1,0 +1,9 @@
+{
+  "artifact_state": "Current State",
+  "current_state_conflicts": [{
+    "id": "ingestion-mode-conflict",
+    "summary": "Runtime telemetry and the operating procedure disagree about ingestion mode.",
+    "evidence_refs": ["runtime-telemetry", "operating-procedure"],
+    "status": "unresolved"
+  }]
+}

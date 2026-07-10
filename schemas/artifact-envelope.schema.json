@@ -53,6 +53,12 @@
       "type": "string",
       "enum": ["Current State", "Candidate Future State", "Accepted Future State"]
     },
+    "acceptance": { "$ref": "artifact-definitions.v1.schema.json#/$defs/acceptance" },
+    "current_state_conflicts": {
+      "type": "array",
+      "items": { "$ref": "artifact-definitions.v1.schema.json#/$defs/currentStateConflict" },
+      "uniqueItems": true
+    },
     "created_at": { "$ref": "artifact-definitions.v1.schema.json#/$defs/rfc3339UtcTimestamp" },
     "updated_at": { "$ref": "artifact-definitions.v1.schema.json#/$defs/rfc3339UtcTimestamp" },
     "created_by": { "$ref": "artifact-definitions.v1.schema.json#/$defs/nonEmptyString" },
@@ -62,6 +68,7 @@
     "evidence": {
       "type": "array",
       "items": { "$ref": "artifact-definitions.v1.schema.json#/$defs/evidence" },
+      "minItems": 1,
       "uniqueItems": true
     },
     "assumptions": {
@@ -102,5 +109,20 @@
       "uniqueItems": true
     },
     "value_gate": { "$ref": "artifact-definitions.v1.schema.json#/$defs/valueGate" }
-  }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "artifact_state": { "const": "Accepted Future State" } } },
+      "then": {
+        "properties": {
+          "acceptance": { "$ref": "artifact-definitions.v1.schema.json#/$defs/acceptance" }
+        },
+        "required": ["acceptance"]
+      }
+    },
+    {
+      "if": { "properties": { "artifact_state": { "enum": ["Current State", "Candidate Future State"] } } },
+      "then": { "properties": { "acceptance": false } }
+    }
+  ]
 }

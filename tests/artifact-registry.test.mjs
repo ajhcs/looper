@@ -37,6 +37,18 @@ describe("Artifact Contract Registry", () => {
     assert.match(result.diagnostics.join("\n"), /Unknown artifact type "unknown\.artifact"/);
   });
 
+  it("runs shared Artifact State semantics through the registry facade", () => {
+    const result = validateArtifactSource({
+      artifact_type: "system-understanding.map",
+      artifact_state: "Accepted Future State"
+    });
+
+    assert.equal(result.ok, false);
+    assert.match(result.diagnostics.join("\n"), /accepting authority/);
+    assert.match(result.diagnostics.join("\n"), /UTC acceptance time/);
+    assert.match(result.diagnostics.join("\n"), /decision or evidence reference/);
+  });
+
   it("reports missing registry dependencies with actionable preflight errors", () => {
     const diagnostics = preflightArtifactRegistry(new Map([
       ["broken.artifact", {

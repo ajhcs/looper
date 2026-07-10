@@ -215,6 +215,37 @@
         "rationale": { "$ref": "#/$defs/nonEmptyString" },
         "value": { "type": "string", "enum": ["usability", "importance", "risk_reduction", "uncertainty_reduction", "decision_value"] }
       }
+    },
+    "acceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["accepting_authority", "accepted_at", "decision_or_evidence_ref"],
+      "properties": {
+        "accepting_authority": { "$ref": "#/$defs/nonEmptyString" },
+        "accepted_at": { "$ref": "#/$defs/rfc3339UtcTimestamp" },
+        "decision_or_evidence_ref": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "currentStateConflict": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "summary", "evidence_refs", "status"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "summary": { "$ref": "#/$defs/nonEmptyString" },
+        "evidence_refs": { "type": "array", "$ref": "#/$defs/identifierReferences", "minItems": 2 },
+        "status": { "type": "string", "enum": ["unresolved", "adjudicated"] },
+        "adjudication_basis": { "$ref": "#/$defs/nonEmptyString" }
+      },
+      "allOf": [{
+        "if": { "properties": { "status": { "const": "adjudicated" } } },
+        "then": {
+          "properties": {
+            "adjudication_basis": { "$ref": "#/$defs/nonEmptyString" }
+          },
+          "required": ["adjudication_basis"]
+        }
+      }]
     }
   }
 }
