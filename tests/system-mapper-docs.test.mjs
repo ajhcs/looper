@@ -30,6 +30,20 @@ describe("System Mapper skill and docs", () => {
     assert.match(skill, /Create deeper maps only when progressive visual disclosure helps/);
   });
 
+  it("routes routine System Mapper work to Luna and makes larger models exceptional", () => {
+    for (const text of [skill, docs]) {
+      assert.match(text, /Luna Medium/);
+      assert.match(text, /Luna High/);
+      assert.match(text, /Terra Medium only/);
+      assert.match(text, /Sol (?:only for|is an) exceptional/);
+      assert.match(text, /final synthesis (?:is|required|do)/i);
+      assert.match(text, /Sol -> Terra -> Luna/);
+    }
+
+    assert.match(agent, /Luna-first workflow/);
+    assert.match(agent, /Escalate beyond Luna only/);
+  });
+
   it("docs require a Map Brief and describe Mermaid as an optional preview", () => {
     assert.match(docs, /Interactive Map View/);
     assert.match(docs, /Current-State Maps by default/);
