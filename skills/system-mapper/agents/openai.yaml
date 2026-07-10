@@ -1,4 +1,4 @@
 interface:
   display_name: "System Mapper"
   short_description: "Create validated current-system maps"
-  default_prompt: "Use $system-mapper to inspect the current system, create a typed Map Source, validate it, render an Interactive Map View, and return a Map Brief."
+  default_prompt: "Use $system-mapper as a Luna-first workflow to inspect the current system, create a typed Map Source, validate it, render an Interactive Map View, and return a Map Brief. Escalate beyond Luna only for the skill's explicit evidence-based conditions."

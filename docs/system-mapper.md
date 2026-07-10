@@ -4,6 +4,14 @@ System Mapper creates System Understanding Maps from a typed Map Source. The Map
 
 System Mapper creates Current-State Maps by default. Create a Future-State Map only when the user explicitly asks for prospective design or planning.
 
+## Model Routing
+
+System Mapper is a Luna-first workflow. Use Luna Medium for ordinary repository inspection, typed Map Source authoring, validation, rendering, and Map Brief synthesis. Use Luna High for large but well-bounded mapping scopes.
+
+Escalate to Terra Medium only when inspected evidence conflicts, boundaries remain genuinely ambiguous, a future-state request requires design judgment, or a well-scoped Luna attempt fails or produces low-confidence work. Sol is an exceptional lane for high-consequence interpretation that cannot be separated from mapping; when possible, route that decision to a planning or specialist skill and keep map production on Luna.
+
+Repository size, cross-layer traces, and final synthesis do not by themselves justify Terra or Sol. System Mapper does not require a routine Sol -> Terra -> Luna chain.
+
 ## Map Source
 
 Map Sources are YAML files validated by `schemas/system-map.schema.json` and semantic checks in `scripts/system-map.mjs`.

@@ -11,6 +11,17 @@ System Mapper creates Current-State Maps by default. Create a Future-State Map o
 
 The canonical artifact is a typed Map Source. Interactive Map Views, Mermaid previews, markdown summaries, and AI context packets are renderers or derivatives. Do not treat renderer syntax as model state.
 
+## Model Routing
+
+System mapping is evidence collection, structured transcription, validation, and bounded synthesis. Route it to the cheapest model likely to complete the map correctly:
+
+- Use Luna Medium by default for inspection, Map Source authoring, validation, rendering, and the Map Brief.
+- Use Luna High when the scope is large but still well specified, such as many files, several mapped domains, or dense trace reconciliation.
+- Escalate to Terra Medium only when evidence conflicts, subsystem boundaries are genuinely ambiguous, the requested future-state map requires meaningful design judgment, or a well-scoped Luna attempt fails or returns low-confidence work.
+- Use Sol only for exceptional, high-consequence interpretation that cannot be separated from the mapping task, such as security-critical architecture or an expensive-to-reverse decision. Prefer handing that decision to a planning or specialist skill while keeping map production on Luna.
+
+Do not use Terra or Sol merely because the repository is large, the map crosses multiple layers, or a final synthesis is required. Do not create a routine Sol -> Terra -> Luna chain for System Mapper.
+
 ## Required Setup
 
 Run setup preflight before validating or rendering maps:
