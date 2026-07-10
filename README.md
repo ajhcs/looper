@@ -5,12 +5,12 @@
 <h1 align="center">Looper</h1>
 
 <p align="center">
-  My personal Codex skills for system mapping, bead decomposition, tight agent loops, and senior SWE decision research.
+  My personal Codex skills for system mapping, bead planning and cleanup, model-aware agent loops, and senior SWE decision research.
 </p>
 
 Looper is the orchestration skill I use personally when work needs more structure than a single prompt, but less ceremony than a project management system. It helps Codex understand the current system first, break planned work into slices, choose useful subagent lanes, verify progress with evidence, and stop cleanly when the work is done, waiting, or genuinely blocked.
 
-This plugin also includes System Mapper for typed current-state maps, Beadwriter for decomposing parent beads into commit-sized childbeads, and Phone-A-SWE for technical decisions that need current sources, codebase context, and systems-engineering translation.
+This plugin also includes System Mapper for typed current-state maps, Beadwriter for decomposing parent beads into commit-sized childbeads, Bead Cleaner for safely pruning a `bd` backlog, and Phone-A-SWE for technical decisions that need current sources, codebase context, and systems-engineering translation.
 
 It is intentionally compact. The point is not to teach an agent how to think; it is to give a capable agent a reliable control loop that can keep working across pauses, fresh context windows, queued checks, and partial failures.
 
@@ -31,16 +31,26 @@ It is intentionally compact. The point is not to teach an agent how to think; it
 - Splitting work into small, reviewable slices.
 - Dispatching implementor, reviewer, fixer, specialist, or parallel discovery lanes.
 - Keeping the parent agent focused on synthesis and verification.
-- Producing compact loops, normally 1200-2000 characters and under 2600 unless more detail is requested.
+- Leading with the executable loop while preserving authority, proof, stop conditions, material caveats, and next action.
 - Reporting progress without pretending that queued CI or in-progress external jobs are blocked.
+- Routing GPT-5.6 work by task fit: Terra High for everyday coordination and judgment, Sol Medium when complexity justifies escalation, and Luna xhigh for focused execution packets.
 
 ### Beadwriter
 
 - Decomposing grill-with-docs output, PRDs, issue briefs, or parent beads into childbeads.
 - Keeping each childbead close to one atomic commit: one logical change, one proof surface, one commit sentence.
 - Using LOC as a sizing signal: 20-150 meaningful changed LOC per commit-sized childbead, with a soft cap around 200.
-- Preparing bead packets with scope, likely files, proof, dependencies, size, and review focus.
+- Preparing sealed executor packets with context references, allowed actions, invariants, proof, dependencies, and stop/escalate conditions.
 - Marking a bead list ready for Looper only when it can be handed to an implementation loop without inventing scope.
+- Labeling execution fit so bounded Luna work stays separate from Terra judgment or Sol escalation.
+
+### Bead Cleaner
+
+- Auditing open `bd` beads against explicit plans, PRDs, ADRs, and current repository evidence.
+- Classifying work as keep, rewrite, defer, duplicate, supersede, close, delete, or review.
+- Preferring history-preserving cleanup over deletion.
+- Requiring an exact ID list, dependency analysis, dry run, and explicit approval before deletion.
+- Never using hard or cascading deletion by default.
 
 ### Phone-A-SWE
 
@@ -86,6 +96,7 @@ Then invoke it in Codex with:
 $system-mapper
 $looper
 $beadwriter
+$bead-cleaner
 $phone-a-swe
 ```
 
@@ -95,6 +106,7 @@ $phone-a-swe
 - `skills/looper/SKILL.md` contains the plugin-native copy of the same skill.
 - `skills/system-mapper/SKILL.md` contains the System Mapper skill.
 - `skills/beadwriter/SKILL.md` contains the bead decomposition and childbead writing skill.
+- `skills/bead-cleaner/SKILL.md` contains the preview-first `bd` backlog cleanup skill.
 - `skills/phone-a-swe/SKILL.md` contains the Phone-A-SWE decision research skill.
 - `schemas/system-map.schema.json`, `scripts/system-map.mjs`, and `maps/examples/` contain the typed map toolchain.
 - `.codex-plugin/plugin.json` contains plugin metadata and documents the Matt Pocock Skills dependency.

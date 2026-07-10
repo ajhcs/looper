@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bead Cleaner"
+  short_description: "Audit and safely clean stale open beads"
+  default_prompt: "Use $bead-cleaner to audit my open beads and propose a safe cleanup plan."

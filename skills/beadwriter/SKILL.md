@@ -1,84 +1,55 @@
 ---
 name: beadwriter
-description: Beadwriter decomposes parent beads, PRDs, issue briefs, and grill-with-docs output into commit-sized childbeads. Use when the user asks to beadwrite, split work into atomic commits, prepare a bead list for Looper, or turn docs/ADRs into implementation units.
+description: Decompose parent beads, PRDs, issue briefs, plans, and grill-with-docs output into evidence-backed, commit-sized childbeads with explicit execution packets. Use when the user asks to beadwrite, split work into atomic commits, prepare work for Looper, or turn docs and ADRs into implementation units.
 ---
 
 # Beadwriter
 
-Decompose a parent bead into childbeads that a strong coding agent can implement and review cleanly.
+Turn an accepted outcome or plan into childbeads another agent can execute without inventing scope. A childbead normally represents one logical change, proof surface, and commit sentence.
 
-A childbead is usually one atomic commit: one logical change, one proof surface, one commit sentence.
+## Role Policy
+
+- Terra High owns normal inspection and decomposition.
+- Sol Medium receives a decision packet when ambiguity, architecture, consequence, or failed decomposition requires replanning.
+- Luna xhigh may execute a sealed childbead or collect bounded evidence; it does not define requirements, architecture, or proof.
+
+Treat these as preferred roles. Record the verified runtime separately, and do not require every bead to traverse all three models.
 
 ## Workflow
 
-1. **Pin the parent bead**: name the user-visible outcome, non-goals, constraints, source docs, and completion condition.
-2. **Map work surfaces**: list likely files, modules, APIs, schemas, tests, docs, migrations, and unknowns. Mark uninspected guesses as `inferred`.
-3. **Find the atomic changes**: split by behavior, contract, state lifecycle, integration boundary, risk class, or proof surface. Keep tightly coupled code and tests together.
-4. **Size each childbead**: apply the Size Contract; resize only when it preserves atomicity.
-5. **Merge or split**: merge tiny dependent chores into their behavioral bead. Split unrelated concerns even when they are small. Isolate large mechanical changes, generated files, migrations, or formatting only when they would hide review signal.
-6. **Sequence for proof**: order beads so each completed bead leaves the repo coherent and reduces uncertainty for the next bead. Put spikes before implementation when unknowns block sizing.
-7. **Return bead packets**: each childbead must be implementable without inventing scope, reviewable without reading the whole plan, and commit-ready in one sentence.
+1. **Pin intent**: outcome, non-goals, constraints, authoritative sources, and completion condition.
+2. **Inspect reality**: relevant files, modules, APIs, schemas, tests, docs, migrations, and unknowns. Mark uninspected guesses `inferred`.
+3. **Split atomically**: divide by behavior, interface, lifecycle, integration boundary, risk, rollback path, or proof. Keep inseparable code and tests together.
+4. **Packetize**: give each childbead the minimum context and complete execution contract below.
+5. **Sequence**: order beads so every commit leaves the repository coherent and reduces uncertainty.
+6. **Critic**: trace every parent requirement to a childbead; remove overlaps, orphan chores, invented scope, and vague proof.
 
-Completion criterion: every parent-bead requirement is covered by at least one childbead, no childbead mixes unrelated concerns, and each childbead names its proof.
+Use a spike only when evidence cannot support an implementation packet. It returns a decision, evidence, file map, proof plan, and revised childbeads.
 
-## Size Contract
+Atomicity outranks LOC. As a secondary sizing signal, target 20-150 meaningful changed lines, scrutinize above 200, and split above 500 unless the work is mechanical or inherently coupled.
 
-Treat LOC as a sizing signal, not the rule that beats atomicity.
+## Executor Packet
 
-- Commit-sized childbead: target 20-150 meaningful changed LOC; soft cap around 200.
-- PR-sized bundle: target 100-300 meaningful changed LOC; soft cap 400; scrutinize 500-800 unless the work is mechanical or inherently coupled.
-- Authority: one atomic logical change beats the numeric target.
+```text
+<id> - <title>
+Commit sentence:
+Outcome:
+Context refs:
+Scope and allowed actions:
+Invariants:
+Required proof:
+Depends on:
+Stop or escalate when:
+Executor role:
+Preferred runtime:
+```
 
-## Splitting Rules
+Required fields are outcome, context refs, scope, invariants, proof, dependencies, stop/escalate condition, and commit sentence. Add review focus, size, migration notes, or rollback detail only when they change execution or acceptance.
 
-Prefer one childbead when:
-
-- the change is one behavior with nearby tests
-- refactor and behavior are inseparable for review
-- splitting would create dead intermediate code
-- the expected size is above target but still one atomic change
-
-Prefer multiple childbeads when:
-
-- different users, workflows, services, or APIs are affected
-- data/model/schema work can be proven before UI or integration work
-- a refactor can land before behavior change
-- tests, fixtures, or harness work unlock several later beads
-- one part can be reverted without reverting the rest
-- the bead contains more than one commit sentence
-
-Use a spike bead only when the implementation path cannot be sized from current evidence. A spike returns a decision, file map, proof plan, and revised childbeads; it does not ship production behavior unless explicitly scoped.
+`Executor role` is semantic (`focused_executor`, `judgment_worker`, or `planner`). `Preferred runtime` names the desired model/effort and must not imply that runtime was actually selected.
 
 ## Output
 
-Use this shape unless the user asks for another format:
+Return parent outcome and non-goals, source/constraint summary, ordered childbeads, requirement coverage, risks or open decisions, and `Ready for Looper`.
 
-```text
-Parent Bead:
-Outcome:
-Sources:
-Assumptions:
-
-Childbeads:
-1. <id> - <title>
-   Commit sentence:
-   Scope:
-   Likely files:
-   Proof:
-   Size:
-   Depends on:
-   Review focus:
-
-Order:
-Risks / Unknowns:
-Merge / Split Notes:
-Ready for Looper:
-```
-
-For `Size`, use `small`, `target`, `large-but-atomic`, `split-required`, or `spike`.
-
-For `Ready for Looper`, say `yes` only when the childbeads can be handed directly to an implementation loop. Otherwise name the exact missing decision, source, or inspection step.
-
-## Style
-
-Write like an engineer preparing clean commits for another engineer. Be practical, not precious. Prefer a slightly larger atomic bead over an artificial split, and prefer a split over a bead whose proof or rollback story is muddy.
+Say `Ready for Looper: yes` only when every requirement is covered and the packets can execute without scope invention. Otherwise name the exact missing source, decision, inspection, or proof.

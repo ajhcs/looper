@@ -43,6 +43,11 @@ sources:
     title: Beadwriter skill
     path: ../skills/beadwriter/SKILL.md
     confidence: verified
+  - id: bead-cleaner-skill
+    type: doc
+    title: Bead Cleaner skill
+    path: ../skills/bead-cleaner/SKILL.md
+    confidence: verified
   - id: phone-swe-skill
     type: doc
     title: Phone-A-SWE skill
@@ -139,6 +144,15 @@ nodes:
     evidence:
       - beadwriter-skill
       - readme
+  - id: bead-cleanup-workflow
+    label: Bead Cleanup Workflow
+    layer: Product
+    type: Workflow
+    status: active
+    description: Bead Cleaner audits bd backlog items against current direction and previews history-preserving cleanup before approved mutations.
+    evidence:
+      - bead-cleaner-skill
+      - readme
   - id: decision-research-workflow
     label: Decision Research Workflow
     layer: Product
@@ -226,6 +240,7 @@ nodes:
       - plugin-looper-skill
       - system-mapper-skill
       - beadwriter-skill
+      - bead-cleaner-skill
       - phone-swe-skill
   - id: plugin-metadata-data
     label: Plugin Metadata
@@ -388,6 +403,15 @@ relationships:
   - id: surface-exposes-beadwriter
     from: codex-skill-surface
     to: bead-decomposition-workflow
+    type: exposes
+    label: exposes
+    status: active
+    evidence:
+      - plugin-manifest
+      - readme
+  - id: surface-exposes-bead-cleaner
+    from: codex-skill-surface
+    to: bead-cleanup-workflow
     type: exposes
     label: exposes
     status: active
@@ -576,6 +600,15 @@ relationships:
       - beadwriter-skill
       - mapper-beads
       - mapper-checkpoint
+  - id: bead-cleaner-curates-plans
+    from: bead-cleanup-workflow
+    to: bead-planning-data
+    type: transforms
+    label: safely curates
+    status: active
+    evidence:
+      - bead-cleaner-skill
+      - readme
   - id: phone-swe-feeds-planning
     from: decision-research-workflow
     to: planning-orchestration-workflow
