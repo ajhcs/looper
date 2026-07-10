@@ -33,7 +33,7 @@ It is intentionally compact. The point is not to teach an agent how to think; it
 - Keeping the parent agent focused on synthesis and verification.
 - Leading with the executable loop while preserving authority, proof, stop conditions, material caveats, and next action.
 - Reporting progress without pretending that queued CI or in-progress external jobs are blocked.
-- Routing GPT-5.6 work by task fit: Terra High for everyday coordination and judgment, Sol Medium when complexity justifies escalation, and Luna xhigh for focused execution packets.
+- Routing bounded implementation to Luna xhigh and the corresponding review/fix pass to Terra xhigh, without fixing a model or effort for other work.
 
 ### Beadwriter
 

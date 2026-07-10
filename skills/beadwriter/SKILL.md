@@ -9,11 +9,11 @@ Turn an accepted outcome or plan into childbeads another agent can execute witho
 
 ## Role Policy
 
-- Terra High owns normal inspection and decomposition.
-- Sol Medium receives a decision packet when ambiguity, architecture, consequence, or failed decomposition requires replanning.
-- Luna xhigh may execute a sealed childbead or collect bounded evidence; it does not define requirements, architecture, or proof.
+- Inspection, decomposition, planning, and evidence collection have no fixed model or effort preference.
+- Luna xhigh implements a sealed childbead; it does not define requirements, architecture, or proof.
+- Terra xhigh reviews and fixes the implementation against the childbead contract and pre-implementation fixed point.
 
-Treat these as preferred roles. Record the verified runtime separately, and do not require every bead to traverse all three models.
+Treat these as preferred execution and review roles. Record the verified runtime separately, and do not claim a preferred runtime actually ran without verification.
 
 ## Workflow
 

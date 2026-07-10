@@ -13,9 +13,9 @@ Use `system-mapper` when current-system evidence is insufficient and `beadwriter
 
 This is the user's local routing policy, not a universal optimum:
 
-- Terra High owns normal judgment, coordination, acceptance, and synthesis.
-- Sol Medium receives a decision packet only when ambiguity, consequence, architecture, or repeated non-progress requires replanning.
-- Luna xhigh receives sealed, focused execution packets only.
+- Luna xhigh owns implementation through sealed, focused execution packets.
+- Terra xhigh owns the review/fix pass against the originating bead or spec and pre-implementation fixed point.
+- Planning, coordination, decomposition, acceptance, synthesis, and specialist work have no fixed model or effort preference.
 
 Record semantic role and preferred runtime separately. Verify that the active surface can select the requested model and effort; otherwise preserve the role, use the closest available runtime, and report what actually ran. Do not force a Terra-Sol-Luna chain or use Max by default.
 
@@ -27,7 +27,7 @@ Carry `goal`, accepted `plan_revision`, current `slice`, `proof`, `ledger`, `ris
 2. Assign one write owner. Delegate only independent work that protects parent context or improves wall-clock time.
 3. Merge lane returns into evidence, not raw transcript history.
 4. Critic: compare the result with the goal, slice contract, tests, regressions, and open risks.
-5. If the critic fails, narrow or split the slice, widen evidence, change the lane, or send a decision packet to Sol.
+5. If the critic fails, narrow or split the slice, widen evidence, change the lane, or request a planning decision.
 6. Checkpoint decisions, evidence references, changed surfaces, risks, and next action.
 
 Stop with:
@@ -38,7 +38,7 @@ Stop with:
 
 ## Delegation Contract
 
-Use a manager pattern: Terra retains acceptance and final synthesis. Parallelize read-heavy exploration, tests, triage, or research when scopes are independent; avoid overlapping writers.
+Use a manager pattern: the parent retains acceptance and final synthesis. Parallelize read-heavy exploration, tests, triage, or research when scopes are independent; avoid overlapping writers.
 
 Give Luna only:
 
@@ -52,9 +52,9 @@ return_schema:
 stop_or_escalate_when:
 ```
 
-Give Sol the unresolved decision, goals, constraints, alternatives, consequences, failed evidence, and required planning artifact. Do not replay settled decisions or the full transcript.
+Give a planning lane the unresolved decision, goals, constraints, alternatives, consequences, failed evidence, and required planning artifact. Do not replay settled decisions or the full transcript.
 
-For a bounded code slice, prefer `matt-pocock-skills:implement`, followed by `matt-pocock-skills:code-review` against the pre-slice fixed point and originating bead/spec. Report a missing required skill instead of silently substituting it.
+For a bounded code slice, dispatch Luna xhigh with `matt-pocock-skills:implement`, followed by Terra xhigh with `matt-pocock-skills:code-review` against the pre-slice fixed point and originating bead/spec. Report a missing required skill instead of silently substituting it.
 
 Lane returns should contain only `changed_or_learned`, `evidence`, `risk_or_blocker`, and `next_action`. Use a machine schema only when software parses the return.
 
