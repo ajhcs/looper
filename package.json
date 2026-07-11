@@ -10,6 +10,8 @@
     "maps:preflight": "node scripts/system-map.mjs preflight",
     "artifacts:validate": "node scripts/artifacts.mjs validate",
     "artifacts:preflight": "node scripts/artifacts.mjs preflight",
+    "contracts:validate": "node scripts/looper-contracts.mjs validate",
+    "eval:routing": "node scripts/evaluate-routing.mjs",
     "test": "node --test tests/*.test.mjs"
   },
   "dependencies": {

@@ -1,25 +1,31 @@
 ---
 name: beadwriter
-description: Decompose parent beads, PRDs, issue briefs, plans, and grill-with-docs output into evidence-backed, commit-sized childbeads with explicit execution packets. Use when the user asks to beadwrite, split work into atomic commits, prepare work for Looper, or turn docs and ADRs into implementation units.
+description: Decompose parent beads, specs, plans, completed Wayfinder maps, and grill-with-docs output into evidence-backed, commit-sized childbeads with explicit execution packets. Use when the user asks to beadwrite, split work into atomic commits, prepare work for Looper, or turn planning artifacts into implementation units.
 ---
 
 # Beadwriter
 
 Turn an accepted outcome or plan into childbeads another agent can execute without inventing scope. A childbead normally represents one logical change, proof surface, and commit sentence.
 
-## Role Policy
+## Inputs And Grounding
 
-- Every implementation or fix packet prefers **GPT-5.6 Luna xhigh**.
-- Prefer Luna max only when the active runtime explicitly makes max selectable; otherwise xhigh is the expected path and work continues without a blocker.
-- Every review packet prefers **GPT-5.6 Sol low**. Findings return to Luna xhigh for correction and then to Sol low for re-review.
+Load `../../references/compatibility-vocabulary.yaml` and use its canonical terms in childbeads. Prefer one accepted spec as the source of truth. A Wayfinder journey normally clears one decision map, hands it to `to-spec` for one accepted spec, then hands that spec here for decomposition; it does not create one spec per decision ticket.
 
-Keep model configuration outside the task prose where the surface supports explicit runtime selection. Record the preferred and verified runtime separately, and do not claim max ran unless it was selectable and verified.
+When the user passes a Wayfinder map directly, load the map plus every closed child ticket's resolution comment and linked decision asset. Treat the map as an index, not the decision store. Continue only when no decision tickets or in-scope fog remain and the destination is an implementation outcome. If the map is incomplete, or its destination is only a decision, return `Ready for Looper: no` with the unresolved frontier or required handoff. Split one map into multiple specs only when its destination explicitly defines independently ownable outcomes; do not infer that split from the number of decision tickets.
+
+## To-Tickets Boundary
+
+Use Matt's `to-tickets` for lightweight tracker-native tracer bullets. Use Beadwriter instead when Looper needs commit boundaries, executor packets, validation commands, dependencies, stop conditions, and runtime metadata. Do not decompose the same accepted spec with both workflows. Existing tracker tickets may be imported only when the user asks Beadwriter to enrich them into childbeads.
+
+Load `../../references/model-routing-policy.yaml` only when assigning `Preferred runtime`. Keep model configuration outside task prose, record preferred and verified runtime separately, and never claim an unverified runtime ran.
+
+For a childbead that owns both UI design judgment and frontend implementation, resolve `Preferred runtime` from the specialized UI design-and-implementation role. A childbead implementing an already accepted design uses the general implementor role.
 
 ## Workflow
 
 1. **Pin intent**: outcome, non-goals, constraints, authoritative sources, and completion condition.
 2. **Inspect reality**: relevant files, modules, APIs, schemas, tests, docs, migrations, and unknowns. Mark uninspected guesses `inferred`.
-3. **Split atomically**: divide by behavior, interface, lifecycle, integration boundary, risk, rollback path, or proof. Keep inseparable code and tests together.
+3. **Split atomically**: prefer thin, end-to-end tracer bullets that leave one independently verifiable behavior working. Keep inseparable code and tests together. For a wide mechanical refactor that cannot stay green as vertical slices, use expand, bounded migrate batches, then contract.
 4. **Packetize**: give each childbead clear scope, success criteria, validation steps, and only the context needed to execute it.
 5. **Sequence**: order beads so every commit leaves the repository coherent and reduces uncertainty.
 6. **Critic**: trace every parent requirement to a childbead; remove overlaps, orphan chores, invented scope, and vague proof.
@@ -45,9 +51,9 @@ Executor role:
 Preferred runtime:
 ```
 
-All fields are required. Reference authoritative sources instead of copying them, keep wording stable across beads, and add review focus, size, migration notes, or rollback detail only when they change execution or acceptance.
+All fields are required. Machine-consumed packets must validate against `schemas/childbead.schema.json`; Markdown remains the human-facing form. Reference authoritative sources instead of copying them, keep wording stable across beads, and add review focus, size, migration notes, or rollback detail only when they change execution or acceptance.
 
-`Executor role` is semantic (`implementor`, `reviewer`, or `planner`). Implementation and fix packets use `GPT-5.6 Luna xhigh (max when available)`; review packets use `GPT-5.6 Sol low`. `Preferred runtime` must not imply that runtime actually ran. Validation is mandatory. A failed or widened implementation returns a revised, evidence-enriched packet to Luna; it does not block because an optional helper skill or exact skill alias is unavailable.
+`Executor role` is semantic (`implementor`, `reviewer`, or `planner`). Resolve `Preferred runtime` from the shared routing policy; it must not imply that runtime actually ran. Validation is mandatory. A failed or widened implementation returns a revised, evidence-enriched packet to the implementor role; it does not block because an optional helper skill or exact skill alias is unavailable.
 
 Name the capability a packet benefits from (implementation, TDD, debugging, or code review), not one mandatory package-qualified skill. At execution time, use a matching installed skill when it resolves cleanly. If it does not, the complete packet remains executable directly and the lane continues with the fallback recorded.
 

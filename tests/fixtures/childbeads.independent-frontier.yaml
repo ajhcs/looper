@@ -1,0 +1,58 @@
+version: 1
+parent: spec-parallel
+ready_for_looper: true
+source_refs: [spec-parallel]
+requirements:
+  - id: req-a
+    statement: Validate imports.
+  - id: req-b
+    statement: Validate exports.
+  - id: req-c
+    statement: Publish only after both validations.
+risks_or_open_decisions: []
+childbeads:
+  -
+    id: parallel-a
+    title: Validate imports
+    commit_sentence: Validate imports independently.
+    outcome: Imports are proven.
+    context_refs: [spec-parallel#req-a]
+    scope_and_allowed_actions: Add import validation.
+    invariants: [Exports remain unchanged.]
+    success_criteria: [Import validation passes.]
+    validation_steps: [Run import tests.]
+    depends_on: []
+    requirement_refs: [req-a]
+    stop_or_escalate_when: Import behavior is unspecified.
+    executor_role: implementor
+    preferred_runtime: routing-policy:implementor
+  -
+    id: parallel-b
+    title: Validate exports
+    commit_sentence: Validate exports independently.
+    outcome: Exports are proven.
+    context_refs: [spec-parallel#req-b]
+    scope_and_allowed_actions: Add export validation.
+    invariants: [Imports remain unchanged.]
+    success_criteria: [Export validation passes.]
+    validation_steps: [Run export tests.]
+    depends_on: []
+    requirement_refs: [req-b]
+    stop_or_escalate_when: Export behavior is unspecified.
+    executor_role: implementor
+    preferred_runtime: routing-policy:implementor
+  -
+    id: parallel-c
+    title: Publish verified data
+    commit_sentence: Publish after import and export verification.
+    outcome: Publishing occurs only after both validations.
+    context_refs: [spec-parallel#req-c]
+    scope_and_allowed_actions: Add the publication gate.
+    invariants: [Neither validation can be skipped.]
+    success_criteria: [Publishing waits for both validations.]
+    validation_steps: [Run publication integration tests.]
+    depends_on: [parallel-a, parallel-b]
+    requirement_refs: [req-c]
+    stop_or_escalate_when: Either validation cannot complete independently.
+    executor_role: implementor
+    preferred_runtime: routing-policy:implementor

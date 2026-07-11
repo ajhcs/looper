@@ -35,17 +35,23 @@ It is intentionally compact. The point is not to teach an agent how to think; it
 - Keeping the parent agent focused on synthesis and verification.
 - Leading with the executable loop while preserving authority, proof, stop conditions, material caveats, and next action.
 - Reporting progress without pretending that queued CI or in-progress external jobs are blocked.
-- Running implementation and fixes on GPT-5.6 Luna xhigh, preferring max only when the active runtime exposes it.
-- Reviewing every implementation/fix diff with GPT-5.6 Sol low, then returning actionable findings to Luna for the next pass.
+- Resolving implementor and reviewer runtimes from one shared routing policy, with verified-runtime reporting and capability-aware fallback.
+- Keeping concrete model defaults in `references/model-routing-policy.yaml` instead of repeating them in skill prompts.
+- Retaining Luna xhigh after the recorded High/xhigh comparison because neither configuration cleared every quality gate; the evidence remains available under `evals/wayfinder-routing/`.
+- Routing slices that combine UI design judgment and frontend implementation through the specialized Sol Medium policy while leaving accepted-design implementation on the general lane.
 - Treating implementation and review skills as optional capability accelerators, so an alias or package-resolution mismatch cannot block an otherwise executable lane.
 - Checkpointing and compacting or starting fresh when work changes phases, so the orchestrator carries decisions and evidence instead of transcript history.
 
 ### Beadwriter
 
-- Decomposing grill-with-docs output, PRDs, issue briefs, or parent beads into childbeads.
+- Decomposing grill-with-docs output, accepted specs, issue briefs, or parent beads into childbeads.
+- Accepting a completed Wayfinder map while preferring its normal handoff through one accepted spec; direct map ingestion also reads closed-ticket resolution comments and stops on unresolved frontier decisions or in-scope fog.
+- Replacing `to-tickets` when Looper needs commit, proof, dependency, stop, and runtime metadata; lightweight tracker-native slicing remains `to-tickets` territory.
 - Keeping each childbead close to one atomic commit: one logical change, one proof surface, one commit sentence.
+- Preferring independently verifiable, end-to-end tracer bullets, with expand-migrate-contract sequencing for wide mechanical refactors.
 - Using LOC as a sizing signal: 20-150 meaningful changed LOC per commit-sized childbead, with a soft cap around 200.
 - Preparing stable executor packets with clear scope, success criteria, validation steps, dependencies, and stop/escalate conditions.
+- Validating machine-consumed YAML or JSON packets against `schemas/childbead.schema.json` while keeping Markdown human-readable.
 - Marking a bead list ready for Looper only when it can be handed to an implementation loop without inventing scope.
 - Labeling execution fit and mandatory validation so failed, low-confidence, or widened work escalates cleanly.
 
@@ -87,7 +93,7 @@ Copy this folder into your Codex skills directory:
 
 ```powershell
 New-Item -ItemType Directory -Force "$env:USERPROFILE\.codex\skills\looper"
-Copy-Item -Recurse -Force .codex-plugin, skills, SKILL.md, agents, assets "$env:USERPROFILE\.codex\skills\looper\"
+Copy-Item -Recurse -Force .codex-plugin, skills, references, schemas, scripts, SKILL.md, agents, assets "$env:USERPROFILE\.codex\skills\looper\"
 ```
 
 For plugin installs, use the plugin-native copy under `skills/looper/SKILL.md`; the root `SKILL.md` remains for direct local skill use.
@@ -110,6 +116,9 @@ $phone-a-swe
 - `skills/beadwriter/SKILL.md` contains the bead decomposition and childbead writing skill.
 - `skills/bead-cleaner/SKILL.md` contains the preview-first `bd` backlog cleanup skill.
 - `skills/phone-a-swe/SKILL.md` contains the Phone-A-SWE decision research skill.
+- `references/compatibility-vocabulary.yaml` and `references/model-routing-policy.yaml` contain shared compatibility and runtime policy.
+- `schemas/childbead.schema.json` and `scripts/looper-contracts.mjs` validate machine-consumed childbead packets.
+- `evals/wayfinder-routing/` and `scripts/evaluate-routing.mjs` contain the reproducible five-case, two-repetition High/xhigh evaluation and latest evidence report.
 - `schemas/system-map.schema.json`, `scripts/system-map.mjs`, and `maps/examples/` contain the typed map toolchain.
 - `.codex-plugin/plugin.json` contains plugin metadata and documents the Matt Pocock Skills dependency.
 - `agents/openai.yaml` contains the agent metadata for the plugin.

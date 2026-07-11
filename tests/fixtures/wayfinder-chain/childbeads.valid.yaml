@@ -1,0 +1,56 @@
+version: 1
+parent: spec-plugin-auth
+ready_for_looper: true
+source_refs: [spec.yaml, resolutions.yaml]
+requirements:
+  - id: req-1
+    statement: Operators can add a replacement token while the current token remains valid.
+  - id: req-2
+    statement: Clients can migrate and verification prevents premature revocation.
+  - id: req-3
+    statement: Rotation actions create an audit event.
+risks_or_open_decisions: []
+childbeads:
+  - id: auth-01
+    title: Add a replacement token alongside the current token
+    commit_sentence: Add backward-compatible replacement-token activation.
+    outcome: Operators can activate a replacement token without invalidating existing clients.
+    context_refs: [spec.yaml#req-1, resolutions.yaml#dt-1]
+    scope_and_allowed_actions: Add the compatible token state and its behavior tests; do not revoke the current token.
+    invariants: [The current token remains valid during expansion.]
+    success_criteria: [Both current and replacement tokens authenticate during migration.]
+    validation_steps: [Run the targeted token authentication tests.]
+    depends_on: []
+    requirement_refs: [req-1]
+    stop_or_escalate_when: Existing storage cannot represent two active tokens without migration risk.
+    executor_role: implementor
+    preferred_runtime: routing-policy:implementor
+  - id: auth-02
+    title: Migrate clients and prove replacement-token use
+    commit_sentence: Migrate clients with rotation audit evidence.
+    outcome: Clients use the replacement token and emit verifiable rotation evidence.
+    context_refs: [spec.yaml#req-2, spec.yaml#req-3, resolutions.yaml#dt-2]
+    scope_and_allowed_actions: Migrate client use, add verification, and emit audit evidence; keep the old token valid.
+    invariants: [Revocation remains unavailable until verification passes.]
+    success_criteria: [All migrated clients use the replacement token., Rotation emits an audit event.]
+    validation_steps: [Run client integration and audit-event tests.]
+    depends_on: [auth-01]
+    requirement_refs: [req-2, req-3]
+    stop_or_escalate_when: A client cannot migrate independently while both tokens remain valid.
+    executor_role: implementor
+    preferred_runtime: routing-policy:implementor
+  - id: auth-03
+    title: Revoke the superseded token
+    commit_sentence: Contract token rotation after verified migration.
+    outcome: Operators can revoke the old token only after migration proof passes.
+    context_refs: [spec.yaml#req-2, resolutions.yaml#dt-1, resolutions.yaml#dt-2]
+    scope_and_allowed_actions: Add guarded revocation and remove obsolete compatibility behavior.
+    invariants: [Failed verification leaves the old token valid.]
+    success_criteria: [Verified rotation revokes the old token., Unverified rotation cannot revoke it.]
+    validation_steps: [Run the full token-rotation integration suite.]
+    depends_on: [auth-02]
+    requirement_refs: [req-2]
+    stop_or_escalate_when: Verification cannot distinguish migrated from unmigrated clients.
+    executor_role: implementor
+    preferred_runtime: routing-policy:implementor
+

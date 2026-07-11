@@ -1,0 +1,10 @@
+goal: Deliver spec-plugin-auth.
+plan_revision: childbeads.valid.yaml
+current_slice: auth-01
+frontier: [auth-01]
+proof: []
+ledger: []
+risks: []
+next_action: Dispatch auth-01 using the shared implementor policy.
+status: ready
+

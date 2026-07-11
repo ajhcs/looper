@@ -9,21 +9,20 @@ const readme = readFileSync("README.md", "utf8");
 
 describe("Looper implementation and review routing", () => {
   it("keeps direct and plugin-native Looper instructions identical", () => {
-    assert.equal(rootSkill, pluginSkill);
+    assert.equal(rootSkill, pluginSkill.replaceAll("../../references/", "references/"));
   });
 
-  it("routes implementation to Luna xhigh with max as an availability-only preference", () => {
-    for (const text of [rootSkill, beadwriter, readme]) {
-      assert.match(text, /Luna xhigh/i);
-      assert.match(text, /max.+available|available.+max|runtime.+exposes it/is);
+  it("routes runtime metadata through one shared policy", () => {
+    for (const text of [rootSkill, beadwriter]) {
+      assert.match(text, /references\/model-routing-policy\.yaml/i);
     }
+    assert.match(readme, /shared routing policy/i);
   });
 
-  it("routes review to Sol low and cycles findings back to Luna", () => {
-    for (const text of [rootSkill, beadwriter, readme]) {
-      assert.match(text, /Sol low/i);
-      assert.match(text, /return.+Luna|returning.+Luna|return to Luna/is);
-    }
+  it("preserves semantic implementation and review roles", () => {
+    assert.match(rootSkill, /implementor role/i);
+    assert.match(rootSkill, /reviewer role/i);
+    assert.match(beadwriter, /implementor.+reviewer.+planner/is);
   });
 
   it("does not make exact helper skill names a blocking dependency", () => {
@@ -33,5 +32,19 @@ describe("Looper implementation and review routing", () => {
     }
     assert.doesNotMatch(rootSkill, /Report a missing required skill/);
     assert.doesNotMatch(beadwriter, /matt-pocock-skills:implement/);
+  });
+});
+
+describe("Beadwriter planning-artifact compatibility", () => {
+  it("understands the Wayfinder to-spec boundary", () => {
+    assert.match(beadwriter, /Wayfinder journey.+one decision map.+to-spec.+one accepted spec/is);
+    assert.match(beadwriter, /closed child ticket's resolution comment/i);
+    assert.match(beadwriter, /no decision tickets or in-scope fog remain/i);
+    assert.match(beadwriter, /Split one map into multiple specs only when its destination explicitly defines independently ownable outcomes/i);
+  });
+
+  it("prefers vertical slices and handles wide refactors", () => {
+    assert.match(beadwriter, /end-to-end tracer bullets/i);
+    assert.match(beadwriter, /expand, bounded migrate batches, then contract/i);
   });
 });

@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://looper.local/schemas/childbead.v1.schema.json",
+  "title": "Looper childbead set",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "parent", "ready_for_looper", "source_refs", "requirements", "risks_or_open_decisions", "childbeads"],
+  "properties": {
+    "version": { "type": "integer", "const": 1 },
+    "parent": { "$ref": "#/$defs/nonEmptyString" },
+    "ready_for_looper": { "type": "boolean" },
+    "source_refs": { "$ref": "#/$defs/nonEmptyStrings" },
+    "requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "statement"],
+        "properties": {
+          "id": { "$ref": "#/$defs/identifier" },
+          "statement": { "$ref": "#/$defs/nonEmptyString" }
+        }
+      }
+    },
+    "risks_or_open_decisions": { "$ref": "#/$defs/nonEmptyStrings" },
+    "childbeads": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/childbead" }
+    }
+  },
+  "$defs": {
+    "nonEmptyString": { "type": "string", "minLength": 1 },
+    "identifier": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$" },
+    "nonEmptyStrings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/nonEmptyString" }
+    },
+    "requiredStrings": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/nonEmptyString" }
+    },
+    "childbead": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id", "title", "commit_sentence", "outcome", "context_refs",
+        "scope_and_allowed_actions", "invariants", "success_criteria",
+        "validation_steps", "depends_on", "requirement_refs",
+        "stop_or_escalate_when", "executor_role", "preferred_runtime"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "title": { "$ref": "#/$defs/nonEmptyString" },
+        "commit_sentence": { "$ref": "#/$defs/nonEmptyString" },
+        "outcome": { "$ref": "#/$defs/nonEmptyString" },
+        "context_refs": { "$ref": "#/$defs/requiredStrings" },
+        "scope_and_allowed_actions": { "$ref": "#/$defs/nonEmptyString" },
+        "invariants": { "$ref": "#/$defs/requiredStrings" },
+        "success_criteria": { "$ref": "#/$defs/requiredStrings" },
+        "validation_steps": { "$ref": "#/$defs/requiredStrings" },
+        "depends_on": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/identifier" }
+        },
+        "requirement_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/identifier" }
+        },
+        "stop_or_escalate_when": { "$ref": "#/$defs/nonEmptyString" },
+        "executor_role": { "enum": ["implementor", "reviewer", "planner"] },
+        "preferred_runtime": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    }
+  }
+}

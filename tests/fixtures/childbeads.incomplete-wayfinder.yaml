@@ -1,0 +1,7 @@
+version: 1
+parent: wf-incomplete
+ready_for_looper: false
+source_refs: [wayfinder:map#wf-incomplete]
+requirements: []
+risks_or_open_decisions: [Decision ticket dt-export-format remains open and in-scope fog remains.]
+childbeads: []

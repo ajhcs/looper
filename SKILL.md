@@ -11,13 +11,9 @@ System Mapper is deprecated for now. When current-system evidence is insufficien
 
 ## Role Policy
 
-This is the user's local routing policy, not a universal optimum:
+Load `references/model-routing-policy.yaml` when assigning runtime metadata. It is the single local routing policy and evidence pointer, not a universal optimum. Keep semantic role, preferred runtime, and verified runtime separate; preserve the role and record the fallback when the preferred runtime is unavailable. The parent retains acceptance and synthesis.
 
-- Implementation and review/fix work use a two-lane cycle: **GPT-5.6 Luna xhigh implements; GPT-5.6 Sol low reviews.**
-- Request Luna max instead of xhigh only when max is actually selectable in the active runtime. Lack of max is not a blocker; continue on Luna xhigh.
-- Reviewer findings return to Luna xhigh for a focused fix, then Sol low reviews the new diff. The parent retains acceptance and synthesis.
-
-Record semantic role, preferred runtime, and verified runtime separately. Do not spend a turn proving optional max support: use max when the runtime advertises it, otherwise use xhigh. If the exact requested model is unavailable, preserve the lane, choose the closest same-family runtime, and report what actually ran.
+Select the policy's specialized UI design-and-implementation role when one slice owns both UI design judgment and frontend implementation. Ordinary frontend execution against an already accepted design remains general implementation.
 
 ## Loop Contract
 
@@ -56,11 +52,11 @@ stop_or_escalate_when:
 
 Keep the packet self-contained but lean: reference authoritative artifacts instead of copying them, omit settled decisions, and do not replay the transcript. For a planning lane, put the unresolved decision and required planning artifact in `outcome`, and the relevant alternatives, consequences, and failed evidence in `context_refs`.
 
-Require the worker to run the packet's validation steps. If validation fails, confidence is low, or wider scope appears, narrow or revise the packet and return it to Luna xhigh; use Luna max when available. Sol low reviews against the pre-slice fixed point and originating bead/spec after each implementation or fix pass.
+Require the worker to run the packet's validation steps. If validation fails, confidence is low, or wider scope appears, narrow or revise the packet and return it to the implementor role. The reviewer role checks the pre-slice fixed point and originating childbead or accepted spec after each implementation or fix pass.
 
 Skills assist a lane; they do not define whether the lane can run. Prefer an installed implementation skill for code work and an installed code-review skill for review, resolving the capability by purpose rather than requiring one exact package-qualified name. Check the available skill catalog once. If a useful skill cannot be resolved or loaded, continue directly from the worker packet or review contract and report the fallback; do not block merely because an alias, namespace, plugin version, or optional skill is missing.
 
-Give the Sol low reviewer the originating acceptance criteria, repository instructions, fixed-point diff, and relevant test output. Ask for actionable correctness, regression, security, or missing-test findings first, ordered by severity with file/line evidence and a minimal fix direction. The reviewer should run cheap targeted checks to resolve uncertainty, say `no findings` when appropriate, and never block solely because a preferred review skill is unavailable. Default to one implementation, one review, one Luna repair, and one fresh Sol confirmation review; continue only for genuinely new evidence.
+Give the reviewer the originating acceptance criteria, repository instructions, fixed-point diff, and relevant test output. Ask for actionable correctness, regression, security, or missing-test findings first, ordered by severity with file/line evidence and a minimal fix direction. The reviewer should run cheap targeted checks to resolve uncertainty, say `no findings` when appropriate, and never block solely because a preferred review skill is unavailable. Default to one implementation, one review, one implementor repair, and one fresh confirmation review; continue only for genuinely new evidence.
 
 Lane returns should contain only `changed_or_learned`, `validation`, `confidence`, `scope_change_or_blocker`, and `next_action`. Use a machine schema only when software parses the return.
 

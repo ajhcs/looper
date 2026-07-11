@@ -1,0 +1,2662 @@
+{
+  "version": 1,
+  "generated_at": "2026-07-11T16:06:24.305Z",
+  "scored_at": "2026-07-11T16:06:24.306Z",
+  "run_count": 20,
+  "results": [
+    {
+      "case_id": "completed-wayfinder",
+      "effort": "high",
+      "repetition": 1,
+      "requested_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "high"
+      },
+      "verified_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "high",
+        "evidence": "accepted CLI invocation trace with completed usage event"
+      },
+      "invocation_trace": {
+        "executable": "codex",
+        "arguments": [
+          "exec",
+          "--ephemeral",
+          "--skip-git-repo-check",
+          "--ignore-user-config",
+          "--ignore-rules",
+          "--sandbox",
+          "read-only",
+          "--model",
+          "gpt-5.6-luna",
+          "--config",
+          "approval_policy=\"never\"",
+          "--config",
+          "model_reasoning_effort=\"high\"",
+          "--output-schema",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\schemas\\childbead.schema.json",
+          "--output-last-message",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\.scratch\\routing-eval\\completed-wayfinder-high-1.json",
+          "--json",
+          "-"
+        ],
+        "accepted": true
+      },
+      "exit_code": 0,
+      "elapsed_ms": 51783,
+      "usage": {
+        "input_tokens": 12024,
+        "output_tokens": 2655,
+        "total_tokens": 14679
+      },
+      "output_sha256": "65788c6f9abaa19d35bc0d79b0a5f0f2321ae9a0846852629318d2e5e84ed57d",
+      "scores": {
+        "required_field_completeness": true,
+        "traceability": true,
+        "scope_fidelity": true,
+        "dependency_correctness": true,
+        "readiness_correctness": true,
+        "schema_validity": true,
+        "quality_pass": true,
+        "diagnostics": []
+      },
+      "output": {
+        "version": 1,
+        "parent": "Backward-compatible API-token rotation; non-goal: OAuth integration or migration.",
+        "ready_for_looper": true,
+        "source_refs": [
+          "Completed decision map for backward-compatible API-token rotation supplied in the evaluation case",
+          "Resolved decisions: expand to two valid tokens, verify client migration, retain audit evidence, then revoke the old token",
+          "Constraint: OAuth is explicitly out of scope"
+        ],
+        "requirements": [
+          {
+            "id": "req-1",
+            "statement": "Expand the API-token rotation so both the old and new tokens are valid concurrently before client migration."
+          },
+          {
+            "id": "req-2",
+            "statement": "Migrate and verify every in-scope client uses the new API token, with durable audit evidence of verification."
+          },
+          {
+            "id": "req-3",
+            "statement": "Contract the rotation by revoking the old API token only after migration verification and audit evidence are complete."
+          }
+        ],
+        "risks_or_open_decisions": [
+          "Client inventory must be complete before verification is accepted.",
+          "The old token must remain available for rollback until contraction criteria pass.",
+          "No unresolved planning decisions remain; OAuth stays out of scope."
+        ],
+        "childbeads": [
+          {
+            "id": "bead-1",
+            "title": "Expand API-token rotation to dual-token validity",
+            "commit_sentence": "Enable concurrent validity for the old and new API tokens.",
+            "outcome": "The rotation enters a backward-compatible expansion state with exactly two valid API tokens and the old token remains usable for rollback.",
+            "context_refs": [
+              "Completed decision map for backward-compatible API-token rotation supplied in the evaluation case",
+              "Resolved decision: expansion requires two valid tokens",
+              "Constraint: OAuth is explicitly out of scope"
+            ],
+            "scope_and_allowed_actions": "Implement the existing token-management/configuration change needed to issue or activate the replacement token while preserving the old token. Limit changes to API-token rotation surfaces; do not alter OAuth, client behavior, or unrelated authentication flows.",
+            "invariants": [
+              "The old token remains valid during expansion.",
+              "The replacement token is valid before any client migration begins.",
+              "No OAuth behavior is changed.",
+              "The rotation has a clearly identifiable old-token and new-token pair."
+            ],
+            "success_criteria": [
+              "Two and only two rotation tokens are valid concurrently for the in-scope API surface.",
+              "The old token continues to authenticate successfully.",
+              "The new token authenticates successfully.",
+              "The expansion state and token identities are observable to the verification and audit steps."
+            ],
+            "validation_steps": [
+              "Inspect the resulting token state and confirm both token identities are active.",
+              "Authenticate a representative in-scope API request with each token.",
+              "Confirm no OAuth configuration or behavior changed.",
+              "Record the expansion result for the migration bead."
+            ],
+            "depends_on": [],
+            "requirement_refs": [
+              "req-1"
+            ],
+            "stop_or_escalate_when": "Stop if the old token cannot remain valid, the new token cannot be independently verified, more than two tokens become active, or implementation requires OAuth changes.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          },
+          {
+            "id": "bead-2",
+            "title": "Migrate and verify in-scope API clients",
+            "commit_sentence": "Migrate all in-scope API clients to the replacement token and verify usage.",
+            "outcome": "Every inventoried in-scope client uses the new API token, and no client depends on the old token for normal operation.",
+            "context_refs": [
+              "Completed decision map for backward-compatible API-token rotation supplied in the evaluation case",
+              "Resolved decision: client migration must be verified",
+              "Expansion output from bead-1"
+            ],
+            "scope_and_allowed_actions": "Update token references for the complete in-scope client inventory, then verify each client through its supported health check, API call, or telemetry. Preserve the old token until verification and audit capture are complete. Do not add OAuth clients or change unrelated credentials.",
+            "invariants": [
+              "The client inventory is explicit and reviewable.",
+              "Each in-scope client is checked individually or through an equivalently complete aggregate proof.",
+              "The old token remains valid until contraction is authorized.",
+              "Failed or unverified clients are not counted as migrated."
+            ],
+            "success_criteria": [
+              "All in-scope clients are mapped to the new token.",
+              "Each client has a successful verification result.",
+              "No in-scope client is observed using the old token after migration.",
+              "The verification record identifies client, result, timestamp, and token generation."
+            ],
+            "validation_steps": [
+              "Enumerate the in-scope client inventory and compare it with the migration result set.",
+              "Run the agreed client health checks or representative API calls using the new token.",
+              "Inspect telemetry or equivalent evidence for residual old-token use.",
+              "Produce a migration verification record suitable for audit retention."
+            ],
+            "depends_on": [
+              "bead-1"
+            ],
+            "requirement_refs": [
+              "req-2"
+            ],
+            "stop_or_escalate_when": "Stop if any in-scope client is missing, fails verification, still uses the old token, or cannot produce auditable evidence of successful migration.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          },
+          {
+            "id": "bead-3",
+            "title": "Capture rotation audit evidence",
+            "commit_sentence": "Persist auditable evidence of token expansion and verified client migration.",
+            "outcome": "The rotation has durable evidence proving the dual-token expansion, client-by-client migration verification, and readiness for contraction.",
+            "context_refs": [
+              "Completed decision map for backward-compatible API-token rotation supplied in the evaluation case",
+              "Resolved decision: audit evidence is required before contraction",
+              "Outputs from beads 1 and 2"
+            ],
+            "scope_and_allowed_actions": "Persist or attach the existing operational audit record for token issuance, dual validity, client migration verification, residual old-token checks, and contraction authorization inputs. Use existing audit/logging surfaces; do not introduce a new compliance system or expand scope to OAuth.",
+            "invariants": [
+              "Evidence is append-only or otherwise tamper-evident within the existing audit surface.",
+              "Evidence identifies the old and new token generations without exposing secret token values.",
+              "Evidence covers every in-scope client and the required validation timestamps.",
+              "Contraction is not marked ready without complete evidence."
+            ],
+            "success_criteria": [
+              "Audit evidence links the expansion event to the old/new token generations.",
+              "The evidence includes a complete verified-client result set.",
+              "The evidence records the residual old-token-use check.",
+              "The evidence explicitly marks whether contraction prerequisites passed."
+            ],
+            "validation_steps": [
+              "Review the stored audit record for completeness against the in-scope client inventory.",
+              "Confirm secret token values are not present in logs or evidence.",
+              "Verify timestamps and token generations are consistent across expansion and migration records.",
+              "Obtain an explicit contraction-ready result from the evidence review."
+            ],
+            "depends_on": [
+              "bead-2"
+            ],
+            "requirement_refs": [
+              "req-2",
+              "req-3"
+            ],
+            "stop_or_escalate_when": "Stop if evidence is incomplete, exposes token secrets, cannot be tied to the client inventory, or does not establish contraction readiness.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          },
+          {
+            "id": "bead-4",
+            "title": "Contract rotation by revoking the old token",
+            "commit_sentence": "Revoke the old API token after verified migration and audit completion.",
+            "outcome": "The rotation is complete: the new token remains valid, the old token is revoked, and in-scope clients continue operating.",
+            "context_refs": [
+              "Completed decision map for backward-compatible API-token rotation supplied in the evaluation case",
+              "Resolved decision: contraction revokes the old token after verification",
+              "Audit evidence from bead-3"
+            ],
+            "scope_and_allowed_actions": "Revoke only the old API token after confirming the contraction-ready audit result, then validate continued operation with the replacement token. Do not revoke the new token, alter OAuth, or rotate unrelated credentials.",
+            "invariants": [
+              "The new token remains valid throughout and after contraction.",
+              "The old token is revoked only after migration verification and audit evidence pass.",
+              "Only the identified old token is revoked.",
+              "No OAuth or unrelated credential is changed."
+            ],
+            "success_criteria": [
+              "The old token fails authentication after revocation.",
+              "The new token continues to authenticate successfully.",
+              "All previously verified in-scope clients remain operational.",
+              "The final audit record contains the revocation event and outcome."
+            ],
+            "validation_steps": [
+              "Confirm the contraction-ready audit result from bead-3.",
+              "Revoke the identified old token.",
+              "Attempt an authenticated request with the old token and confirm rejection.",
+              "Attempt representative requests with the new token and confirm success.",
+              "Check client health and append the revocation result to the audit record."
+            ],
+            "depends_on": [
+              "bead-3"
+            ],
+            "requirement_refs": [
+              "req-3"
+            ],
+            "stop_or_escalate_when": "Stop before revocation if any client verification or audit prerequisite is missing; escalate if the old token remains accepted, the new token fails, or revocation affects any token other than the identified old token.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "completed-wayfinder",
+      "effort": "high",
+      "repetition": 2,
+      "requested_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "high"
+      },
+      "verified_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "high",
+        "evidence": "accepted CLI invocation trace with completed usage event"
+      },
+      "invocation_trace": {
+        "executable": "codex",
+        "arguments": [
+          "exec",
+          "--ephemeral",
+          "--skip-git-repo-check",
+          "--ignore-user-config",
+          "--ignore-rules",
+          "--sandbox",
+          "read-only",
+          "--model",
+          "gpt-5.6-luna",
+          "--config",
+          "approval_policy=\"never\"",
+          "--config",
+          "model_reasoning_effort=\"high\"",
+          "--output-schema",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\schemas\\childbead.schema.json",
+          "--output-last-message",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\.scratch\\routing-eval\\completed-wayfinder-high-2.json",
+          "--json",
+          "-"
+        ],
+        "accepted": true
+      },
+      "exit_code": 0,
+      "elapsed_ms": 35047,
+      "usage": {
+        "input_tokens": 12024,
+        "output_tokens": 1701,
+        "total_tokens": 13725
+      },
+      "output_sha256": "67ee3d50b9572347fd851b4f9669bac135ca1e4b1f47b3d6b134995bc39c1daf",
+      "scores": {
+        "required_field_completeness": true,
+        "traceability": true,
+        "scope_fidelity": true,
+        "dependency_correctness": true,
+        "readiness_correctness": true,
+        "schema_validity": true,
+        "quality_pass": true,
+        "diagnostics": []
+      },
+      "output": {
+        "version": 1,
+        "parent": "Deliver backward-compatible API-token rotation through expansion, verified client migration, audit evidence, and contraction.",
+        "ready_for_looper": true,
+        "source_refs": [
+          "Completed Wayfinder decision map: backward-compatible API-token rotation",
+          "Resolved decisions: expansion requires two valid tokens, client migration must be verified, audit evidence is required, and contraction revokes the old token"
+        ],
+        "requirements": [
+          {
+            "id": "req-1",
+            "statement": "Expand token validity so the old and new API tokens are simultaneously accepted during rotation."
+          },
+          {
+            "id": "req-2",
+            "statement": "Migrate all in-scope clients to the new API token and produce verifiable audit evidence of migration."
+          },
+          {
+            "id": "req-3",
+            "statement": "After migration verification, contract the validity window by revoking the old API token."
+          }
+        ],
+        "risks_or_open_decisions": [
+          "OAuth is explicitly out of scope.",
+          "Do not revoke the old token until all in-scope client migrations are verified and audit evidence is retained."
+        ],
+        "childbeads": [
+          {
+            "id": "cb-1",
+            "title": "Expand API-token validity for backward-compatible rotation",
+            "commit_sentence": "Expand API-token rotation to accept both old and new tokens.",
+            "outcome": "The new token is active while the old token remains valid, allowing clients to migrate without an availability break.",
+            "context_refs": [
+              "Completed Wayfinder decision map: backward-compatible API-token rotation",
+              "Resolved decision: expansion requires two valid tokens"
+            ],
+            "scope_and_allowed_actions": "Implement only the token expansion needed for API-token rotation. Provision or activate the new token, retain the old token as valid, and update focused tests or configuration required to prove simultaneous validity. OAuth changes are not allowed.",
+            "invariants": [
+              "Both the old and new API tokens remain valid during the migration window.",
+              "Existing authenticated API clients remain backward compatible.",
+              "OAuth remains out of scope."
+            ],
+            "success_criteria": [
+              "The new token authenticates successfully.",
+              "The old token continues to authenticate successfully during expansion.",
+              "Focused automated coverage proves simultaneous validity.",
+              "The repository remains coherent after this commit."
+            ],
+            "validation_steps": [
+              "Run the focused token-authentication tests.",
+              "Exercise authentication once with the old token and once with the new token.",
+              "Confirm no OAuth configuration or implementation changed."
+            ],
+            "depends_on": [],
+            "requirement_refs": [
+              "req-1"
+            ],
+            "stop_or_escalate_when": "Stop if the token store, authentication path, or rotation interface cannot support two concurrently valid tokens without an unresolved design decision.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          },
+          {
+            "id": "cb-2",
+            "title": "Migrate and verify all in-scope API clients",
+            "commit_sentence": "Migrate in-scope clients to the new API token with audit evidence.",
+            "outcome": "Every in-scope client uses the new token, and migration completion is independently verifiable before contraction.",
+            "context_refs": [
+              "Completed Wayfinder decision map: backward-compatible API-token rotation",
+              "Resolved decision: client migration must be verified and audit evidence retained",
+              "cb-1: Expand API-token validity for backward-compatible rotation"
+            ],
+            "scope_and_allowed_actions": "Update only in-scope API clients and their token references to use the new token. Verify client authentication and record audit evidence identifying each migrated client and its verification result. Do not revoke the old token or change OAuth behavior.",
+            "invariants": [
+              "The old token remains valid while migration verification is incomplete.",
+              "Every in-scope client has a recorded migration and verification result.",
+              "OAuth remains out of scope."
+            ],
+            "success_criteria": [
+              "All in-scope clients are configured with the new token.",
+              "Each client successfully authenticates using the new token.",
+              "Audit evidence is retained and identifies the verified clients.",
+              "No client remains dependent on the old token for normal operation."
+            ],
+            "validation_steps": [
+              "Enumerate the authoritative in-scope client list.",
+              "Verify each client authenticates with the new token.",
+              "Check the audit evidence for complete client coverage and successful results.",
+              "Confirm the old token has not been revoked in this commit."
+            ],
+            "depends_on": [
+              "cb-1"
+            ],
+            "requirement_refs": [
+              "req-2"
+            ],
+            "stop_or_escalate_when": "Stop if the authoritative client inventory is unavailable, any client cannot be verified with the new token, or audit evidence cannot prove complete migration.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          },
+          {
+            "id": "cb-3",
+            "title": "Contract rotation by revoking the old API token",
+            "commit_sentence": "Revoke the old API token after verified client migration.",
+            "outcome": "The old token is revoked only after complete migration verification, completing the token rotation and closing the compatibility window.",
+            "context_refs": [
+              "Completed Wayfinder decision map: backward-compatible API-token rotation",
+              "Resolved decision: contraction revokes the old token after verified migration",
+              "cb-2: Migrate and verify all in-scope API clients"
+            ],
+            "scope_and_allowed_actions": "Review the migration verification and audit evidence from the preceding slice, then revoke the old API token. Add focused proof that the old token fails while the new token continues to authenticate. Do not alter client scope or introduce OAuth changes.",
+            "invariants": [
+              "Revocation occurs only after complete migration verification and retained audit evidence.",
+              "The new API token remains valid after contraction.",
+              "OAuth remains out of scope."
+            ],
+            "success_criteria": [
+              "The old API token is revoked.",
+              "Requests using the old token are rejected.",
+              "Requests using the new token continue to succeed.",
+              "The migration audit evidence remains available as proof of the prerequisite."
+            ],
+            "validation_steps": [
+              "Confirm the migration audit evidence covers every in-scope client.",
+              "Revoke the old token through the existing supported rotation mechanism.",
+              "Verify the old token is rejected.",
+              "Verify the new token still authenticates successfully."
+            ],
+            "depends_on": [
+              "cb-2"
+            ],
+            "requirement_refs": [
+              "req-3"
+            ],
+            "stop_or_escalate_when": "Stop before revocation if migration evidence is incomplete, any client still requires the old token, or the new token fails validation.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "incomplete-wayfinder",
+      "effort": "high",
+      "repetition": 1,
+      "requested_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "high"
+      },
+      "verified_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "high",
+        "evidence": "accepted CLI invocation trace with completed usage event"
+      },
+      "invocation_trace": {
+        "executable": "codex",
+        "arguments": [
+          "exec",
+          "--ephemeral",
+          "--skip-git-repo-check",
+          "--ignore-user-config",
+          "--ignore-rules",
+          "--sandbox",
+          "read-only",
+          "--model",
+          "gpt-5.6-luna",
+          "--config",
+          "approval_policy=\"never\"",
+          "--config",
+          "model_reasoning_effort=\"high\"",
+          "--output-schema",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\schemas\\childbead.schema.json",
+          "--output-last-message",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\.scratch\\routing-eval\\incomplete-wayfinder-high-1.json",
+          "--json",
+          "-"
+        ],
+        "accepted": true
+      },
+      "exit_code": 0,
+      "elapsed_ms": 6476,
+      "usage": {
+        "input_tokens": 12004,
+        "output_tokens": 238,
+        "total_tokens": 12242
+      },
+      "output_sha256": "2deba1c83cdef9b70cd4f346904a17750e5912e8eab587d6eb4f8a0e00c15e64",
+      "scores": {
+        "required_field_completeness": true,
+        "traceability": true,
+        "scope_fidelity": false,
+        "dependency_correctness": true,
+        "readiness_correctness": true,
+        "schema_validity": true,
+        "quality_pass": false,
+        "diagnostics": []
+      },
+      "output": {
+        "version": 1,
+        "parent": "Unspecified parent bead or accepted spec",
+        "ready_for_looper": false,
+        "source_refs": [
+          "User-provided Beadwriter instructions"
+        ],
+        "requirements": [],
+        "risks_or_open_decisions": [
+          "No accepted_spec, decision_map, parent bead, plan, or completed planning artifact was supplied.",
+          "The intended outcome, non-goals, constraints, authoritative sources, and completion condition are unknown.",
+          "No implementation packet can be created without inventing scope."
+        ],
+        "childbeads": []
+      }
+    },
+    {
+      "case_id": "incomplete-wayfinder",
+      "effort": "high",
+      "repetition": 2,
+      "requested_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "high"
+      },
+      "verified_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "high",
+        "evidence": "accepted CLI invocation trace with completed usage event"
+      },
+      "invocation_trace": {
+        "executable": "codex",
+        "arguments": [
+          "exec",
+          "--ephemeral",
+          "--skip-git-repo-check",
+          "--ignore-user-config",
+          "--ignore-rules",
+          "--sandbox",
+          "read-only",
+          "--model",
+          "gpt-5.6-luna",
+          "--config",
+          "approval_policy=\"never\"",
+          "--config",
+          "model_reasoning_effort=\"high\"",
+          "--output-schema",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\schemas\\childbead.schema.json",
+          "--output-last-message",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\.scratch\\routing-eval\\incomplete-wayfinder-high-2.json",
+          "--json",
+          "-"
+        ],
+        "accepted": true
+      },
+      "exit_code": 0,
+      "elapsed_ms": 7298,
+      "usage": {
+        "input_tokens": 12004,
+        "output_tokens": 263,
+        "total_tokens": 12267
+      },
+      "output_sha256": "68db7b1e210b2249f09fcea07780661065077df5ce1b928f0f4b7feff289d29e",
+      "scores": {
+        "required_field_completeness": true,
+        "traceability": true,
+        "scope_fidelity": false,
+        "dependency_correctness": true,
+        "readiness_correctness": true,
+        "schema_validity": true,
+        "quality_pass": false,
+        "diagnostics": []
+      },
+      "output": {
+        "version": 1,
+        "parent": "No parent bead, accepted_spec, or decision_map supplied",
+        "ready_for_looper": false,
+        "source_refs": [
+          "User-provided Beadwriter instructions"
+        ],
+        "requirements": [],
+        "risks_or_open_decisions": [
+          "Missing authoritative parent outcome and accepted_spec or completed decision_map.",
+          "Cannot identify requirements, constraints, non-goals, implementation scope, dependencies, or validation proof.",
+          "No childbeads can be created without inventing scope."
+        ],
+        "childbeads": []
+      }
+    },
+    {
+      "case_id": "direct-accepted-spec",
+      "effort": "high",
+      "repetition": 1,
+      "requested_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "high"
+      },
+      "verified_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "high",
+        "evidence": "accepted CLI invocation trace with completed usage event"
+      },
+      "invocation_trace": {
+        "executable": "codex",
+        "arguments": [
+          "exec",
+          "--ephemeral",
+          "--skip-git-repo-check",
+          "--ignore-user-config",
+          "--ignore-rules",
+          "--sandbox",
+          "read-only",
+          "--model",
+          "gpt-5.6-luna",
+          "--config",
+          "approval_policy=\"never\"",
+          "--config",
+          "model_reasoning_effort=\"high\"",
+          "--output-schema",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\schemas\\childbead.schema.json",
+          "--output-last-message",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\.scratch\\routing-eval\\direct-accepted-spec-high-1.json",
+          "--json",
+          "-"
+        ],
+        "accepted": true
+      },
+      "exit_code": 0,
+      "elapsed_ms": 11214,
+      "usage": {
+        "input_tokens": 12005,
+        "output_tokens": 506,
+        "total_tokens": 12511
+      },
+      "output_sha256": "11f6ce9af905856a00655224dbd5caf268f8c00bc13fc1791cd739e2b6a70074",
+      "scores": {
+        "required_field_completeness": true,
+        "traceability": true,
+        "scope_fidelity": true,
+        "dependency_correctness": true,
+        "readiness_correctness": true,
+        "schema_validity": true,
+        "quality_pass": true,
+        "diagnostics": []
+      },
+      "output": {
+        "version": 1,
+        "parent": "Implement CSV export for one report with downloaded-header validation",
+        "ready_for_looper": true,
+        "source_refs": [
+          "direct-accepted-spec"
+        ],
+        "requirements": [
+          {
+            "id": "req-1",
+            "statement": "Users can export one report as CSV and validate the downloaded header."
+          }
+        ],
+        "risks_or_open_decisions": [],
+        "childbeads": [
+          {
+            "id": "cb-1",
+            "title": "Implement one-report CSV export and header validation",
+            "commit_sentence": "Implement CSV export for one report with downloaded-header validation",
+            "outcome": "A user can export a selected report as CSV, download it, and verify that the downloaded file contains the expected header.",
+            "context_refs": [
+              "direct-accepted-spec"
+            ],
+            "scope_and_allowed_actions": "Implement the smallest end-to-end vertical slice for exporting one report as CSV and validating its downloaded header, including only the necessary production code, UI or API wiring, and focused tests. Do not add bulk export, scheduling, alternate formats, report redesign, or unrelated validation.",
+            "invariants": [
+              "The export represents exactly one selected report.",
+              "The downloaded artifact is CSV.",
+              "The downloaded CSV header is validated against the report's expected header.",
+              "Existing report behavior remains unchanged when export is not used."
+            ],
+            "success_criteria": [
+              "A user can initiate export for one report.",
+              "The browser or client receives a downloadable CSV artifact.",
+              "The downloaded CSV contains the expected header.",
+              "A focused automated test covers successful export and header validation.",
+              "Invalid or mismatched headers fail validation clearly."
+            ],
+            "validation_steps": [
+              "Run the focused export and header-validation tests.",
+              "Exercise the export flow for one report and inspect the downloaded CSV header.",
+              "Exercise a mismatched-header case and confirm validation fails clearly."
+            ],
+            "depends_on": [],
+            "requirement_refs": [
+              "req-1"
+            ],
+            "stop_or_escalate_when": "Stop and escalate if the accepted spec does not define the report selection input, expected header source, download mechanism, or failure behavior; do not invent those contracts.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "direct-accepted-spec",
+      "effort": "high",
+      "repetition": 2,
+      "requested_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "high"
+      },
+      "verified_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "high",
+        "evidence": "accepted CLI invocation trace with completed usage event"
+      },
+      "invocation_trace": {
+        "executable": "codex",
+        "arguments": [
+          "exec",
+          "--ephemeral",
+          "--skip-git-repo-check",
+          "--ignore-user-config",
+          "--ignore-rules",
+          "--sandbox",
+          "read-only",
+          "--model",
+          "gpt-5.6-luna",
+          "--config",
+          "approval_policy=\"never\"",
+          "--config",
+          "model_reasoning_effort=\"high\"",
+          "--output-schema",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\schemas\\childbead.schema.json",
+          "--output-last-message",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\.scratch\\routing-eval\\direct-accepted-spec-high-2.json",
+          "--json",
+          "-"
+        ],
+        "accepted": true
+      },
+      "exit_code": 0,
+      "elapsed_ms": 11946,
+      "usage": {
+        "input_tokens": 12005,
+        "output_tokens": 532,
+        "total_tokens": 12537
+      },
+      "output_sha256": "5e8c9a70a9a54fed95f4891449e26bdbc59ad83ea3fe15ac885c207bcbce2fcd",
+      "scores": {
+        "required_field_completeness": true,
+        "traceability": true,
+        "scope_fidelity": true,
+        "dependency_correctness": true,
+        "readiness_correctness": true,
+        "schema_validity": true,
+        "quality_pass": true,
+        "diagnostics": []
+      },
+      "output": {
+        "version": 1,
+        "parent": "direct-accepted-spec",
+        "ready_for_looper": true,
+        "source_refs": [
+          "accepted spec: direct-accepted-spec"
+        ],
+        "requirements": [
+          {
+            "id": "req-1",
+            "statement": "Users can export one report as CSV and validate the downloaded header."
+          }
+        ],
+        "risks_or_open_decisions": [],
+        "childbeads": [
+          {
+            "id": "cb-1",
+            "title": "Export one report as CSV with a validated header",
+            "commit_sentence": "Implement one-report CSV export and downloaded-header validation.",
+            "outcome": "A user can export one report as a CSV file and verify that the downloaded file begins with the expected header.",
+            "context_refs": [
+              "accepted spec: direct-accepted-spec",
+              "requirement req-1"
+            ],
+            "scope_and_allowed_actions": "Implement the smallest end-to-end path for exporting one report as CSV, including the expected header and validation of the downloaded header. Add or update focused automated tests. Do not add bulk export, new report formats, or unrelated download behavior.",
+            "invariants": [
+              "The export represents exactly one report.",
+              "The downloaded file is CSV-formatted.",
+              "The expected CSV header is present and validated.",
+              "Existing report behavior outside this export path remains unchanged."
+            ],
+            "success_criteria": [
+              "A user can trigger export for one report and receive a CSV download.",
+              "The downloaded CSV contains the expected header.",
+              "Automated coverage verifies the export and header validation behavior."
+            ],
+            "validation_steps": [
+              "Run the focused export and header-validation tests.",
+              "Exercise the export path and inspect the downloaded CSV header.",
+              "Run the relevant existing test suite for the affected area."
+            ],
+            "depends_on": [],
+            "requirement_refs": [
+              "req-1"
+            ],
+            "stop_or_escalate_when": "Stop and escalate if the report schema, expected header, or download entry point is not defined by the accepted spec, or if implementing the export requires unrelated API or data-model changes.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "wide-refactor",
+      "effort": "high",
+      "repetition": 1,
+      "requested_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "high"
+      },
+      "verified_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "high",
+        "evidence": "accepted CLI invocation trace with completed usage event"
+      },
+      "invocation_trace": {
+        "executable": "codex",
+        "arguments": [
+          "exec",
+          "--ephemeral",
+          "--skip-git-repo-check",
+          "--ignore-user-config",
+          "--ignore-rules",
+          "--sandbox",
+          "read-only",
+          "--model",
+          "gpt-5.6-luna",
+          "--config",
+          "approval_policy=\"never\"",
+          "--config",
+          "model_reasoning_effort=\"high\"",
+          "--output-schema",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\schemas\\childbead.schema.json",
+          "--output-last-message",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\.scratch\\routing-eval\\wide-refactor-high-1.json",
+          "--json",
+          "-"
+        ],
+        "accepted": true
+      },
+      "exit_code": 0,
+      "elapsed_ms": 42241,
+      "usage": {
+        "input_tokens": 12003,
+        "output_tokens": 2181,
+        "total_tokens": 14184
+      },
+      "output_sha256": "0c3bab451c02b4da5118eebdf61f3d9390a33919c8c73818e02b42dcf6c006c6",
+      "scores": {
+        "required_field_completeness": true,
+        "traceability": true,
+        "scope_fidelity": true,
+        "dependency_correctness": false,
+        "readiness_correctness": false,
+        "schema_validity": true,
+        "quality_pass": false,
+        "diagnostics": []
+      },
+      "output": {
+        "version": 1,
+        "parent": "Rename tokenId to credentialId across all callers without broken intermediate commits; non-goals: no unrelated API, schema, or behavior changes.",
+        "ready_for_looper": false,
+        "source_refs": [
+          "user-provided wide-refactor evaluation case",
+          "req-rename: rename tokenId to credentialId across many callers"
+        ],
+        "requirements": [
+          {
+            "id": "req-rename",
+            "statement": "Rename tokenId to credentialId across many callers while allowing both forms to coexist temporarily and keeping every intermediate commit coherent."
+          }
+        ],
+        "risks_or_open_decisions": [
+          "The accepted spec contains no repository file map, API boundary inventory, schema inventory, test inventory, or caller grouping.",
+          "Bounded migration batches cannot be defined without inspecting the repository.",
+          "Compatibility direction, deprecation behavior, and the exact contract-removal condition remain unspecified.",
+          "A planner pass is required before implementation packets can be execution-ready."
+        ],
+        "childbeads": [
+          {
+            "id": "rename-tokenid-inventory",
+            "title": "Inventory tokenId usage and define coherent migration batches",
+            "commit_sentence": "Map tokenId-to-credentialId migration boundaries and proof surfaces",
+            "outcome": "Produce an evidence-backed file map, compatibility decision, expand/migrate/contract sequence, bounded caller batches, validation plan, and revised implementation childbeads for req-rename.",
+            "context_refs": [
+              "user-provided wide-refactor evaluation case",
+              "req-rename: rename tokenId to credentialId across many callers"
+            ],
+            "scope_and_allowed_actions": "Read-only inspection of definitions, APIs, schemas, persistence boundaries, callers, tests, fixtures, generated artifacts, and documentation that reference tokenId or credentialId. Do not modify files, rename symbols, or remove compatibility. Group callers into bounded batches whose intermediate commits remain coherent.",
+            "invariants": [
+              "Both tokenId and credentialId may coexist during migration.",
+              "No proposed intermediate commit may leave its touched boundary inconsistent.",
+              "The final contract must use credentialId everywhere in scope.",
+              "No unrelated behavior or surface-area changes may be introduced."
+            ],
+            "success_criteria": [
+              "Every in-scope tokenId definition and caller is classified.",
+              "Compatibility direction and contract-removal condition are explicitly decided or escalated.",
+              "Expand, bounded migrate, and contract phases are documented.",
+              "Each migration batch has named files or modules, dependencies, success proof, and rollback considerations.",
+              "Revised implementation childbeads cover req-rename without relying on inferred caller groups."
+            ],
+            "validation_steps": [
+              "Run read-only repository searches for tokenId and credentialId, including case variants and generated/test files.",
+              "Trace each result to its owning API, schema, persistence boundary, caller group, or proof surface.",
+              "Verify the proposed sequence keeps type-checking, tests, and public boundaries coherent after every phase.",
+              "Return the evidence map and revised childbeads for review."
+            ],
+            "depends_on": [],
+            "requirement_refs": [
+              "req-rename"
+            ],
+            "stop_or_escalate_when": "Stop if the accepted spec, repository root, compatibility policy, generated-code policy, or contract-removal condition is unavailable; escalate any caller whose ownership or migration order cannot be established from evidence.",
+            "executor_role": "planner",
+            "preferred_runtime": "routing-policy:implementor"
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "wide-refactor",
+      "effort": "high",
+      "repetition": 2,
+      "requested_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "high"
+      },
+      "verified_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "high",
+        "evidence": "accepted CLI invocation trace with completed usage event"
+      },
+      "invocation_trace": {
+        "executable": "codex",
+        "arguments": [
+          "exec",
+          "--ephemeral",
+          "--skip-git-repo-check",
+          "--ignore-user-config",
+          "--ignore-rules",
+          "--sandbox",
+          "read-only",
+          "--model",
+          "gpt-5.6-luna",
+          "--config",
+          "approval_policy=\"never\"",
+          "--config",
+          "model_reasoning_effort=\"high\"",
+          "--output-schema",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\schemas\\childbead.schema.json",
+          "--output-last-message",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\.scratch\\routing-eval\\wide-refactor-high-2.json",
+          "--json",
+          "-"
+        ],
+        "accepted": true
+      },
+      "exit_code": 0,
+      "elapsed_ms": 7566,
+      "usage": {
+        "input_tokens": 12003,
+        "output_tokens": 281,
+        "total_tokens": 12284
+      },
+      "output_sha256": "dd65c3dd2bd071f95e2cf45587bd6bab647411d6fd8a7d2bf68fd76210816ff0",
+      "scores": {
+        "required_field_completeness": true,
+        "traceability": false,
+        "scope_fidelity": false,
+        "dependency_correctness": false,
+        "readiness_correctness": false,
+        "schema_validity": true,
+        "quality_pass": false,
+        "diagnostics": []
+      },
+      "output": {
+        "version": 1,
+        "parent": "Unspecified parent bead",
+        "ready_for_looper": false,
+        "source_refs": [
+          "User-provided Beadwriter instructions"
+        ],
+        "requirements": [],
+        "risks_or_open_decisions": [
+          "No accepted_spec, decision_map, plan, completed Wayfinder map, or parent outcome was supplied.",
+          "Implementation scope, constraints, authoritative sources, completion conditions, and validation proof are missing.",
+          "No childbeads can be packetized without inventing scope."
+        ],
+        "childbeads": []
+      }
+    },
+    {
+      "case_id": "independent-frontier",
+      "effort": "high",
+      "repetition": 1,
+      "requested_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "high"
+      },
+      "verified_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "high",
+        "evidence": "accepted CLI invocation trace with completed usage event"
+      },
+      "invocation_trace": {
+        "executable": "codex",
+        "arguments": [
+          "exec",
+          "--ephemeral",
+          "--skip-git-repo-check",
+          "--ignore-user-config",
+          "--ignore-rules",
+          "--sandbox",
+          "read-only",
+          "--model",
+          "gpt-5.6-luna",
+          "--config",
+          "approval_policy=\"never\"",
+          "--config",
+          "model_reasoning_effort=\"high\"",
+          "--output-schema",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\schemas\\childbead.schema.json",
+          "--output-last-message",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\.scratch\\routing-eval\\independent-frontier-high-1.json",
+          "--json",
+          "-"
+        ],
+        "accepted": true
+      },
+      "exit_code": 0,
+      "elapsed_ms": 27285,
+      "usage": {
+        "input_tokens": 12000,
+        "output_tokens": 1407,
+        "total_tokens": 13407
+      },
+      "output_sha256": "cd2f6ce8e6311464f01631a3c1cb6ecc8508bcaa47582da31d0fd981eeb8c157",
+      "scores": {
+        "required_field_completeness": true,
+        "traceability": true,
+        "scope_fidelity": true,
+        "dependency_correctness": true,
+        "readiness_correctness": true,
+        "schema_validity": true,
+        "quality_pass": true,
+        "diagnostics": []
+      },
+      "output": {
+        "version": 1,
+        "parent": "Independent validation frontiers: validate imports and exports independently, then publish only after both validations succeed. Non-goals: changing unrelated import/export behavior or publishing before both validations pass.",
+        "ready_for_looper": true,
+        "source_refs": [
+          "Supplied evaluation case: independent-frontier"
+        ],
+        "requirements": [
+          {
+            "id": "req-a",
+            "statement": "Validate imports."
+          },
+          {
+            "id": "req-b",
+            "statement": "Validate exports."
+          },
+          {
+            "id": "req-c",
+            "statement": "Publish only after both import and export validations succeed."
+          }
+        ],
+        "risks_or_open_decisions": [],
+        "childbeads": [
+          {
+            "id": "cb-import-validation",
+            "title": "Implement import validation",
+            "commit_sentence": "Add import validation and focused proof.",
+            "outcome": "Imports are validated independently with automated coverage for valid and invalid import cases.",
+            "context_refs": [
+              "Supplied evaluation case: independent-frontier",
+              "Requirement req-a"
+            ],
+            "scope_and_allowed_actions": "Implement only the import-validation behavior and its focused tests. Reuse existing import interfaces and conventions; do not modify export validation or publishing behavior.",
+            "invariants": [
+              "Import validation remains independently executable.",
+              "Invalid imports do not pass validation.",
+              "No publishing occurs as part of this childbead."
+            ],
+            "success_criteria": [
+              "Import validation is implemented for the accepted import contract.",
+              "Focused tests cover successful and rejected imports.",
+              "The relevant existing test suite remains green."
+            ],
+            "validation_steps": [
+              "Run the focused import-validation tests.",
+              "Run the existing test suite covering the import path.",
+              "Confirm this change does not invoke publishing."
+            ],
+            "depends_on": [],
+            "requirement_refs": [
+              "req-a"
+            ],
+            "stop_or_escalate_when": "Stop if the accepted import contract or existing import integration point is unavailable or requires changing export or publishing semantics.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          },
+          {
+            "id": "cb-export-validation",
+            "title": "Implement export validation",
+            "commit_sentence": "Add export validation and focused proof.",
+            "outcome": "Exports are validated independently with automated coverage for valid and invalid export cases.",
+            "context_refs": [
+              "Supplied evaluation case: independent-frontier",
+              "Requirement req-b"
+            ],
+            "scope_and_allowed_actions": "Implement only the export-validation behavior and its focused tests. Reuse existing export interfaces and conventions; do not modify import validation or publishing behavior.",
+            "invariants": [
+              "Export validation remains independently executable.",
+              "Invalid exports do not pass validation.",
+              "No publishing occurs as part of this childbead."
+            ],
+            "success_criteria": [
+              "Export validation is implemented for the accepted export contract.",
+              "Focused tests cover successful and rejected exports.",
+              "The relevant existing test suite remains green."
+            ],
+            "validation_steps": [
+              "Run the focused export-validation tests.",
+              "Run the existing test suite covering the export path.",
+              "Confirm this change does not invoke publishing."
+            ],
+            "depends_on": [],
+            "requirement_refs": [
+              "req-b"
+            ],
+            "stop_or_escalate_when": "Stop if the accepted export contract or existing export integration point is unavailable or requires changing import or publishing semantics.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          },
+          {
+            "id": "cb-gated-publish",
+            "title": "Gate publishing on both validations",
+            "commit_sentence": "Require successful import and export validation before publishing.",
+            "outcome": "Publishing occurs only when both import validation and export validation have succeeded.",
+            "context_refs": [
+              "Supplied evaluation case: independent-frontier",
+              "Requirement req-c",
+              "Childbeads cb-import-validation and cb-export-validation"
+            ],
+            "scope_and_allowed_actions": "Update only the publishing gate and its focused integration tests. Require successful completion of both validation results before publishing; preserve existing publishing behavior after the gate passes.",
+            "invariants": [
+              "Publishing never occurs when import validation fails.",
+              "Publishing never occurs when export validation fails.",
+              "Publishing occurs only after both validations succeed.",
+              "Existing post-validation publishing behavior is preserved."
+            ],
+            "success_criteria": [
+              "The publish path requires both validation results to be successful.",
+              "Focused tests cover each validation failing independently and both succeeding.",
+              "The relevant publishing test suite remains green."
+            ],
+            "validation_steps": [
+              "Run focused publishing-gate tests for import failure, export failure, and both-success cases.",
+              "Run the existing validation and publishing test suites.",
+              "Verify no publish side effect occurs in either failure case."
+            ],
+            "depends_on": [
+              "cb-import-validation",
+              "cb-export-validation"
+            ],
+            "requirement_refs": [
+              "req-c",
+              "req-a",
+              "req-b"
+            ],
+            "stop_or_escalate_when": "Stop if the publish path cannot observe both validation results without inventing a new contract, or if enforcing the gate requires unrelated workflow changes.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "independent-frontier",
+      "effort": "high",
+      "repetition": 2,
+      "requested_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "high"
+      },
+      "verified_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "high",
+        "evidence": "accepted CLI invocation trace with completed usage event"
+      },
+      "invocation_trace": {
+        "executable": "codex",
+        "arguments": [
+          "exec",
+          "--ephemeral",
+          "--skip-git-repo-check",
+          "--ignore-user-config",
+          "--ignore-rules",
+          "--sandbox",
+          "read-only",
+          "--model",
+          "gpt-5.6-luna",
+          "--config",
+          "approval_policy=\"never\"",
+          "--config",
+          "model_reasoning_effort=\"high\"",
+          "--output-schema",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\schemas\\childbead.schema.json",
+          "--output-last-message",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\.scratch\\routing-eval\\independent-frontier-high-2.json",
+          "--json",
+          "-"
+        ],
+        "accepted": true
+      },
+      "exit_code": 0,
+      "elapsed_ms": 24227,
+      "usage": {
+        "input_tokens": 12000,
+        "output_tokens": 1236,
+        "total_tokens": 13236
+      },
+      "output_sha256": "64a9465d998299575d88f0d9c2d5b55f30311a2a19d68199197b1d1f58fe327f",
+      "scores": {
+        "required_field_completeness": true,
+        "traceability": true,
+        "scope_fidelity": true,
+        "dependency_correctness": true,
+        "readiness_correctness": true,
+        "schema_validity": true,
+        "quality_pass": true,
+        "diagnostics": []
+      },
+      "output": {
+        "version": 1,
+        "parent": "Decompose accepted spec for independent import/export validation and gated publication",
+        "ready_for_looper": true,
+        "source_refs": [
+          "evaluation case independent-frontier",
+          "accepted_spec:requirements req-a, req-b, req-c"
+        ],
+        "requirements": [
+          {
+            "id": "req-a",
+            "statement": "Validate imports."
+          },
+          {
+            "id": "req-b",
+            "statement": "Validate exports."
+          },
+          {
+            "id": "req-c",
+            "statement": "Publish only after both import and export validations succeed."
+          }
+        ],
+        "risks_or_open_decisions": [],
+        "childbeads": [
+          {
+            "id": "cb-import-validation",
+            "title": "Implement import validation",
+            "commit_sentence": "Add import validation for the accepted import contract.",
+            "outcome": "Imports are validated independently and produce a verifiable success or failure result.",
+            "context_refs": [
+              "accepted_spec:req-a",
+              "evaluation case independent-frontier"
+            ],
+            "scope_and_allowed_actions": "Capability: implementation. Implement only import validation and its directly coupled tests or proof. Do not modify export validation or publication gating except for shared interfaces required to expose the import result.",
+            "invariants": [
+              "Import validation remains independent of export validation.",
+              "Validation failures are observable and prevent a successful import-validation result.",
+              "No publication behavior is introduced in this slice."
+            ],
+            "success_criteria": [
+              "Import validation covers the accepted import contract.",
+              "A passing import case produces a successful validation result.",
+              "A failing import case produces a failure result.",
+              "Automated proof covers passing and failing import validation."
+            ],
+            "validation_steps": [
+              "Run the focused import-validation tests.",
+              "Run the relevant project test or verification command covering the import validation path.",
+              "Confirm the change does not require export validation or publication to pass."
+            ],
+            "depends_on": [],
+            "requirement_refs": [
+              "req-a"
+            ],
+            "stop_or_escalate_when": "Stop if the accepted import contract or validation result interface is undefined; escalate rather than inventing rules or coupling this slice to publication.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          },
+          {
+            "id": "cb-export-validation",
+            "title": "Implement export validation",
+            "commit_sentence": "Add export validation for the accepted export contract.",
+            "outcome": "Exports are validated independently and produce a verifiable success or failure result.",
+            "context_refs": [
+              "accepted_spec:req-b",
+              "evaluation case independent-frontier"
+            ],
+            "scope_and_allowed_actions": "Capability: implementation. Implement only export validation and its directly coupled tests or proof. Do not modify import validation or publication gating except for shared interfaces required to expose the export result.",
+            "invariants": [
+              "Export validation remains independent of import validation.",
+              "Validation failures are observable and prevent a successful export-validation result.",
+              "No publication behavior is introduced in this slice."
+            ],
+            "success_criteria": [
+              "Export validation covers the accepted export contract.",
+              "A passing export case produces a successful validation result.",
+              "A failing export case produces a failure result.",
+              "Automated proof covers passing and failing export validation."
+            ],
+            "validation_steps": [
+              "Run the focused export-validation tests.",
+              "Run the relevant project test or verification command covering the export validation path.",
+              "Confirm the change does not require import validation or publication to pass."
+            ],
+            "depends_on": [],
+            "requirement_refs": [
+              "req-b"
+            ],
+            "stop_or_escalate_when": "Stop if the accepted export contract or validation result interface is undefined; escalate rather than inventing rules or coupling this slice to publication.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          },
+          {
+            "id": "cb-publication-gate",
+            "title": "Gate publication on both validations",
+            "commit_sentence": "Require successful import and export validation before publication.",
+            "outcome": "Publication occurs only when both independent validations have succeeded.",
+            "context_refs": [
+              "accepted_spec:req-c",
+              "accepted_spec:req-a",
+              "accepted_spec:req-b",
+              "evaluation case independent-frontier"
+            ],
+            "scope_and_allowed_actions": "Capability: implementation. Update publication gating and its directly coupled tests or proof so it consumes both validation results. Do not change the validation rules themselves or add unrelated publication behavior.",
+            "invariants": [
+              "Publication is blocked when import validation fails.",
+              "Publication is blocked when export validation fails.",
+              "Publication proceeds only when both validations succeed.",
+              "The gate does not redefine either validation contract."
+            ],
+            "success_criteria": [
+              "Publication succeeds when both validations succeed.",
+              "Publication is blocked when only import validation fails.",
+              "Publication is blocked when only export validation fails.",
+              "Publication is blocked when both validations fail.",
+              "Automated proof covers all gate outcomes."
+            ],
+            "validation_steps": [
+              "Run focused publication-gating tests.",
+              "Run the relevant project test or verification command covering validation and publication integration.",
+              "Review the proof to confirm both independent validation results are required before publication."
+            ],
+            "depends_on": [
+              "cb-import-validation",
+              "cb-export-validation"
+            ],
+            "requirement_refs": [
+              "req-c"
+            ],
+            "stop_or_escalate_when": "Stop if publication cannot consume explicit results from both validations or if either validation's contract must be invented; escalate with the missing interface or decision.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "completed-wayfinder",
+      "effort": "xhigh",
+      "repetition": 1,
+      "requested_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "xhigh"
+      },
+      "verified_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "xhigh",
+        "evidence": "accepted CLI invocation trace with completed usage event"
+      },
+      "invocation_trace": {
+        "executable": "codex",
+        "arguments": [
+          "exec",
+          "--ephemeral",
+          "--skip-git-repo-check",
+          "--ignore-user-config",
+          "--ignore-rules",
+          "--sandbox",
+          "read-only",
+          "--model",
+          "gpt-5.6-luna",
+          "--config",
+          "approval_policy=\"never\"",
+          "--config",
+          "model_reasoning_effort=\"xhigh\"",
+          "--output-schema",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\schemas\\childbead.schema.json",
+          "--output-last-message",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\.scratch\\routing-eval\\completed-wayfinder-xhigh-1.json",
+          "--json",
+          "-"
+        ],
+        "accepted": true
+      },
+      "exit_code": 0,
+      "elapsed_ms": 35828,
+      "usage": {
+        "input_tokens": 12024,
+        "output_tokens": 1872,
+        "total_tokens": 13896
+      },
+      "output_sha256": "5e6f69cb673306cd15ee8f0c5124e092475618a90217865c78992a435934e769",
+      "scores": {
+        "required_field_completeness": true,
+        "traceability": true,
+        "scope_fidelity": true,
+        "dependency_correctness": true,
+        "readiness_correctness": true,
+        "schema_validity": true,
+        "quality_pass": true,
+        "diagnostics": []
+      },
+      "output": {
+        "version": 1,
+        "parent": "Backward-compatible API-token rotation",
+        "ready_for_looper": true,
+        "source_refs": [
+          "Completed decision map: backward-compatible API-token rotation",
+          "Resolved decisions: two valid tokens during expansion, verified client migration, audit evidence, and old-token revocation",
+          "Constraint: OAuth is explicitly out of scope"
+        ],
+        "requirements": [
+          {
+            "id": "req-1",
+            "statement": "Support backward-compatible expansion with two valid API tokens."
+          },
+          {
+            "id": "req-2",
+            "statement": "Verify client migration and produce audit evidence before contraction."
+          },
+          {
+            "id": "req-3",
+            "statement": "Contract the rotation by revoking the old API token."
+          }
+        ],
+        "risks_or_open_decisions": [
+          "The migration verification mechanism and audit destination must follow the existing repository conventions.",
+          "Do not extend the implementation to OAuth or other credential types."
+        ],
+        "childbeads": [
+          {
+            "id": "token-rotation-expand",
+            "title": "Enable dual-valid-token expansion",
+            "commit_sentence": "Enable backward-compatible API-token rotation with two simultaneously valid tokens.",
+            "outcome": "The API-token rotation flow can introduce a replacement token while continuing to accept the existing token.",
+            "context_refs": [
+              "Completed decision map: backward-compatible API-token rotation",
+              "Resolved decision: expansion requires two valid tokens",
+              "Constraint: OAuth is explicitly out of scope"
+            ],
+            "scope_and_allowed_actions": "Update only the API-token rotation behavior and its focused tests or configuration needed to support a bounded period in which both old and replacement tokens are valid. Preserve existing token validation and client behavior. Do not revoke tokens, migrate clients, alter OAuth, or redesign unrelated authentication flows.",
+            "invariants": [
+              "Existing clients using the old token remain authenticated during expansion.",
+              "The replacement token is valid before any contraction occurs.",
+              "OAuth remains out of scope.",
+              "Token rotation remains limited to the intended API-token path."
+            ],
+            "success_criteria": [
+              "A replacement token can be issued or activated while the old token remains valid.",
+              "Both tokens are accepted concurrently for the expansion window.",
+              "Focused tests prove old-token compatibility and replacement-token validity.",
+              "No contraction or old-token revocation occurs in this commit."
+            ],
+            "validation_steps": [
+              "Run the focused API-token rotation and authentication tests.",
+              "Run the relevant token-validation regression tests.",
+              "Verify a test scenario authenticates successfully with both old and replacement tokens during expansion.",
+              "Confirm OAuth-related behavior and files are unchanged."
+            ],
+            "depends_on": [],
+            "requirement_refs": [
+              "req-1"
+            ],
+            "stop_or_escalate_when": "Stop if the existing token lifecycle cannot represent two valid tokens without a schema or ownership decision, or if implementing this requires changing OAuth or unrelated authentication behavior.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          },
+          {
+            "id": "token-rotation-migrate-audit",
+            "title": "Verify client migration and record audit evidence",
+            "commit_sentence": "Verify migration to the replacement API token and record auditable rotation evidence.",
+            "outcome": "All in-scope clients are verified to use the replacement token, and the rotation has durable audit evidence sufficient to authorize contraction.",
+            "context_refs": [
+              "Completed decision map: backward-compatible API-token rotation",
+              "Resolved decisions: verified client migration and audit evidence",
+              "Prerequisite childbead: token-rotation-expand",
+              "Constraint: OAuth is explicitly out of scope"
+            ],
+            "scope_and_allowed_actions": "Add or update the migration verification and audit recording needed for API-token rotation. Use existing client inventory, observability, audit-log, and test conventions where available. Limit changes to proving migration and recording evidence for this rotation. Do not revoke the old token or change OAuth behavior.",
+            "invariants": [
+              "The old token remains valid until migration verification is complete.",
+              "Migration verification is based on observable evidence rather than an unverified assumption.",
+              "Audit evidence identifies the rotation and supports the later revocation decision.",
+              "OAuth remains out of scope."
+            ],
+            "success_criteria": [
+              "Every in-scope client is verified to use the replacement token, or an explicit failed-client result prevents contraction.",
+              "Audit evidence records the rotation, verification outcome, and timestamp or equivalent repository-standard metadata.",
+              "Focused tests cover successful verification and the no-contraction condition when verification is incomplete.",
+              "The old token remains valid after this commit."
+            ],
+            "validation_steps": [
+              "Run the focused migration-verification and audit tests.",
+              "Exercise a successful migration scenario and inspect the emitted repository-standard audit evidence.",
+              "Exercise an incomplete-migration scenario and verify that contraction is not authorized.",
+              "Confirm the old token is still accepted after verification evidence is recorded."
+            ],
+            "depends_on": [
+              "token-rotation-expand"
+            ],
+            "requirement_refs": [
+              "req-2"
+            ],
+            "stop_or_escalate_when": "Stop if client inventory, migration observability, or the audit destination is unavailable or ambiguous; escalate rather than treating missing evidence as successful migration.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          },
+          {
+            "id": "token-rotation-contract",
+            "title": "Revoke the old API token after verified migration",
+            "commit_sentence": "Revoke the old API token only after verified client migration and audit evidence.",
+            "outcome": "The rotation contracts safely by revoking the old token after the replacement is active, migration is verified, and audit evidence exists.",
+            "context_refs": [
+              "Completed decision map: backward-compatible API-token rotation",
+              "Resolved decision: contraction revokes the old token",
+              "Prerequisite childbead: token-rotation-migrate-audit",
+              "Constraint: OAuth is explicitly out of scope"
+            ],
+            "scope_and_allowed_actions": "Implement the contraction guard and old-token revocation for the API-token rotation flow. Require successful migration verification and audit evidence before revocation. Update focused tests and repository-standard operational documentation only where needed to describe the completed flow. Do not alter expansion behavior, revoke the replacement token, or change OAuth.",
+            "invariants": [
+              "The replacement token remains valid after contraction.",
+              "The old token is not revoked before migration verification and audit evidence are present.",
+              "Failed or incomplete verification leaves the old token valid and surfaces a clear blocked outcome.",
+              "OAuth remains out of scope."
+            ],
+            "success_criteria": [
+              "The old token is revoked only after verified migration and audit evidence.",
+              "The replacement token continues to authenticate after revocation.",
+              "A guard prevents revocation when verification or audit evidence is missing.",
+              "Focused tests prove both successful contraction and safe non-contraction paths."
+            ],
+            "validation_steps": [
+              "Run the complete focused API-token rotation test suite.",
+              "Exercise the successful expand, migrate, audit, and contract sequence.",
+              "Verify the old token is rejected and the replacement token remains accepted after contraction.",
+              "Exercise missing-verification and missing-audit scenarios and verify the old token remains valid.",
+              "Confirm OAuth-related behavior and files are unchanged."
+            ],
+            "depends_on": [
+              "token-rotation-migrate-audit"
+            ],
+            "requirement_refs": [
+              "req-3"
+            ],
+            "stop_or_escalate_when": "Stop if verified migration or audit evidence cannot be established, if revocation could affect the replacement token, or if the change would require OAuth behavior.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "completed-wayfinder",
+      "effort": "xhigh",
+      "repetition": 2,
+      "requested_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "xhigh"
+      },
+      "verified_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "xhigh",
+        "evidence": "accepted CLI invocation trace with completed usage event"
+      },
+      "invocation_trace": {
+        "executable": "codex",
+        "arguments": [
+          "exec",
+          "--ephemeral",
+          "--skip-git-repo-check",
+          "--ignore-user-config",
+          "--ignore-rules",
+          "--sandbox",
+          "read-only",
+          "--model",
+          "gpt-5.6-luna",
+          "--config",
+          "approval_policy=\"never\"",
+          "--config",
+          "model_reasoning_effort=\"xhigh\"",
+          "--output-schema",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\schemas\\childbead.schema.json",
+          "--output-last-message",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\.scratch\\routing-eval\\completed-wayfinder-xhigh-2.json",
+          "--json",
+          "-"
+        ],
+        "accepted": true
+      },
+      "exit_code": 0,
+      "elapsed_ms": 77227,
+      "usage": {
+        "input_tokens": 12024,
+        "output_tokens": 4168,
+        "total_tokens": 16192
+      },
+      "output_sha256": "0d60ea4fb7a5b3d9717e0a3ceb2c09e9bffb8b6df8709be88ad6f2c50cadcd67",
+      "scores": {
+        "required_field_completeness": true,
+        "traceability": true,
+        "scope_fidelity": true,
+        "dependency_correctness": true,
+        "readiness_correctness": true,
+        "schema_validity": true,
+        "quality_pass": true,
+        "diagnostics": []
+      },
+      "output": {
+        "version": 1,
+        "parent": "Outcome: perform a backward-compatible API-token rotation with two valid tokens during migration, verified client migration, audit evidence, and final revocation of the predecessor token. Non-goal: OAuth.",
+        "ready_for_looper": true,
+        "source_refs": [
+          "Supplied completed Wayfinder decision map: backward-compatible API-token rotation",
+          "Supplied closed decisions: dual-token expansion, verified client migration, audit evidence, and predecessor-token revocation"
+        ],
+        "requirements": [
+          {
+            "id": "req-1",
+            "statement": "Expand rotation support so the predecessor and replacement API tokens are concurrently valid during migration."
+          },
+          {
+            "id": "req-2",
+            "statement": "Migrate every in-scope client to the replacement token and retain verifiable audit evidence of migration."
+          },
+          {
+            "id": "req-3",
+            "statement": "Contract the rotation window by revoking the predecessor token only after migration verification and audit evidence are complete."
+          }
+        ],
+        "risks_or_open_decisions": [
+          "Use the accepted spec's authoritative token store, in-scope client inventory, telemetry, and audit sink; do not infer missing systems or clients.",
+          "Stop before contraction if any client remains unverified, uses the predecessor token, or lacks audit evidence."
+        ],
+        "childbeads": [
+          {
+            "id": "rotation-expand",
+            "title": "Expand API-token rotation to two concurrently valid tokens",
+            "commit_sentence": "Support backward-compatible rotation with both predecessor and replacement API tokens valid.",
+            "outcome": "The replacement token can be introduced without interrupting clients that still use the predecessor token.",
+            "context_refs": [
+              "Supplied completed Wayfinder decision map: backward-compatible API-token rotation",
+              "Requirement req-1",
+              "Accepted spec's token-store and authentication-path definitions"
+            ],
+            "scope_and_allowed_actions": "Implement the rotation expansion in the authoritative token store and authentication path named by the accepted spec. Create or register the replacement token, retain the predecessor token, and update focused tests or configuration required to prove concurrent validity. Do not revoke the predecessor token, migrate clients, add OAuth support, or change unrelated authentication behavior.",
+            "invariants": [
+              "Exactly two API tokens are valid during the migration window.",
+              "Both predecessor and replacement tokens authenticate successfully for the existing API contract.",
+              "Unknown, malformed, or otherwise invalid tokens remain rejected.",
+              "OAuth remains out of scope.",
+              "The predecessor token is not revoked in this childbead."
+            ],
+            "success_criteria": [
+              "The replacement token is registered and accepted by the existing API authentication path.",
+              "The predecessor token remains accepted during migration.",
+              "Focused authentication and regression coverage proves both-token validity and invalid-token rejection.",
+              "The repository remains coherent with no contraction or client-migration behavior included."
+            ],
+            "validation_steps": [
+              "Run the accepted spec's prescribed focused token-authentication tests.",
+              "Exercise an existing representative API request with each valid token and verify successful authentication.",
+              "Exercise the same authentication path with an invalid token and verify rejection.",
+              "Confirm the predecessor token remains enabled after validation."
+            ],
+            "depends_on": [],
+            "requirement_refs": [
+              "req-1"
+            ],
+            "stop_or_escalate_when": "Stop and escalate if the accepted spec does not identify the authoritative token store or authentication path, if more than two tokens would become valid, or if implementing expansion requires an OAuth decision.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          },
+          {
+            "id": "rotation-migrate-verify",
+            "title": "Migrate and verify all in-scope clients",
+            "commit_sentence": "Migrate all in-scope clients to the replacement API token and verify their usage.",
+            "outcome": "Every client identified by the accepted spec uses the replacement token successfully while the predecessor token remains available as a controlled fallback.",
+            "context_refs": [
+              "Supplied completed Wayfinder decision map: backward-compatible API-token rotation",
+              "Requirement req-2",
+              "Childbead rotation-expand",
+              "Accepted spec's client inventory and migration procedure"
+            ],
+            "scope_and_allowed_actions": "Using the accepted spec's authoritative client inventory, update each in-scope client's token reference to the replacement token. Execute the specified client verification and telemetry checks, documenting client identity, replacement-token success, predecessor-token non-use, timestamp, and result in the authoritative audit sink. Do not revoke the predecessor token or modify out-of-scope clients.",
+            "invariants": [
+              "Every in-scope client is accounted for individually.",
+              "The predecessor token remains valid until verification and evidence are complete.",
+              "Client migration does not alter API behavior or introduce downtime.",
+              "Token secret values are not written to logs or audit records.",
+              "OAuth remains out of scope."
+            ],
+            "success_criteria": [
+              "All in-scope clients authenticate successfully with the replacement token.",
+              "Verification shows no remaining predecessor-token use by an in-scope client.",
+              "Audit evidence is complete, attributable to each client, and stored in the authoritative sink named by the accepted spec.",
+              "No client is marked migrated based only on configuration change without successful verification."
+            ],
+            "validation_steps": [
+              "Run the accepted spec's client-migration and smoke-test commands for every in-scope client.",
+              "Review authentication telemetry or the specified verification signal to confirm replacement-token use and predecessor-token non-use for each client.",
+              "Review the resulting audit records for client identity, token identity, verification time, and pass/fail result.",
+              "Re-run the focused API authentication checks from rotation-expand to confirm both tokens remain valid before contraction."
+            ],
+            "depends_on": [
+              "rotation-expand"
+            ],
+            "requirement_refs": [
+              "req-2"
+            ],
+            "stop_or_escalate_when": "Stop and escalate if the client inventory, verification signal, or authoritative audit sink is incomplete; if any client fails migration; or if predecessor-token use remains detectable.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          },
+          {
+            "id": "rotation-contract",
+            "title": "Revoke the predecessor API token after verified migration",
+            "commit_sentence": "Revoke the predecessor API token after all client migrations are verified and audited.",
+            "outcome": "The rotation is contracted safely: the predecessor token is rejected and the replacement token remains the sole valid API token.",
+            "context_refs": [
+              "Supplied completed Wayfinder decision map: backward-compatible API-token rotation",
+              "Requirement req-3",
+              "Childbead rotation-migrate-verify",
+              "Accepted spec's contraction and rollback procedure"
+            ],
+            "scope_and_allowed_actions": "Review the completed migration verification and audit evidence, then revoke only the predecessor token through the authoritative token-management mechanism. Retain the replacement token and run post-revocation authentication checks. Do not revoke or rotate the replacement token, alter client scope, or add OAuth behavior.",
+            "invariants": [
+              "Revocation occurs only after every in-scope client has passed verification and audit evidence is complete.",
+              "The replacement token remains valid after contraction.",
+              "The predecessor token is rejected after revocation.",
+              "No token secret values are exposed in logs or audit records.",
+              "OAuth remains out of scope."
+            ],
+            "success_criteria": [
+              "The predecessor token is revoked through the authoritative mechanism.",
+              "Requests using the predecessor token are rejected.",
+              "Requests using the replacement token continue to succeed.",
+              "Post-contraction regression checks pass and the revocation event is recorded as required by the accepted spec."
+            ],
+            "validation_steps": [
+              "Review rotation-migrate-verify's complete client verification and audit evidence before executing revocation.",
+              "Run the accepted spec's contraction command or procedure against the predecessor token.",
+              "Verify a representative API request with the predecessor token is rejected.",
+              "Verify representative API requests with the replacement token succeed.",
+              "Run the accepted spec's post-rotation regression and audit checks."
+            ],
+            "depends_on": [
+              "rotation-migrate-verify"
+            ],
+            "requirement_refs": [
+              "req-3"
+            ],
+            "stop_or_escalate_when": "Do not revoke if any client lacks successful verification or audit evidence, if predecessor-token use is still observed, or if the replacement token fails pre-contraction checks; escalate with the failed evidence and follow the accepted spec's rollback procedure.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "incomplete-wayfinder",
+      "effort": "xhigh",
+      "repetition": 1,
+      "requested_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "xhigh"
+      },
+      "verified_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "xhigh",
+        "evidence": "accepted CLI invocation trace with completed usage event"
+      },
+      "invocation_trace": {
+        "executable": "codex",
+        "arguments": [
+          "exec",
+          "--ephemeral",
+          "--skip-git-repo-check",
+          "--ignore-user-config",
+          "--ignore-rules",
+          "--sandbox",
+          "read-only",
+          "--model",
+          "gpt-5.6-luna",
+          "--config",
+          "approval_policy=\"never\"",
+          "--config",
+          "model_reasoning_effort=\"xhigh\"",
+          "--output-schema",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\schemas\\childbead.schema.json",
+          "--output-last-message",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\.scratch\\routing-eval\\incomplete-wayfinder-xhigh-1.json",
+          "--json",
+          "-"
+        ],
+        "accepted": true
+      },
+      "exit_code": 0,
+      "elapsed_ms": 9031,
+      "usage": {
+        "input_tokens": 12004,
+        "output_tokens": 368,
+        "total_tokens": 12372
+      },
+      "output_sha256": "c249c5a1d738bd020ebbd1d0205c82553fe24064a37a3dbf0ad16e608d2784ec",
+      "scores": {
+        "required_field_completeness": true,
+        "traceability": true,
+        "scope_fidelity": false,
+        "dependency_correctness": true,
+        "readiness_correctness": true,
+        "schema_validity": true,
+        "quality_pass": false,
+        "diagnostics": []
+      },
+      "output": {
+        "version": 1,
+        "parent": "No accepted_spec or decision_map supplied for decomposition",
+        "ready_for_looper": false,
+        "source_refs": [
+          "User-provided beadwriter instructions only; no accepted_spec, decision_map, plan, or completed Wayfinder map supplied."
+        ],
+        "requirements": [],
+        "risks_or_open_decisions": [
+          "An authoritative accepted_spec or completed decision_map is required before implementation childbeads can be defined.",
+          "No implementation requirements, constraints, proof surfaces, dependencies, or validation commands were supplied."
+        ],
+        "childbeads": []
+      }
+    },
+    {
+      "case_id": "incomplete-wayfinder",
+      "effort": "xhigh",
+      "repetition": 2,
+      "requested_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "xhigh"
+      },
+      "verified_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "xhigh",
+        "evidence": "accepted CLI invocation trace with completed usage event"
+      },
+      "invocation_trace": {
+        "executable": "codex",
+        "arguments": [
+          "exec",
+          "--ephemeral",
+          "--skip-git-repo-check",
+          "--ignore-user-config",
+          "--ignore-rules",
+          "--sandbox",
+          "read-only",
+          "--model",
+          "gpt-5.6-luna",
+          "--config",
+          "approval_policy=\"never\"",
+          "--config",
+          "model_reasoning_effort=\"xhigh\"",
+          "--output-schema",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\schemas\\childbead.schema.json",
+          "--output-last-message",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\.scratch\\routing-eval\\incomplete-wayfinder-xhigh-2.json",
+          "--json",
+          "-"
+        ],
+        "accepted": true
+      },
+      "exit_code": 0,
+      "elapsed_ms": 10014,
+      "usage": {
+        "input_tokens": 12004,
+        "output_tokens": 378,
+        "total_tokens": 12382
+      },
+      "output_sha256": "52ee4db554fcf17f158094d1205942c3f0496fe0cd81daed75ca82c31bccee2e",
+      "scores": {
+        "required_field_completeness": true,
+        "traceability": true,
+        "scope_fidelity": false,
+        "dependency_correctness": true,
+        "readiness_correctness": true,
+        "schema_validity": true,
+        "quality_pass": false,
+        "diagnostics": []
+      },
+      "output": {
+        "version": 1,
+        "parent": "No parent outcome or accepted spec supplied",
+        "ready_for_looper": false,
+        "source_refs": [
+          "User-provided Beadwriter instructions"
+        ],
+        "requirements": [],
+        "risks_or_open_decisions": [
+          "Missing authoritative accepted_spec, decision_map, or completed planning artifact.",
+          "Missing parent outcome, non-goals, constraints, completion condition, and requirement statements.",
+          "Repository inspection and proof-surface validation were explicitly disallowed."
+        ],
+        "childbeads": []
+      }
+    },
+    {
+      "case_id": "direct-accepted-spec",
+      "effort": "xhigh",
+      "repetition": 1,
+      "requested_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "xhigh"
+      },
+      "verified_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "xhigh",
+        "evidence": "accepted CLI invocation trace with completed usage event"
+      },
+      "invocation_trace": {
+        "executable": "codex",
+        "arguments": [
+          "exec",
+          "--ephemeral",
+          "--skip-git-repo-check",
+          "--ignore-user-config",
+          "--ignore-rules",
+          "--sandbox",
+          "read-only",
+          "--model",
+          "gpt-5.6-luna",
+          "--config",
+          "approval_policy=\"never\"",
+          "--config",
+          "model_reasoning_effort=\"xhigh\"",
+          "--output-schema",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\schemas\\childbead.schema.json",
+          "--output-last-message",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\.scratch\\routing-eval\\direct-accepted-spec-xhigh-1.json",
+          "--json",
+          "-"
+        ],
+        "accepted": true
+      },
+      "exit_code": 0,
+      "elapsed_ms": 28641,
+      "usage": {
+        "input_tokens": 12005,
+        "output_tokens": 1452,
+        "total_tokens": 13457
+      },
+      "output_sha256": "a48e5c068a8a66aa40f388c1e4ae74f9b3c9270bb52a0d2ab2641f2ff391e4fd",
+      "scores": {
+        "required_field_completeness": true,
+        "traceability": true,
+        "scope_fidelity": true,
+        "dependency_correctness": true,
+        "readiness_correctness": true,
+        "schema_validity": true,
+        "quality_pass": true,
+        "diagnostics": []
+      },
+      "output": {
+        "version": 1,
+        "parent": "direct-accepted-spec",
+        "ready_for_looper": true,
+        "source_refs": [
+          "accepted-spec: direct-accepted-spec"
+        ],
+        "requirements": [
+          {
+            "id": "req-1",
+            "statement": "Users can export one report as CSV and validate the downloaded header."
+          }
+        ],
+        "risks_or_open_decisions": [],
+        "childbeads": [
+          {
+            "id": "cb-1",
+            "title": "Export one report as CSV with a validated download header",
+            "commit_sentence": "Add CSV export for one report and validate its downloaded header.",
+            "outcome": "Users can trigger a CSV export for the specified report and receive a download whose header is validated against the report's expected columns.",
+            "context_refs": [
+              "accepted-spec: direct-accepted-spec",
+              "requirement: req-1"
+            ],
+            "scope_and_allowed_actions": "Implement only the specified report's user-triggered CSV export, download response, header validation, and focused automated coverage. Reuse existing report data, column definitions, and application conventions. Do not add other report formats, bulk export, or unrelated UI/API changes.",
+            "invariants": [
+              "The export represents the selected report.",
+              "The CSV header preserves the report's expected column names and order.",
+              "Header validation fails clearly when the downloaded header does not match the expected header."
+            ],
+            "success_criteria": [
+              "A user can invoke the specified report's CSV export.",
+              "The downloaded file is valid CSV and contains the expected header.",
+              "Automated tests verify the export and exact downloaded-header validation."
+            ],
+            "validation_steps": [
+              "Run the focused automated tests covering the report CSV export and downloaded header.",
+              "Verify the downloaded CSV header matches the report's expected columns and order.",
+              "Verify a mismatched header is rejected by the validation path."
+            ],
+            "depends_on": [],
+            "requirement_refs": [
+              "req-1"
+            ],
+            "stop_or_escalate_when": "Stop and escalate if the specified report or its expected header cannot be identified from the accepted spec and existing report definition, or if implementing the export requires unrelated schema, authentication, or cross-report changes.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "direct-accepted-spec",
+      "effort": "xhigh",
+      "repetition": 2,
+      "requested_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "xhigh"
+      },
+      "verified_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "xhigh",
+        "evidence": "accepted CLI invocation trace with completed usage event"
+      },
+      "invocation_trace": {
+        "executable": "codex",
+        "arguments": [
+          "exec",
+          "--ephemeral",
+          "--skip-git-repo-check",
+          "--ignore-user-config",
+          "--ignore-rules",
+          "--sandbox",
+          "read-only",
+          "--model",
+          "gpt-5.6-luna",
+          "--config",
+          "approval_policy=\"never\"",
+          "--config",
+          "model_reasoning_effort=\"xhigh\"",
+          "--output-schema",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\schemas\\childbead.schema.json",
+          "--output-last-message",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\.scratch\\routing-eval\\direct-accepted-spec-xhigh-2.json",
+          "--json",
+          "-"
+        ],
+        "accepted": true
+      },
+      "exit_code": 0,
+      "elapsed_ms": 30178,
+      "usage": {
+        "input_tokens": 12005,
+        "output_tokens": 1551,
+        "total_tokens": 13556
+      },
+      "output_sha256": "fd9aade73c8889b813bf448bc1fcfdb4f22aa114c1b5412b5967314c5d00dad8",
+      "scores": {
+        "required_field_completeness": true,
+        "traceability": true,
+        "scope_fidelity": true,
+        "dependency_correctness": true,
+        "readiness_correctness": true,
+        "schema_validity": true,
+        "quality_pass": true,
+        "diagnostics": []
+      },
+      "output": {
+        "version": 1,
+        "parent": "direct-accepted-spec",
+        "ready_for_looper": true,
+        "source_refs": [
+          "accepted spec: direct-accepted-spec"
+        ],
+        "requirements": [
+          {
+            "id": "req-1",
+            "statement": "Users can export one report as CSV and validate the downloaded header."
+          }
+        ],
+        "risks_or_open_decisions": [],
+        "childbeads": [
+          {
+            "id": "cb-1",
+            "title": "Export one report as CSV with a validated header",
+            "commit_sentence": "Add one-report CSV export and verify the downloaded header.",
+            "outcome": "Users can download one report as CSV whose header matches the accepted spec.",
+            "context_refs": [
+              "accepted spec: direct-accepted-spec",
+              "req-1"
+            ],
+            "scope_and_allowed_actions": "Implement the existing one-report export flow, serialize the report as CSV, provide the download through the established application boundary, and add focused automated coverage for the downloaded header. Do not add multi-report export, scheduling, new report types, or unrelated formatting changes.",
+            "invariants": [
+              "The export covers exactly one report.",
+              "The downloaded artifact is valid CSV.",
+              "The header matches the accepted spec's required columns and ordering.",
+              "Existing report behavior outside export remains unchanged."
+            ],
+            "success_criteria": [
+              "A user can export one report as a CSV download.",
+              "The downloaded CSV header is validated against the accepted spec.",
+              "Focused automated coverage proves the export and header behavior."
+            ],
+            "validation_steps": [
+              "Run the focused export test suite for the touched module.",
+              "Exercise the one-report export flow and inspect the downloaded CSV.",
+              "Assert that the first CSV row exactly matches the accepted spec's required header.",
+              "Run the repository's standard validation checks for the changed code."
+            ],
+            "depends_on": [],
+            "requirement_refs": [
+              "req-1"
+            ],
+            "stop_or_escalate_when": "Stop if the accepted spec does not define the report or its required header, if the existing report boundary cannot support a one-report export without a separate design decision, or if implementation requires multi-report or unrelated scope.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "wide-refactor",
+      "effort": "xhigh",
+      "repetition": 1,
+      "requested_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "xhigh"
+      },
+      "verified_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "xhigh",
+        "evidence": "accepted CLI invocation trace with completed usage event"
+      },
+      "invocation_trace": {
+        "executable": "codex",
+        "arguments": [
+          "exec",
+          "--ephemeral",
+          "--skip-git-repo-check",
+          "--ignore-user-config",
+          "--ignore-rules",
+          "--sandbox",
+          "read-only",
+          "--model",
+          "gpt-5.6-luna",
+          "--config",
+          "approval_policy=\"never\"",
+          "--config",
+          "model_reasoning_effort=\"xhigh\"",
+          "--output-schema",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\schemas\\childbead.schema.json",
+          "--output-last-message",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\.scratch\\routing-eval\\wide-refactor-xhigh-1.json",
+          "--json",
+          "-"
+        ],
+        "accepted": true
+      },
+      "exit_code": 0,
+      "elapsed_ms": 9118,
+      "usage": {
+        "input_tokens": 12003,
+        "output_tokens": 384,
+        "total_tokens": 12387
+      },
+      "output_sha256": "7d34d54b771835479494c57194b1c11f9841dcb28a775aae5b2ee2f92fbdcb31",
+      "scores": {
+        "required_field_completeness": true,
+        "traceability": false,
+        "scope_fidelity": false,
+        "dependency_correctness": false,
+        "readiness_correctness": false,
+        "schema_validity": true,
+        "quality_pass": false,
+        "diagnostics": []
+      },
+      "output": {
+        "version": 1,
+        "parent": "Beadwriter decomposition request",
+        "ready_for_looper": false,
+        "source_refs": [
+          "User-provided Beadwriter instructions"
+        ],
+        "requirements": [],
+        "risks_or_open_decisions": [
+          "No accepted_spec, parent bead, decision_map, plan, or completed Wayfinder map was supplied.",
+          "The implementation outcome, non-goals, constraints, authoritative sources, and completion condition are missing.",
+          "No repository inspection or validation evidence is available; repository inspection is prohibited by the supplied instructions."
+        ],
+        "childbeads": []
+      }
+    },
+    {
+      "case_id": "wide-refactor",
+      "effort": "xhigh",
+      "repetition": 2,
+      "requested_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "xhigh"
+      },
+      "verified_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "xhigh",
+        "evidence": "accepted CLI invocation trace with completed usage event"
+      },
+      "invocation_trace": {
+        "executable": "codex",
+        "arguments": [
+          "exec",
+          "--ephemeral",
+          "--skip-git-repo-check",
+          "--ignore-user-config",
+          "--ignore-rules",
+          "--sandbox",
+          "read-only",
+          "--model",
+          "gpt-5.6-luna",
+          "--config",
+          "approval_policy=\"never\"",
+          "--config",
+          "model_reasoning_effort=\"xhigh\"",
+          "--output-schema",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\schemas\\childbead.schema.json",
+          "--output-last-message",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\.scratch\\routing-eval\\wide-refactor-xhigh-2.json",
+          "--json",
+          "-"
+        ],
+        "accepted": true
+      },
+      "exit_code": 0,
+      "elapsed_ms": 11940,
+      "usage": {
+        "input_tokens": 12003,
+        "output_tokens": 502,
+        "total_tokens": 12505
+      },
+      "output_sha256": "0887cb9445b7ce23f8724ff58e8da486dc2fd10bcd5c307223db5ccba5ae7b3e",
+      "scores": {
+        "required_field_completeness": true,
+        "traceability": false,
+        "scope_fidelity": false,
+        "dependency_correctness": false,
+        "readiness_correctness": false,
+        "schema_validity": true,
+        "quality_pass": false,
+        "diagnostics": []
+      },
+      "output": {
+        "version": 1,
+        "parent": "Decompose an implementation-ready outcome into Looper childbeads",
+        "ready_for_looper": false,
+        "source_refs": [
+          "User-provided Beadwriter instructions; no accepted_spec, decision_map, completed plan, or implementation outcome supplied"
+        ],
+        "requirements": [
+          {
+            "id": "authoritative-input",
+            "statement": "An accepted_spec, completed decision_map, or implementation-ready plan is required to define the parent outcome, requirements, constraints, and proof obligations."
+          }
+        ],
+        "risks_or_open_decisions": [
+          "Missing authoritative source prevents evidence-backed decomposition.",
+          "No repository inspection, requirement set, validation commands, dependencies, or execution scope were supplied.",
+          "Ready for Looper remains no until an implementation-ready source is provided."
+        ],
+        "childbeads": []
+      }
+    },
+    {
+      "case_id": "independent-frontier",
+      "effort": "xhigh",
+      "repetition": 1,
+      "requested_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "xhigh"
+      },
+      "verified_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "xhigh",
+        "evidence": "accepted CLI invocation trace with completed usage event"
+      },
+      "invocation_trace": {
+        "executable": "codex",
+        "arguments": [
+          "exec",
+          "--ephemeral",
+          "--skip-git-repo-check",
+          "--ignore-user-config",
+          "--ignore-rules",
+          "--sandbox",
+          "read-only",
+          "--model",
+          "gpt-5.6-luna",
+          "--config",
+          "approval_policy=\"never\"",
+          "--config",
+          "model_reasoning_effort=\"xhigh\"",
+          "--output-schema",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\schemas\\childbead.schema.json",
+          "--output-last-message",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\.scratch\\routing-eval\\independent-frontier-xhigh-1.json",
+          "--json",
+          "-"
+        ],
+        "accepted": true
+      },
+      "exit_code": 0,
+      "elapsed_ms": 24978,
+      "usage": {
+        "input_tokens": 12000,
+        "output_tokens": 1266,
+        "total_tokens": 13266
+      },
+      "output_sha256": "d25a8e8e6957c9d8b48ccfd653deba49e710c8fa1a5c9d6a344e41adb494e5ac",
+      "scores": {
+        "required_field_completeness": true,
+        "traceability": true,
+        "scope_fidelity": true,
+        "dependency_correctness": true,
+        "readiness_correctness": true,
+        "schema_validity": true,
+        "quality_pass": true,
+        "diagnostics": []
+      },
+      "output": {
+        "version": 1,
+        "parent": "Implement import/export validation gates and publish-after-both workflow",
+        "ready_for_looper": true,
+        "source_refs": [
+          "user_prompt:evaluation-case-independent-frontier"
+        ],
+        "requirements": [
+          {
+            "id": "req-a",
+            "statement": "Validate imports."
+          },
+          {
+            "id": "req-b",
+            "statement": "Validate exports."
+          },
+          {
+            "id": "req-c",
+            "statement": "Publish only after both import and export validations succeed."
+          }
+        ],
+        "risks_or_open_decisions": [],
+        "childbeads": [
+          {
+            "id": "bead-import-validation",
+            "title": "Add import validation",
+            "commit_sentence": "Add validation that verifies imports before downstream publication.",
+            "outcome": "Imports are validated as an independently verifiable behavior.",
+            "context_refs": [
+              "user_prompt:evaluation-case-independent-frontier",
+              "requirement:req-a"
+            ],
+            "scope_and_allowed_actions": "Implement the import-validation behavior and its directly coupled tests. Do not modify export validation or publication gating except where a shared validation interface is required.",
+            "invariants": [
+              "Import validation remains independently executable.",
+              "A failed import validation is observable as a validation failure.",
+              "No publication behavior is introduced in this slice."
+            ],
+            "success_criteria": [
+              "Import validation exists and correctly accepts valid imports.",
+              "Invalid imports fail validation.",
+              "Tests cover successful and failed import validation."
+            ],
+            "validation_steps": [
+              "Run the focused import-validation test suite.",
+              "Run the relevant static checks for changed code."
+            ],
+            "depends_on": [],
+            "requirement_refs": [
+              "req-a"
+            ],
+            "stop_or_escalate_when": "Stop if the import contract or validation failure semantics are unspecified by the implementation context; escalate the missing contract instead of inventing behavior.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          },
+          {
+            "id": "bead-export-validation",
+            "title": "Add export validation",
+            "commit_sentence": "Add validation that verifies exports before downstream publication.",
+            "outcome": "Exports are validated as an independently verifiable behavior.",
+            "context_refs": [
+              "user_prompt:evaluation-case-independent-frontier",
+              "requirement:req-b"
+            ],
+            "scope_and_allowed_actions": "Implement the export-validation behavior and its directly coupled tests. Do not modify import validation or publication gating except where a shared validation interface is required.",
+            "invariants": [
+              "Export validation remains independently executable.",
+              "A failed export validation is observable as a validation failure.",
+              "No publication behavior is introduced in this slice."
+            ],
+            "success_criteria": [
+              "Export validation exists and correctly accepts valid exports.",
+              "Invalid exports fail validation.",
+              "Tests cover successful and failed export validation."
+            ],
+            "validation_steps": [
+              "Run the focused export-validation test suite.",
+              "Run the relevant static checks for changed code."
+            ],
+            "depends_on": [],
+            "requirement_refs": [
+              "req-b"
+            ],
+            "stop_or_escalate_when": "Stop if the export contract or validation failure semantics are unspecified by the implementation context; escalate the missing contract instead of inventing behavior.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          },
+          {
+            "id": "bead-publish-after-validation",
+            "title": "Gate publication on both validations",
+            "commit_sentence": "Publish only after import and export validation both succeed.",
+            "outcome": "Publication is prevented unless both import and export validations have succeeded.",
+            "context_refs": [
+              "user_prompt:evaluation-case-independent-frontier",
+              "requirement:req-c"
+            ],
+            "scope_and_allowed_actions": "Implement the publication gate that consumes the existing import and export validation results, plus directly coupled tests. Do not redesign either validation implementation or add unrelated publication behavior.",
+            "invariants": [
+              "Publication cannot occur when import validation fails.",
+              "Publication cannot occur when export validation fails.",
+              "Publication occurs only when both validations succeed.",
+              "Both validation results are evaluated before publication."
+            ],
+            "success_criteria": [
+              "Publication succeeds when both validations pass.",
+              "Publication is blocked when import validation fails.",
+              "Publication is blocked when export validation fails.",
+              "Tests cover all three outcomes."
+            ],
+            "validation_steps": [
+              "Run the focused publication-gating test suite.",
+              "Run the combined import, export, and publication validation tests.",
+              "Run the relevant static checks for changed code."
+            ],
+            "depends_on": [
+              "bead-import-validation",
+              "bead-export-validation"
+            ],
+            "requirement_refs": [
+              "req-c"
+            ],
+            "stop_or_escalate_when": "Stop if validation results cannot be consumed reliably from the preceding slices or if publication has additional undocumented prerequisites; escalate the contract gap instead of inventing prerequisites.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "independent-frontier",
+      "effort": "xhigh",
+      "repetition": 2,
+      "requested_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "xhigh"
+      },
+      "verified_runtime": {
+        "model": "gpt-5.6-luna",
+        "effort": "xhigh",
+        "evidence": "accepted CLI invocation trace with completed usage event"
+      },
+      "invocation_trace": {
+        "executable": "codex",
+        "arguments": [
+          "exec",
+          "--ephemeral",
+          "--skip-git-repo-check",
+          "--ignore-user-config",
+          "--ignore-rules",
+          "--sandbox",
+          "read-only",
+          "--model",
+          "gpt-5.6-luna",
+          "--config",
+          "approval_policy=\"never\"",
+          "--config",
+          "model_reasoning_effort=\"xhigh\"",
+          "--output-schema",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\schemas\\childbead.schema.json",
+          "--output-last-message",
+          "C:\\Users\\colet\\OneDrive\\Documents\\Loop\\.scratch\\routing-eval\\independent-frontier-xhigh-2.json",
+          "--json",
+          "-"
+        ],
+        "accepted": true
+      },
+      "exit_code": 0,
+      "elapsed_ms": 23237,
+      "usage": {
+        "input_tokens": 12000,
+        "output_tokens": 1158,
+        "total_tokens": 13158
+      },
+      "output_sha256": "663fcc5cd00faff855f3dd21488ddac62e7b50f436f70aaf00c5039cc87d8b08",
+      "scores": {
+        "required_field_completeness": true,
+        "traceability": true,
+        "scope_fidelity": true,
+        "dependency_correctness": true,
+        "readiness_correctness": true,
+        "schema_validity": true,
+        "quality_pass": true,
+        "diagnostics": []
+      },
+      "output": {
+        "version": 1,
+        "parent": "Implement import/export validation with publish gating",
+        "ready_for_looper": true,
+        "source_refs": [
+          "supplied evaluation case: independent-frontier"
+        ],
+        "requirements": [
+          {
+            "id": "req-a",
+            "statement": "Validate imports."
+          },
+          {
+            "id": "req-b",
+            "statement": "Validate exports."
+          },
+          {
+            "id": "req-c",
+            "statement": "Publish only after import and export validation both succeed."
+          }
+        ],
+        "risks_or_open_decisions": [],
+        "childbeads": [
+          {
+            "id": "cb-import-validation",
+            "title": "Add import validation",
+            "commit_sentence": "Add validation that verifies imports before publication.",
+            "outcome": "Imports are independently validated and produce a clear success or failure result.",
+            "context_refs": [
+              "supplied evaluation case: independent-frontier",
+              "requirement req-a"
+            ],
+            "scope_and_allowed_actions": "Implement only import validation and its directly coupled tests or proof. Do not change export validation or publication gating.",
+            "invariants": [
+              "Import validation remains independently executable.",
+              "Validation failure prevents treating imports as validated."
+            ],
+            "success_criteria": [
+              "Import validation covers the required import checks.",
+              "A passing result is distinguishable from a failing result.",
+              "Tests or equivalent proof cover passing and failing import validation."
+            ],
+            "validation_steps": [
+              "Run the focused import-validation test or verification command.",
+              "Confirm both passing and failing import cases are covered."
+            ],
+            "depends_on": [],
+            "requirement_refs": [
+              "req-a"
+            ],
+            "stop_or_escalate_when": "Stop if the required import rules are not defined by the supplied source or if implementing them requires decisions about exports or publication behavior.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          },
+          {
+            "id": "cb-export-validation",
+            "title": "Add export validation",
+            "commit_sentence": "Add validation that verifies exports before publication.",
+            "outcome": "Exports are independently validated and produce a clear success or failure result.",
+            "context_refs": [
+              "supplied evaluation case: independent-frontier",
+              "requirement req-b"
+            ],
+            "scope_and_allowed_actions": "Implement only export validation and its directly coupled tests or proof. Do not change import validation or publication gating.",
+            "invariants": [
+              "Export validation remains independently executable.",
+              "Validation failure prevents treating exports as validated."
+            ],
+            "success_criteria": [
+              "Export validation covers the required export checks.",
+              "A passing result is distinguishable from a failing result.",
+              "Tests or equivalent proof cover passing and failing export validation."
+            ],
+            "validation_steps": [
+              "Run the focused export-validation test or verification command.",
+              "Confirm both passing and failing export cases are covered."
+            ],
+            "depends_on": [],
+            "requirement_refs": [
+              "req-b"
+            ],
+            "stop_or_escalate_when": "Stop if the required export rules are not defined by the supplied source or if implementing them requires decisions about imports or publication behavior.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          },
+          {
+            "id": "cb-publish-gating",
+            "title": "Gate publication on both validations",
+            "commit_sentence": "Publish only after import and export validation both succeed.",
+            "outcome": "Publication occurs only when import validation and export validation have both succeeded.",
+            "context_refs": [
+              "supplied evaluation case: independent-frontier",
+              "requirements req-a, req-b, req-c"
+            ],
+            "scope_and_allowed_actions": "Update publication gating and its directly coupled tests or proof so publication requires successful import and export validation. Do not redefine either validation rule.",
+            "invariants": [
+              "Publication never occurs when import validation fails.",
+              "Publication never occurs when export validation fails.",
+              "Publication remains possible when both validations succeed."
+            ],
+            "success_criteria": [
+              "The publication path requires both validation results to be successful.",
+              "Tests or equivalent proof cover import failure, export failure, and both-success cases.",
+              "The repository remains coherent after the change."
+            ],
+            "validation_steps": [
+              "Run focused publication-gating tests or verification.",
+              "Verify publication is blocked independently by each validation failure.",
+              "Verify publication succeeds only when both validations pass."
+            ],
+            "depends_on": [
+              "cb-import-validation",
+              "cb-export-validation"
+            ],
+            "requirement_refs": [
+              "req-c"
+            ],
+            "stop_or_escalate_when": "Stop if the existing publication path or validation result contract cannot be identified from the implementation context, or if publication semantics require a decision not present in the supplied source.",
+            "executor_role": "implementor",
+            "preferred_runtime": "routing-policy:implementor"
+          }
+        ]
+      }
+    }
+  ]
+}
