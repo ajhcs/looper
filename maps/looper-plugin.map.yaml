@@ -90,21 +90,35 @@ sources:
     confidence: verified
   - id: mapper-beads
     type: doc
-    title: System Mapper bead plan
-    path: ../docs/beads/system-mapper.md
+    title: System Mapper interactive renderer brief
+    path: ../docs/postponed-work/system-mapper/system-mapper-interactive-renderer.md
     confidence: verified
   - id: mapper-checkpoint
     type: doc
     title: System Mapper checkpoint
-    path: ../docs/beads/system-mapper-checkpoint.md
+    path: ../docs/postponed-work/system-mapper/system-mapper-checkpoint.md
+    confidence: verified
+  - id: routing-research
+    type: doc
+    title: GPT-5.6 orchestration model policy research
+    path: ../docs/research/gpt-5.6-orchestration-model-policy.md
+    confidence: verified
+  - id: prompt-structure-research
+    type: doc
+    title: GPT-5.6 prompt and orchestration structure research
+    path: ../docs/research/gpt-5.6-prompt-system-structure.md
     confidence: verified
   - id: preflight-runtime
     type: runtime
-    title: npm run maps:preflight output on 2026-07-06
+    title: npm run maps:preflight output on 2026-07-10
     confidence: verified
   - id: git-status-runtime
     type: runtime
-    title: git status --short output on 2026-07-06
+    title: git status --short output on 2026-07-10
+    confidence: verified
+  - id: test-runtime
+    type: runtime
+    title: npm test output on 2026-07-10
     confidence: verified
 nodes:
   - id: codex-skill-surface
@@ -209,6 +223,16 @@ nodes:
       - system-mapper-skill
       - phone-swe-skill
       - map-schema
+  - id: model-routing-concept
+    label: Cost-Aware Model Routing
+    layer: Knowledge
+    type: Concept
+    status: active
+    description: Skills select the cheapest model and reasoning level likely to succeed, escalating by tier when evidence, ambiguity, or failed work warrants it.
+    evidence:
+      - root-looper-skill
+      - system-mapper-skill
+      - routing-research
   - id: map-source-data
     label: Typed Map Sources
     layer: Data
@@ -304,7 +328,7 @@ nodes:
     layer: System
     type: System Component
     status: at_risk
-    description: The current worktree has modified and untracked files, so map changes should preserve unrelated user work.
+    description: The current worktree has a user modification in CONTEXT.md, so map changes must preserve that unrelated work.
     evidence:
       - git-status-runtime
   - id: skill-code-area
@@ -344,6 +368,7 @@ nodes:
     description: Node tests verify valid fixtures, invalid diagnostics, renderer output, preflight reporting, and docs/plugin consistency.
     evidence:
       - map-tests
+      - test-runtime
   - id: plugin-metadata-code-area
     label: Plugin Metadata Code Area
     layer: Code
@@ -377,7 +402,7 @@ nodes:
     layer: Work
     type: Workflow
     status: partial
-    description: The System Mapper checkpoint says implementation is complete and the next action is commit/PR packaging.
+    description: Historical checkpoint docs record the completed interactive-renderer implementation and its packaging sequence; the current repository is already on later merged work.
     evidence:
       - mapper-checkpoint
       - git-status-runtime
@@ -445,6 +470,24 @@ relationships:
     evidence:
       - system-mapper-skill
       - map-schema
+  - id: mapping-uses-model-routing
+    from: current-system-mapping-workflow
+    to: model-routing-concept
+    type: uses
+    label: routes bounded map work by
+    status: active
+    evidence:
+      - system-mapper-skill
+      - routing-research
+  - id: looping-uses-model-routing
+    from: planning-orchestration-workflow
+    to: model-routing-concept
+    type: uses
+    label: assigns execution and review lanes by
+    status: active
+    evidence:
+      - root-looper-skill
+      - routing-research
   - id: understanding-depends-on-traceability
     from: system-understanding-concept
     to: traceability-concept
@@ -534,6 +577,7 @@ relationships:
     evidence:
       - map-tests
       - mapper-checkpoint
+      - test-runtime
   - id: skill-files-feed-surface
     from: skill-doc-data
     to: codex-skill-surface

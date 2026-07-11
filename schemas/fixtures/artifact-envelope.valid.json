@@ -93,6 +93,8 @@
       "source_element_id": "analytics-system",
       "target_artifact_id": "analytics-ecosystem",
       "target_element_id": "collection-service",
+      "source_element_kind": "System Component",
+      "target_element_kind": "System Component",
       "relationship_type": "uses",
       "inverse_label": "is used by",
       "confidence": {

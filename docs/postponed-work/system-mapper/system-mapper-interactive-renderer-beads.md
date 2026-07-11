@@ -7,7 +7,7 @@ Outcome: System Mapper generates a Cytoscape-powered Interactive Map View and a 
 Sources:
 - `CONTEXT.md`
 - `docs/adr/0002-use-interactive-map-view-as-primary-renderer.md`
-- `docs/beads/system-mapper-interactive-renderer.md`
+- `docs/postponed-work/system-mapper/system-mapper-interactive-renderer.md`
 - Phone-A-SWE renderer decision packet from the grill-with-docs session
 - Existing System Mapper implementation in `scripts/system-map.mjs`, `package.json`, `tests/`, `docs/system-mapper.md`, and `skills/system-mapper/SKILL.md`
 
@@ -69,7 +69,7 @@ Assumptions:
 6. `mapper-html-006` - Add Map Brief output contract and example
    Commit sentence: Add a Map Brief contract and example so System Mapper reports mapped domains, openable views, gaps, traces, deepenings, and next action.
    Scope: Document the chat response shape; add or update tests that inspect the skill/docs for the required output contract; include an example brief for the analytics fixture.
-   Likely files: `docs/system-mapper.md`, `skills/system-mapper/SKILL.md`, `tests/system-mapper-docs.test.mjs`, possibly `docs/beads/system-mapper-interactive-renderer.md`.
+   Likely files: `docs/system-mapper.md`, `skills/system-mapper/SKILL.md`, `tests/system-mapper-docs.test.mjs`, possibly `docs/postponed-work/system-mapper/system-mapper-interactive-renderer.md`.
    Proof: Docs tests assert mapped domains, Interactive Map View path, Map Source path, key findings, traces, evidence gaps, Deepening Recommendations, and next action are required in System Mapper output.
    Size: small.
    Depends on: `mapper-html-005`.
@@ -78,7 +78,7 @@ Assumptions:
 7. `mapper-html-007` - Dogfood interactive views on existing maps
    Commit sentence: Generate and inspect Interactive Map Views for the Analytics and Looper Plugin maps, then record any layout or deepening follow-ups.
    Scope: Generate HTML for `maps/examples/analytics.map.yaml` and `maps/looper-plugin.map.yaml`; inspect usability; record evidence gaps, deepening recommendations, and any layout limitations that should become follow-up beads rather than hidden TODOs.
-   Likely files: `maps/examples/generated/analytics.html`, `maps/generated/looper-plugin.html`, `docs/beads/system-mapper-checkpoint.md`, optional follow-up bead notes.
+   Likely files: `maps/examples/generated/analytics.html`, `maps/generated/looper-plugin.html`, `docs/postponed-work/system-mapper/system-mapper-checkpoint.md`, optional follow-up bead notes.
    Proof: Validation passes for both maps; HTML renders for both maps; manual or browser-smoke inspection confirms clickable nodes, relationship explanation, trace mode, detail panel, and generated map navigation.
    Size: target.
    Depends on: `mapper-html-006`.

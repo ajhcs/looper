@@ -1,5 +1,8 @@
 # System Mapper
 
+> **Deprecated for now:** New System Mapper work is paused. The implementation is
+> retained, and planning/backlog material lives under `docs/postponed-work/`.
+
 System Mapper creates System Understanding Maps from a typed Map Source. The Map Source is canonical; the Interactive Map View is the primary generated renderer.
 
 System Mapper creates Current-State Maps by default. Create a Future-State Map only when the user explicitly asks for prospective design or planning.

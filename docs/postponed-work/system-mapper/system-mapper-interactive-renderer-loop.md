@@ -2,10 +2,10 @@
 
 State:
 - goal: ship the `mapper-html-*` beads so System Mapper generates a Cytoscape Interactive Map View, removes D2/SVG, and returns useful Map Briefs.
-- beads: `docs/beads/system-mapper-interactive-renderer-beads.md`.
-- source docs: `CONTEXT.md`, `docs/adr/0002-use-interactive-map-view-as-primary-renderer.md`, `docs/beads/system-mapper-interactive-renderer.md`.
+- beads: `docs/postponed-work/system-mapper/system-mapper-interactive-renderer-beads.md`.
+- source docs: `CONTEXT.md`, `docs/adr/0002-use-interactive-map-view-as-primary-renderer.md`, `docs/postponed-work/system-mapper/system-mapper-interactive-renderer.md`.
 - lanes: default code slice uses `matt-pocock-skills:implement` medium, then `matt-pocock-skills:code-review` high.
-- checkpoint: record completed bead, files changed, commands run, evidence, risks, and next bead in `docs/beads/system-mapper-checkpoint.md`.
+- checkpoint: record completed bead, files changed, commands run, evidence, risks, and next bead in `docs/postponed-work/system-mapper/system-mapper-checkpoint.md`.
 
 Loop:
 1. Re-enter from checkpoint and select the first incomplete childbead in order: `mapper-html-001` through `mapper-html-007`.

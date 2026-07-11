@@ -5,6 +5,10 @@ description: Inspect, create, validate, render, and deepen System Understanding 
 
 # System Mapper
 
+> **Deprecated for now:** Do not start new System Mapper work. The implementation and
+> historical planning material are retained for possible revival, but its backlog is
+> parked under `docs/postponed-work/`.
+
 Use System Mapper when the user needs to understand the current system before planning work, decomposing beads, or making implementation decisions.
 
 System Mapper creates Current-State Maps by default. Create a Future-State Map only when the user explicitly asks for prospective design or planning.

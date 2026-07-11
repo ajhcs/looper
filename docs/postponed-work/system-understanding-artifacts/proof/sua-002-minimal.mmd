@@ -1,0 +1,14 @@
+%% Generated from minimal-system. Do not edit by hand.
+flowchart TD
+  user_surface["User Surface\nProduct / Surface\nactive"]
+  app_code["App Code\nCode / Code Area\nactive"]
+  app_code -->|"implements"| user_surface
+  classDef product fill:#D8F3DC,stroke:#2D6A4F
+  classDef knowledge fill:#FFF3B0,stroke:#9A6700
+  classDef data fill:#D7E8FF,stroke:#2457A6
+  classDef system fill:#E8DDFF,stroke:#6741D9
+  classDef code fill:#E9ECEF,stroke:#495057
+  classDef business fill:#FFE8CC,stroke:#D9480F
+  classDef work fill:#FFE3E3,stroke:#C92A2A
+  class user_surface product
+  class app_code code

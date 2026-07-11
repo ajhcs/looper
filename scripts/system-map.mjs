@@ -4,6 +4,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 
 import { createRequire } from "node:module";
 import { dirname, join, resolve } from "node:path";
 import YAML from "yaml";
+import { deriveDependencyDirection, getRelationshipDefinition, validateRelationship } from "./relationship-definitions.mjs";
 
 const require = createRequire(import.meta.url);
 const schemaPath = resolve("schemas/system-map.schema.json");
@@ -136,6 +137,13 @@ export function validateMapSource(data) {
     if (relationship.to && !nodeIds.has(relationship.to)) {
       diagnostics.push(`relationship ${relationship.id} target ${relationship.to} does not match any node id`);
     }
+    const sourceNode = (data.nodes ?? []).find((node) => node.id === relationship.from);
+    const targetNode = (data.nodes ?? []).find((node) => node.id === relationship.to);
+    diagnostics.push(...validateRelationship({
+      relationshipType: relationship.type,
+      sourceKind: sourceNode?.type,
+      targetKind: targetNode?.type
+    }, ["system-map.relationships.v1"]).map((diagnostic) => `relationship ${relationship.id} ${diagnostic}`));
     for (const evidenceId of relationship.evidence ?? []) {
       if (!sourceIds.has(evidenceId)) {
         diagnostics.push(`relationship ${relationship.id} evidence ${evidenceId} does not match any source id`);
@@ -554,8 +562,8 @@ export function renderHtml(mapSource) {
         '<p class="detail-description">' + escapeDetailHtml(node.description || "No description provided.") + '</p>',
         renderDetailPills("Evidence quality", node.evidenceQualityLabels),
         renderSources(node.sources),
-        renderRelationships("Incoming relationships", node.incomingRelationships, "fromLabel"),
-        renderRelationships("Outgoing relationships", node.outgoingRelationships, "toLabel"),
+        renderRelationships("Depended On By", node.incomingRelationships, "fromLabel"),
+        renderRelationships("Depends On", node.outgoingRelationships, "toLabel"),
         renderRelatedRisks(node.relatedRisksAndUnknowns),
         renderChildMap(node.childMap),
         renderTracePanel(null)
@@ -572,7 +580,7 @@ export function renderHtml(mapSource) {
       detailPanel.innerHTML = [
         '<p class="detail-eyebrow">Relationship Explanation</p>',
         '<h2 class="detail-title">' + escapeDetailHtml(relationship.fromLabel) + ' -> ' + escapeDetailHtml(relationship.toLabel) + '</h2>',
-        '<p class="detail-meta">' + escapeDetailHtml(relationship.type) + ' / ' + escapeDetailHtml(relationship.label) + ' / ' + escapeDetailHtml(relationship.status) + '</p>',
+        '<p class="detail-meta">' + escapeDetailHtml(relationship.type) + ' / ' + escapeDetailHtml(relationship.forwardLabel) + ' / ' + escapeDetailHtml(relationship.status) + '</p>',
         '<p class="detail-description">' + escapeDetailHtml(relationship.why) + '</p>',
         renderDetailPills("Evidence quality", relationship.evidenceQualityLabels),
         renderSources(relationship.sources),
@@ -603,7 +611,7 @@ export function renderHtml(mapSource) {
       return '<section class="detail-section"><h3>' + title + '</h3>' +
         renderList(relationships, (relationship) => [
           '<strong>' + escapeDetailHtml(relationship[labelKey]) + '</strong>',
-          '<div class="detail-source-meta">' + escapeDetailHtml(relationship.label) + ' / ' + escapeDetailHtml(relationship.type) + ' / ' + escapeDetailHtml(relationship.status) + '</div>',
+          '<div class="detail-source-meta">' + escapeDetailHtml(relationship.directionalLabel) + ' / ' + escapeDetailHtml(relationship.type) + ' / ' + escapeDetailHtml(relationship.status) + '</div>',
           '<div>' + escapeDetailHtml(relationship.why) + '</div>'
         ].join("")) +
         '</section>';
@@ -734,10 +742,10 @@ function buildHtmlRendererData(mapSource) {
     const sourceRefs = (node.evidence ?? []).map((sourceId) => sourcesById.get(sourceId)).filter(Boolean);
     const incomingRelationships = rawRelationships
       .filter((relationship) => relationship.to === node.id)
-      .map((relationship) => summarizeRelationship(relationship, rawNodesById, sourcesById));
+      .map((relationship) => summarizeRelationship(relationship, rawNodesById, sourcesById, node.id));
     const outgoingRelationships = rawRelationships
       .filter((relationship) => relationship.from === node.id)
-      .map((relationship) => summarizeRelationship(relationship, rawNodesById, sourcesById));
+      .map((relationship) => summarizeRelationship(relationship, rawNodesById, sourcesById, node.id));
     const relatedRisksAndUnknowns = [...incomingRelationships, ...outgoingRelationships]
       .map((relationship) => relationship.from === node.id ? relationship.to : relationship.from)
       .map((relatedNodeId) => rawNodesById.get(relatedNodeId))
@@ -843,11 +851,16 @@ function buildHtmlRendererData(mapSource) {
   };
 }
 
-function summarizeRelationship(relationship, nodesById, sourcesById) {
+function summarizeRelationship(relationship, nodesById, sourcesById, selectedElementId = null) {
   const sourceRefs = (relationship.evidence ?? []).map((sourceId) => sourcesById.get(sourceId)).filter(Boolean);
   const fromLabel = nodesById.get(relationship.from)?.label ?? relationship.from;
   const toLabel = nodesById.get(relationship.to)?.label ?? relationship.to;
   const label = relationship.label || relationship.type;
+  const definition = getRelationshipDefinition(relationship.type, ["system-map.relationships.v1"]);
+  const dependencyDirection = selectedElementId ? deriveDependencyDirection(relationship, selectedElementId) : null;
+  const directionalLabel = selectedElementId === relationship.to
+    ? definition?.inverseLabel ?? label
+    : definition?.forwardLabel || label;
   return {
     id: relationship.id,
     from: relationship.from,
@@ -856,6 +869,10 @@ function summarizeRelationship(relationship, nodesById, sourcesById) {
     toLabel,
     type: relationship.type,
     label,
+    forwardLabel: definition?.forwardLabel ?? relationship.type,
+    inverseLabel: definition?.inverseLabel ?? relationship.type,
+    directionalLabel,
+    dependencyDirection,
     status: relationship.status,
     description: relationship.description ?? "",
     evidence: relationship.evidence ?? [],

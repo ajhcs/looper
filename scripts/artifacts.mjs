@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import YAML from "yaml";
 import { validateMapSource } from "./system-map.mjs";
+import { relationshipVocabularyRegistry, validateRelationship } from "./relationship-definitions.mjs";
 
 const envelopeSchemaPath = resolve("schemas/artifact-envelope.schema.json");
 const sharedDefinitionsPath = resolve("schemas/artifact-definitions.schema.json");
@@ -56,6 +57,7 @@ export function validateArtifactSource(source) {
   }
 
   diagnostics.push(...validateContract(entry, adaptation.source));
+  diagnostics.push(...validateTraceReferences(adaptation.envelope?.trace_links, entry.relationshipExtensions));
   diagnostics.push(...normaliseValidatorResult(entry.semanticValidator(adaptation.source)));
 
   return {
@@ -144,6 +146,8 @@ export function preflightArtifactRegistry(registry = artifactRegistry) {
     if (!Array.isArray(entry?.relationshipExtensions) || entry.relationshipExtensions.length === 0 ||
       entry.relationshipExtensions.some((vocabulary) => typeof vocabulary !== "string" || vocabulary.length === 0)) {
       errors.push(`${artifactType} relationship vocabulary is missing or invalid`);
+    } else if (entry.relationshipExtensions.some((vocabulary) => !relationshipVocabularyRegistry.has(vocabulary))) {
+      errors.push(`${artifactType} relationship vocabulary is not registered`);
     }
     if (!Array.isArray(entry?.generatedViews)) {
       errors.push(`${artifactType} generated views must be an array`);
@@ -191,6 +195,15 @@ function validateContract(entry, source) {
 
 function validateLegacySystemMap(source) {
   return validateMapSource(source);
+}
+
+function validateTraceReferences(traceLinks, relationshipExtensions) {
+  return (traceLinks ?? []).flatMap((traceLink) => validateRelationship({
+    relationshipType: traceLink?.relationship_type,
+    sourceKind: traceLink?.source_element_kind,
+    targetKind: traceLink?.target_element_kind,
+    inverseLabel: traceLink?.inverse_label
+  }, relationshipExtensions).map((diagnostic) => `trace link ${traceLink?.id ?? "(missing id)"} ${diagnostic}`));
 }
 
 function normaliseValidatorResult(result) {

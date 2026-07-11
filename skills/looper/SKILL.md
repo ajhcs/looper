@@ -7,7 +7,7 @@ description: Write compact Codex orchestration loops over accepted plans, beads,
 
 Turn an accepted plan into an executable control loop. Preserve authority, proof, stop conditions, material caveats, and next action; trim repetition and optional explanation first.
 
-Use `system-mapper` when current-system evidence is insufficient and `beadwriter` when no provable slice exists. Do not invent implementation scope.
+System Mapper is deprecated for now. When current-system evidence is insufficient, stop and ask for a narrower evidence-gathering step; use `beadwriter` when no provable slice exists. Do not invent implementation scope.
 
 ## Role Policy
 

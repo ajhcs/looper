@@ -79,13 +79,15 @@ describe("System Mapper skill and docs", () => {
     assert.match(docs, /Verify the inferred implementation evidence/);
   });
 
-  it("README and plugin metadata expose System Mapper consistently", () => {
+  it("README and plugin metadata deprecate System Mapper consistently", () => {
     assert.match(readme, /\$system-mapper/);
     assert.match(readme, /System Mapper/);
+    assert.match(readme, /deprecated for now/i);
     assert.match(readme, /Interactive Map Views/);
     assert.match(readme, /Map Briefs/);
     assert.match(plugin.interface.longDescription, /System Mapper/);
-    assert(plugin.interface.defaultPrompt.some((prompt) => prompt.includes("System Mapper")));
+    assert.match(plugin.interface.longDescription, /deprecated for now/i);
+    assert(!plugin.interface.defaultPrompt.some((prompt) => prompt.includes("System Mapper")));
     assert.match(agent, /Interactive Map View/);
     assert.match(agent, /Map Brief/);
   });

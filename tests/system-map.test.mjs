@@ -7,6 +7,7 @@ import {
   renderHtml,
   renderMermaid,
   runPreflight,
+  validateMapSource,
   validateFile
 } from "../scripts/system-map.mjs";
 
@@ -39,6 +40,19 @@ describe("System Map Source validation", () => {
       assert.equal(result.ok, false, `${filePath} should fail`);
       assert.match(result.diagnostics.join("\n"), new RegExp(escapeRegExp(expected)));
     }
+  });
+
+  it("rejects legacy relationship endpoint pairs outside their controlled definition", () => {
+    const fixture = loadMapSource(resolve("maps/examples/minimal.map.yaml")).data;
+    fixture.relationships[0] = {
+      ...fixture.relationships[0],
+      from: "user-surface",
+      to: "app-code"
+    };
+
+    const result = validateMapSource(fixture);
+    assert.equal(result.ok, false);
+    assert.match(result.diagnostics.join("\n"), /implements does not allow Surface -> Code Area/);
   });
 });
 
@@ -83,8 +97,13 @@ describe("System Map renderers", () => {
 
   it("adds relationship summaries, related risks and unknowns, and generated child map links", () => {
     const html = renderHtml(analytics);
-    assert.match(html, /Incoming relationships/);
-    assert.match(html, /Outgoing relationships/);
+    const rendererData = extractRendererData(html);
+    const dashboard = rendererData.nodes.find((node) => node.id === "dashboard-surface");
+    const collection = rendererData.nodes.find((node) => node.id === "collection-path");
+    const outgoing = dashboard.outgoingRelationships.find((relationship) => relationship.id === "dashboard-uses-collection");
+    const incoming = collection.incomingRelationships.find((relationship) => relationship.id === "dashboard-uses-collection");
+    assert.match(html, /Depended On By/);
+    assert.match(html, /Depends On/);
     assert.match(html, /Related risks and unknowns/);
     assert.match(html, /Data Quality Coverage/);
     assert.match(html, /Security Coverage Unknowns/);
@@ -94,6 +113,10 @@ describe("System Map renderers", () => {
     assert.doesNotMatch(html, /"generatedHtmlPath": "[^"]*\.map\.ya?ml"/);
     assert.doesNotMatch(html, /"generatedHtmlPath": "[^"]*docs\//);
     assert.doesNotMatch(html, /"generatedHtmlPath": "(?:https?:|javascript:|\/\/)/);
+    assert.equal(outgoing.directionalLabel, "uses");
+    assert.deepEqual(outgoing.dependencyDirection, { group: "Depends On", relatedElementId: "collection-path" });
+    assert.equal(incoming.directionalLabel, "is used by");
+    assert.deepEqual(incoming.dependencyDirection, { group: "Depended On By", relatedElementId: "dashboard-surface" });
   });
 
   it("adds relationship explanation UI hooks and inspectable edge data", () => {

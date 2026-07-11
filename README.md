@@ -10,13 +10,15 @@
 
 Looper is the orchestration skill I use personally when work needs more structure than a single prompt, but less ceremony than a project management system. It helps Codex understand the current system first, break planned work into slices, choose useful subagent lanes, verify progress with evidence, and stop cleanly when the work is done, waiting, or genuinely blocked.
 
-This plugin also includes System Mapper for typed current-state maps, Beadwriter for decomposing parent beads into commit-sized childbeads, Bead Cleaner for safely pruning a `bd` backlog, and Phone-A-SWE for technical decisions that need current sources, codebase context, and systems-engineering translation.
+This plugin includes Beadwriter for decomposing parent beads into commit-sized childbeads, Bead Cleaner for safely pruning a `bd` backlog, and Phone-A-SWE for technical decisions that need current sources, codebase context, and systems-engineering translation. System Mapper is deprecated for now; its implementation is retained, and its backlog is parked under `docs/postponed-work/`.
 
 It is intentionally compact. The point is not to teach an agent how to think; it is to give a capable agent a reliable control loop that can keep working across pauses, fresh context windows, queued checks, and partial failures.
 
 ## What It Is For
 
 ### System Mapper
+
+> Deprecated for now. Do not start new System Mapper work; retained artifacts and bead packets are parked under `docs/postponed-work/`.
 
 - Creating System Understanding Maps from typed YAML Map Sources.
 - Validating Product, Knowledge, Data, System, and Code traceability before planning work.

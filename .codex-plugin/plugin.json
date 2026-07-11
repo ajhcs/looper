@@ -1,7 +1,7 @@
 {
   "name": "looper",
   "version": "0.4.0",
-  "description": "Map systems, write and clean beads, orchestrate GPT-5.6 work, and research software decisions.",
+  "description": "Write and clean beads, orchestrate GPT-5.6 work, and research software decisions.",
   "author": {
     "name": "Colet"
   },
@@ -23,8 +23,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Looper",
-    "shortDescription": "Map systems, write and clean beads, run loops.",
-    "longDescription": "Looper writes compact GPT-5.6-aware Codex orchestration loops over plans, beads, bounded execution, review/fix passes, and proof. It includes System Mapper for typed current-state maps, Beadwriter for commit-sized execution packets, Bead Cleaner for safe bd backlog cleanup, and Phone-A-SWE for research-backed software decisions. Default code lanes require Matt Pocock Skills for matt-pocock-skills:implement and matt-pocock-skills:code-review.",
+    "shortDescription": "Write and clean beads, research decisions, run loops.",
+    "longDescription": "Looper writes compact GPT-5.6-aware Codex orchestration loops over plans, beads, bounded execution, review/fix passes, and proof. It includes Beadwriter for commit-sized execution packets, Bead Cleaner for safe bd backlog cleanup, and Phone-A-SWE for research-backed software decisions. System Mapper is deprecated for now, with its backlog retained under docs/postponed-work. Default code lanes require Matt Pocock Skills for matt-pocock-skills:implement and matt-pocock-skills:code-review.",
     "developerName": "Colet",
     "category": "Productivity",
     "capabilities": [
@@ -32,7 +32,6 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Use System Mapper to map this current system.",
       "Use Looper to write a Codex loop.",
       "Use Beadwriter to decompose this bead.",
       "Use Bead Cleaner to audit and safely prune open beads.",
