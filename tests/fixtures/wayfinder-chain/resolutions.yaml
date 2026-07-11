@@ -1,0 +1,11 @@
+decision_map: wf-plugin-auth
+resolutions:
+  - decision_ticket_id: dt-1
+    question: How can tokens rotate without breaking active clients?
+    resolution: Add the replacement token before migrating clients, then revoke the old token after verified adoption.
+    requirement_refs: [req-1, req-2]
+  - decision_ticket_id: dt-2
+    question: What proof is required before revocation?
+    resolution: A repository test and audit event must prove migrated clients use the replacement token.
+    requirement_refs: [req-2, req-3]
+

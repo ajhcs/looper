@@ -1,0 +1,14 @@
+id: spec-plugin-auth
+type: accepted_spec
+source_refs: [map.yaml, resolutions.yaml]
+requirements:
+  - id: req-1
+    statement: Operators can add a replacement token while the current token remains valid.
+  - id: req-2
+    statement: Clients can migrate and verification prevents premature revocation.
+  - id: req-3
+    statement: Rotation actions create an audit event.
+out_of_scope:
+  - requirement_id: os-1
+    statement: Replace API tokens with OAuth.
+

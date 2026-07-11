@@ -1,0 +1,12 @@
+id: wf-plugin-auth
+type: decision_map
+destination: Deliver a backward-compatible API-token rotation workflow ready for implementation.
+open_decision_tickets: []
+not_yet_specified: []
+out_of_scope:
+  - requirement_id: os-1
+    statement: Replace API tokens with OAuth.
+decisions_so_far:
+  - decision_ticket_id: dt-1
+  - decision_ticket_id: dt-2
+

@@ -1,0 +1,54 @@
+version: 1
+parent: spec-rename-token
+ready_for_looper: true
+source_refs: [spec-rename-token]
+requirements:
+  - id: req-rename
+    statement: Rename tokenId to credentialId without a broken intermediate commit.
+risks_or_open_decisions: []
+childbeads:
+  -
+    id: rename-expand
+    title: Expand the credential identifier contract
+    commit_sentence: Add credentialId beside tokenId.
+    outcome: Both identifier forms work.
+    context_refs: [spec-rename-token#req-rename]
+    scope_and_allowed_actions: Add the new form without removing the old form.
+    invariants: [Existing callers remain green.]
+    success_criteria: [Both forms pass compatibility tests.]
+    validation_steps: [Run compatibility tests.]
+    depends_on: []
+    requirement_refs: [req-rename]
+    stop_or_escalate_when: The two forms cannot coexist.
+    executor_role: implementor
+    preferred_runtime: routing-policy:implementor
+  -
+    id: rename-migrate
+    title: Migrate callers to credentialId
+    commit_sentence: Migrate bounded callers to credentialId.
+    outcome: All callers use the new form.
+    context_refs: [spec-rename-token#callers]
+    scope_and_allowed_actions: Migrate callers while retaining compatibility.
+    invariants: [The old form remains valid during migration.]
+    success_criteria: [All callers pass with credentialId.]
+    validation_steps: [Run caller and compatibility tests.]
+    depends_on: [rename-expand]
+    requirement_refs: [req-rename]
+    stop_or_escalate_when: A caller cannot migrate while compatibility remains.
+    executor_role: implementor
+    preferred_runtime: routing-policy:implementor
+  -
+    id: rename-contract
+    title: Contract the token identifier contract
+    commit_sentence: Remove the obsolete tokenId form.
+    outcome: Only credentialId remains.
+    context_refs: [spec-rename-token#req-rename]
+    scope_and_allowed_actions: Remove the old form after migration proof.
+    invariants: [The new form remains valid.]
+    success_criteria: [No tokenId callers remain., The full suite passes.]
+    validation_steps: [Search for tokenId and run the full suite.]
+    depends_on: [rename-migrate]
+    requirement_refs: [req-rename]
+    stop_or_escalate_when: Any old-form caller remains.
+    executor_role: implementor
+    preferred_runtime: routing-policy:implementor

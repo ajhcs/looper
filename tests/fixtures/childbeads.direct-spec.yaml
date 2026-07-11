@@ -1,0 +1,23 @@
+version: 1
+parent: spec-direct
+ready_for_looper: true
+source_refs: [spec-direct#accepted]
+requirements:
+  - id: req-1
+    statement: A direct accepted spec can become a childbead without a decision map.
+risks_or_open_decisions: []
+childbeads:
+  - id: direct-01
+    title: Implement the accepted behavior
+    commit_sentence: Implement the direct accepted specification.
+    outcome: The accepted behavior is independently verifiable.
+    context_refs: [spec-direct#req-1]
+    scope_and_allowed_actions: Implement only the accepted behavior and its proof.
+    invariants: [No decision-map reconstruction is required.]
+    success_criteria: [The accepted behavior passes its focused test.]
+    validation_steps: [Run the focused behavior test.]
+    depends_on: []
+    requirement_refs: [req-1]
+    stop_or_escalate_when: The accepted spec contains an unresolved decision.
+    executor_role: implementor
+    preferred_runtime: routing-policy:implementor

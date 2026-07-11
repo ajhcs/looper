@@ -1,0 +1,21 @@
+version: 1
+terms:
+  decision_map:
+    definition: An index of unresolved and resolved planning decisions for one destination.
+    accepted_aliases: [Wayfinder map, wayfinder:map]
+  decision_ticket:
+    definition: One question resolved while clearing a decision map.
+    accepted_aliases: [Wayfinder ticket, investigation ticket]
+  accepted_spec:
+    definition: The settled, implementation-ready synthesis of requirements and decisions.
+    accepted_aliases: [spec, PRD]
+  tracker_ticket:
+    definition: A lightweight tracker-native implementation slice.
+    accepted_aliases: [to-tickets ticket, issue]
+  childbead:
+    definition: A Looper-native implementation packet with commit, proof, dependency, stop, and runtime metadata.
+    accepted_aliases: [executor packet, bead]
+  looper_slice:
+    definition: One dependency-ready childbead selected for execution and review.
+    accepted_aliases: [current slice, implementation slice]
+

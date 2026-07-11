@@ -1,0 +1,23 @@
+version: 1
+parent: invalid
+ready_for_looper: true
+source_refs: [invalid-spec]
+requirements:
+  - id: req-1
+    statement: This requirement is not covered.
+risks_or_open_decisions: []
+childbeads:
+  - id: broken-01
+    title: Broken packet
+    commit_sentence: Demonstrate actionable validation.
+    outcome: Validation fails.
+    context_refs: [invalid-spec]
+    scope_and_allowed_actions: Do nothing useful.
+    invariants: [Remain invalid.]
+    success_criteria: [Validation rejects this fixture.]
+    validation_steps: [Run contract validation.]
+    depends_on: [missing-bead]
+    requirement_refs: [unknown-requirement]
+    stop_or_escalate_when: Always.
+    executor_role: implementor
+    preferred_runtime: routing-policy:implementor
