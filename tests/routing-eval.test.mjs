@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { scoreRun, selectWinner } from "../scripts/evaluate-routing.mjs";
+import { evaluationInfrastructureFailures, scoreRun, selectWinner } from "../scripts/evaluate-routing.mjs";
 import { loadContract } from "../scripts/looper-contracts.mjs";
 
 const golden = loadContract("tests/fixtures/wayfinder-chain/childbeads.valid.yaml");
@@ -37,5 +37,25 @@ describe("Routing evaluation", () => {
     tied[0].scores.quality_pass = false;
     assert.equal(selectWinner(tied).selected_effort, "xhigh");
   });
-});
 
+  it("fails evaluation infrastructure when a run fails or lacks evidence", () => {
+    const incomplete = Array.from({ length: 20 }, (_, index) => ({
+      effort: index < 10 ? "high" : "xhigh",
+      case_id: `case-${index % 5}`,
+      repetition: (index % 2) + 1,
+      exit_code: 0,
+      output: {},
+      usage: { total_tokens: 100 },
+      verified_runtime: { model: "gpt-5.6-luna" },
+      scores: { schema_validity: true }
+    }));
+    assert.deepEqual(evaluationInfrastructureFailures(incomplete), []);
+    incomplete[0].exit_code = 1;
+    incomplete[1].usage = null;
+    incomplete[2].verified_runtime = null;
+    const failures = evaluationInfrastructureFailures(incomplete).join("\n");
+    assert.match(failures, /exited 1/);
+    assert.match(failures, /no usage evidence/);
+    assert.match(failures, /no verified runtime evidence/);
+  });
+});

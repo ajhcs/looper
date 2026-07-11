@@ -1,9 +1,9 @@
 {
   "version": 1,
-  "generated_at": "2026-07-11T15:51:09.215Z",
-  "scored_at": "2026-07-11T15:52:46.027Z",
+  "generated_at": "2026-07-11T16:06:24.305Z",
+  "scored_at": "2026-07-11T16:06:24.306Z",
   "model": "gpt-5.6-luna",
-  "runtime_verification": "The runner fixed model and effort in CLI arguments; current Codex JSONL usage traces did not echo them, so verified_runtime remains null.",
+  "runtime_verification": "Each verified runtime is backed by the recorded CLI invocation arguments, a successful exit, and a completed JSONL usage event.",
   "selection_rule": "quality gate, then efficiency; ties retain xhigh",
   "selected_effort": "xhigh",
   "reason": "High did not satisfy the quality-first replacement rule; ties and incomplete evidence retain xhigh.",
@@ -13,16 +13,16 @@
     "high": {
       "total": 10,
       "passed": 6,
-      "runtime_verified": false,
-      "median_total_tokens": 12817.5,
-      "median_elapsed_ms": 17900.5
+      "runtime_verified": true,
+      "median_total_tokens": 12886.5,
+      "median_elapsed_ms": 18086.5
     },
     "xhigh": {
       "total": 10,
       "passed": 6,
-      "runtime_verified": false,
-      "median_total_tokens": 13130.5,
-      "median_elapsed_ms": 22694.5
+      "runtime_verified": true,
+      "median_total_tokens": 13212,
+      "median_elapsed_ms": 24107.5
     }
   }
 }

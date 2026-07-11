@@ -9,7 +9,7 @@ Turn an accepted outcome or plan into childbeads another agent can execute witho
 
 ## Inputs And Grounding
 
-Load `references/compatibility-vocabulary.yaml` and use its canonical terms in childbeads. Prefer one accepted spec as the source of truth. A Wayfinder journey normally clears one decision map, hands it to `to-spec` for one accepted spec, then hands that spec here for decomposition; it does not create one spec per decision ticket.
+Load `../../references/compatibility-vocabulary.yaml` and use its canonical terms in childbeads. Prefer one accepted spec as the source of truth. A Wayfinder journey normally clears one decision map, hands it to `to-spec` for one accepted spec, then hands that spec here for decomposition; it does not create one spec per decision ticket.
 
 When the user passes a Wayfinder map directly, load the map plus every closed child ticket's resolution comment and linked decision asset. Treat the map as an index, not the decision store. Continue only when no decision tickets or in-scope fog remain and the destination is an implementation outcome. If the map is incomplete, or its destination is only a decision, return `Ready for Looper: no` with the unresolved frontier or required handoff. Split one map into multiple specs only when its destination explicitly defines independently ownable outcomes; do not infer that split from the number of decision tickets.
 
@@ -17,7 +17,7 @@ When the user passes a Wayfinder map directly, load the map plus every closed ch
 
 Use Matt's `to-tickets` for lightweight tracker-native tracer bullets. Use Beadwriter instead when Looper needs commit boundaries, executor packets, validation commands, dependencies, stop conditions, and runtime metadata. Do not decompose the same accepted spec with both workflows. Existing tracker tickets may be imported only when the user asks Beadwriter to enrich them into childbeads.
 
-Load `references/model-routing-policy.yaml` only when assigning `Preferred runtime`. Keep model configuration outside task prose, record preferred and verified runtime separately, and never claim an unverified runtime ran.
+Load `../../references/model-routing-policy.yaml` only when assigning `Preferred runtime`. Keep model configuration outside task prose, record preferred and verified runtime separately, and never claim an unverified runtime ran.
 
 ## Workflow
 

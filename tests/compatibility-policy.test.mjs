@@ -27,8 +27,9 @@ describe("Compatibility vocabulary", () => {
 
 describe("Central routing policy", () => {
   it("is the only skill source of concrete model defaults", () => {
-    for (const skill of [rootSkill, looperSkill, beadwriter]) {
-      assert.match(skill, /references\/model-routing-policy\.yaml/);
+    assert.match(rootSkill, /references\/model-routing-policy\.yaml/);
+    for (const skill of [looperSkill, beadwriter]) {
+      assert.match(skill, /\.\.\/\.\.\/references\/model-routing-policy\.yaml/);
       assert.doesNotMatch(skill, /GPT-5\.6 Luna xhigh|GPT-5\.6 Sol low/);
     }
     assert.equal(routing.roles.implementor.model, "gpt-5.6-luna");
@@ -36,8 +37,7 @@ describe("Central routing policy", () => {
     assert.match(routing.selection_rule, /ties retain xhigh/i);
   });
 
-  it("keeps direct and plugin-native Looper instructions identical", () => {
-    assert.equal(rootSkill, looperSkill);
+  it("keeps direct and plugin-native Looper behavior identical except resource paths", () => {
+    assert.equal(rootSkill, looperSkill.replaceAll("../../references/", "references/"));
   });
 });
-

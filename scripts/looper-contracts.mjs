@@ -1,9 +1,11 @@
 import Ajv2020 from "ajv/dist/2020.js";
 import { readFileSync } from "node:fs";
 import { extname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import YAML from "yaml";
 
-const schemaPath = resolve("schemas/childbead.schema.json");
+const root = resolve(fileURLToPath(new URL("..", import.meta.url)));
+const schemaPath = resolve(root, "schemas/childbead.schema.json");
 const schema = JSON.parse(readFileSync(schemaPath, "utf8"));
 const ajv = new Ajv2020({ allErrors: true, strict: true });
 const validateSchema = ajv.compile(schema);
@@ -21,6 +23,7 @@ export function validateChildbeadSet(source) {
   }
 
   const requirementIds = new Set(source.requirements.map(({ id }) => id));
+  if (source.ready_for_looper && source.requirements.length === 0) diagnostics.push("ready_for_looper requires at least one requirement");
   if (requirementIds.size !== source.requirements.length) diagnostics.push("requirement ids must be unique");
   const beadIds = new Set();
   for (const bead of source.childbeads) {

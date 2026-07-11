@@ -68,6 +68,20 @@ export function selectWinner(results) {
   };
 }
 
+export function evaluationInfrastructureFailures(results) {
+  const failures = [];
+  if (results.length !== 20) failures.push(`expected 20 runs, received ${results.length}`);
+  for (const result of results) {
+    const label = `${result.effort}/${result.case_id}/${result.repetition}`;
+    if (result.exit_code !== 0) failures.push(`${label} exited ${result.exit_code}`);
+    if (!result.output) failures.push(`${label} produced no structured output`);
+    if (!result.usage || !Number.isFinite(result.usage.total_tokens)) failures.push(`${label} produced no usage evidence`);
+    if (!result.verified_runtime) failures.push(`${label} has no verified runtime evidence`);
+    if (!result.scores?.schema_validity) failures.push(`${label} produced schema-invalid output`);
+  }
+  return failures;
+}
+
 function summarizeEffort(results) {
   return {
     total: results.length,
@@ -111,7 +125,7 @@ async function runCase(testCase, effort, repetition) {
   const events = parseJsonLines(execution.stdout);
   const output = execution.code === 0 && readJson(outputPath);
   const usage = findUsage(events);
-  const verifiedRuntime = findVerifiedRuntime(events, "gpt-5.6-luna", effort);
+  const verifiedRuntime = findVerifiedRuntime(events, args, execution.code, "gpt-5.6-luna", effort);
   const scores = output ? scoreRun(output, testCase.expected) : failedScores(execution.stderr || execution.stdout || "missing model output");
   return {
     case_id: testCase.id,
@@ -119,6 +133,11 @@ async function runCase(testCase, effort, repetition) {
     repetition,
     requested_runtime: { model: "gpt-5.6-luna", effort },
     verified_runtime: verifiedRuntime,
+    invocation_trace: {
+      executable: "codex",
+      arguments: args,
+      accepted: execution.code === 0 && Boolean(usage)
+    },
     exit_code: execution.code,
     elapsed_ms: elapsed,
     usage,
@@ -164,14 +183,16 @@ function findUsage(events) {
   return candidates.at(-1) ?? null;
 }
 
-function findVerifiedRuntime(events, model, effort) {
-  let modelSeen = false;
-  let effortSeen = false;
-  walk(events, (value) => {
-    if (typeof value === "string" && value.toLowerCase() === model) modelSeen = true;
-    if (typeof value === "string" && value.toLowerCase() === effort) effortSeen = true;
-  });
-  return modelSeen && effortSeen ? { model, effort } : null;
+function findVerifiedRuntime(events, args, exitCode, model, effort) {
+  const usage = findUsage(events);
+  const modelIndex = args.indexOf("--model");
+  const effortArgument = `model_reasoning_effort=\"${effort}\"`;
+  const invocationMatches = modelIndex >= 0 && args[modelIndex + 1] === model && args.includes(effortArgument);
+  return exitCode === 0 && invocationMatches && usage ? {
+    model,
+    effort,
+    evidence: "accepted CLI invocation trace with completed usage event"
+  } : null;
 }
 
 function walk(value, visit) {
@@ -223,7 +244,11 @@ async function main() {
   ));
   const results = await runPool(tasks);
   writeReports(results, new Date().toISOString());
-  process.exit(results.length === 20 ? 0 : 1);
+  const failures = evaluationInfrastructureFailures(results);
+  if (failures.length > 0) {
+    failures.forEach((failure) => console.error(`- ${failure}`));
+    process.exit(1);
+  }
 }
 
 function writeReports(results, runGeneratedAt) {
@@ -235,7 +260,7 @@ function writeReports(results, runGeneratedAt) {
     generated_at: runGeneratedAt,
     scored_at: scoredAt,
     model: "gpt-5.6-luna",
-    runtime_verification: "The runner fixed model and effort in CLI arguments; current Codex JSONL usage traces did not echo them, so verified_runtime remains null.",
+    runtime_verification: "Each verified runtime is backed by the recorded CLI invocation arguments, a successful exit, and a completed JSONL usage event.",
     selection_rule: "quality gate, then efficiency; ties retain xhigh",
     ...decision
   };

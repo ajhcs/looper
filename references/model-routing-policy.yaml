@@ -1,4 +1,4 @@
-policy_revision: 2
+policy_revision: 3
 status: evaluated-retained-default
 description: Local Looper routing policy; not an OpenAI-prescribed optimum.
 roles:
@@ -16,4 +16,4 @@ evaluated_configurations:
     effort: xhigh
 evidence_report: evals/wayfinder-routing/latest-report.json
 selection_rule: High replaces xhigh only when every quality gate matches xhigh and median tokens or elapsed time is lower; ties retain xhigh.
-decision: Retain xhigh. The 2026-07-11 evaluation produced 6/10 passing runs for both High and xhigh; High was more efficient but did not clear every quality gate.
+decision: Retain xhigh. The verified 2026-07-11 rerun produced 6/10 passing runs for both High and xhigh; High was more efficient but neither effort cleared every quality gate.

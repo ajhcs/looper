@@ -9,7 +9,7 @@ const readme = readFileSync("README.md", "utf8");
 
 describe("Looper implementation and review routing", () => {
   it("keeps direct and plugin-native Looper instructions identical", () => {
-    assert.equal(rootSkill, pluginSkill);
+    assert.equal(rootSkill, pluginSkill.replaceAll("../../references/", "references/"));
   });
 
   it("routes runtime metadata through one shared policy", () => {

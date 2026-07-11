@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, it } from "node:test";
@@ -22,7 +23,25 @@ describe("Childbead contract", () => {
     assert.equal(result.ok, true, result.diagnostics.join("\n"));
     const source = loadContract(fixture("childbeads.incomplete-wayfinder.yaml"));
     assert.equal(source.ready_for_looper, false);
+    assert.deepEqual(source.requirements, []);
     assert.match(source.risks_or_open_decisions.join("\n"), /decision ticket.+fog/i);
+  });
+
+  it("requires requirements only when a packet is ready", () => {
+    const source = loadContract(fixture("childbeads.incomplete-wayfinder.yaml"));
+    source.ready_for_looper = true;
+    const result = validateChildbeadSet(source);
+    assert.equal(result.ok, false);
+    assert.match(result.diagnostics.join("\n"), /requires at least one requirement/);
+  });
+
+  it("loads its schema independently of the caller working directory", () => {
+    const parent = resolve("..");
+    const script = resolve("scripts/looper-contracts.mjs");
+    const contract = resolve("tests/fixtures/childbeads.direct-spec.yaml");
+    const result = spawnSync(process.execPath, [script, "validate", contract], { cwd: parent, encoding: "utf8" });
+    assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+    assert.match(result.stdout, /OK/);
   });
 
   it("supports direct accepted specs without decision-map reconstruction", () => {
@@ -74,4 +93,3 @@ describe("Wayfinder golden chain", () => {
     assert.deepEqual(checkpoint.frontier, validateChildbeadSet(childbeads).frontier);
   });
 });
-

@@ -11,7 +11,7 @@ System Mapper is deprecated for now. When current-system evidence is insufficien
 
 ## Role Policy
 
-Load `references/model-routing-policy.yaml` when assigning runtime metadata. It is the single local routing policy and evidence pointer, not a universal optimum. Keep semantic role, preferred runtime, and verified runtime separate; preserve the role and record the fallback when the preferred runtime is unavailable. The parent retains acceptance and synthesis.
+Load `../../references/model-routing-policy.yaml` when assigning runtime metadata. It is the single local routing policy and evidence pointer, not a universal optimum. Keep semantic role, preferred runtime, and verified runtime separate; preserve the role and record the fallback when the preferred runtime is unavailable. The parent retains acceptance and synthesis.
 
 ## Loop Contract
 
