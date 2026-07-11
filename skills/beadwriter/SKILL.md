@@ -19,6 +19,8 @@ Use Matt's `to-tickets` for lightweight tracker-native tracer bullets. Use Beadw
 
 Load `../../references/model-routing-policy.yaml` only when assigning `Preferred runtime`. Keep model configuration outside task prose, record preferred and verified runtime separately, and never claim an unverified runtime ran.
 
+For a childbead that owns both UI design judgment and frontend implementation, resolve `Preferred runtime` from the specialized UI design-and-implementation role. A childbead implementing an already accepted design uses the general implementor role.
+
 ## Workflow
 
 1. **Pin intent**: outcome, non-goals, constraints, authoritative sources, and completion condition.

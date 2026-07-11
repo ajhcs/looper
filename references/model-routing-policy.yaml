@@ -1,10 +1,14 @@
-policy_revision: 3
+policy_revision: 4
 status: evaluated-retained-default
 description: Local Looper routing policy; not an OpenAI-prescribed optimum.
 roles:
   implementor:
     model: gpt-5.6-luna
     effort: xhigh
+  ui_design_implementor:
+    model: gpt-5.6-sol
+    effort: medium
+    applies_when: The packet owns both UI design judgment and frontend implementation.
   reviewer:
     model: gpt-5.6-sol
     effort: low
@@ -16,4 +20,4 @@ evaluated_configurations:
     effort: xhigh
 evidence_report: evals/wayfinder-routing/latest-report.json
 selection_rule: High replaces xhigh only when every quality gate matches xhigh and median tokens or elapsed time is lower; ties retain xhigh.
-decision: Retain xhigh. The verified 2026-07-11 rerun produced 6/10 passing runs for both High and xhigh; High was more efficient but neither effort cleared every quality gate.
+decision: Retain xhigh for general implementation after the verified 2026-07-11 rerun; use Sol Medium as the user-selected local default when one packet owns both UI design and implementation.

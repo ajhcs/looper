@@ -13,6 +13,8 @@ System Mapper is deprecated for now. When current-system evidence is insufficien
 
 Load `../../references/model-routing-policy.yaml` when assigning runtime metadata. It is the single local routing policy and evidence pointer, not a universal optimum. Keep semantic role, preferred runtime, and verified runtime separate; preserve the role and record the fallback when the preferred runtime is unavailable. The parent retains acceptance and synthesis.
 
+Select the policy's specialized UI design-and-implementation role when one slice owns both UI design judgment and frontend implementation. Ordinary frontend execution against an already accepted design remains general implementation.
+
 ## Loop Contract
 
 Carry `goal`, accepted `plan_revision`, current `slice`, `proof`, `ledger`, `risks`, `next_action`, and `status`.

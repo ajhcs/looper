@@ -38,6 +38,7 @@ It is intentionally compact. The point is not to teach an agent how to think; it
 - Resolving implementor and reviewer runtimes from one shared routing policy, with verified-runtime reporting and capability-aware fallback.
 - Keeping concrete model defaults in `references/model-routing-policy.yaml` instead of repeating them in skill prompts.
 - Retaining Luna xhigh after the recorded High/xhigh comparison because neither configuration cleared every quality gate; the evidence remains available under `evals/wayfinder-routing/`.
+- Routing slices that combine UI design judgment and frontend implementation through the specialized Sol Medium policy while leaving accepted-design implementation on the general lane.
 - Treating implementation and review skills as optional capability accelerators, so an alias or package-resolution mismatch cannot block an otherwise executable lane.
 - Checkpointing and compacting or starting fresh when work changes phases, so the orchestrator carries decisions and evidence instead of transcript history.
 

@@ -33,8 +33,18 @@ describe("Central routing policy", () => {
       assert.doesNotMatch(skill, /GPT-5\.6 Luna xhigh|GPT-5\.6 Sol low/);
     }
     assert.equal(routing.roles.implementor.model, "gpt-5.6-luna");
+    assert.equal(routing.roles.ui_design_implementor.model, "gpt-5.6-sol");
+    assert.equal(routing.roles.ui_design_implementor.effort, "medium");
+    assert.match(routing.roles.ui_design_implementor.applies_when, /both UI design judgment and frontend implementation/i);
     assert.equal(routing.roles.reviewer.model, "gpt-5.6-sol");
     assert.match(routing.selection_rule, /ties retain xhigh/i);
+  });
+
+  it("routes combined UI design and implementation without widening accepted-design work", () => {
+    for (const skill of [rootSkill, looperSkill, beadwriter]) {
+      assert.match(skill, /both UI design.+frontend implementation/is);
+      assert.match(skill, /accepted design.+general implement/is);
+    }
   });
 
   it("keeps direct and plugin-native Looper behavior identical except resource paths", () => {
