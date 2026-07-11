@@ -9,11 +9,11 @@ Turn an accepted outcome or plan into childbeads another agent can execute witho
 
 ## Role Policy
 
-- Luna Medium handles mechanical work; Luna High handles bounded, well-specified implementation with clear validation.
-- Terra Medium handles ordinary multi-file implementation, research, and review; Terra High handles complex debugging, cross-module changes, and edge-case-heavy review.
-- Sol Medium handles ambiguous architecture, security-critical decisions, expensive-to-repeat work, and final synthesis; Sol High is only for exceptionally difficult work.
+- Every implementation or fix packet prefers **GPT-5.6 Luna xhigh**.
+- Prefer Luna max only when the active runtime explicitly makes max selectable; otherwise xhigh is the expected path and work continues without a blocker.
+- Every review packet prefers **GPT-5.6 Sol low**. Findings return to Luna xhigh for correction and then to Sol low for re-review.
 
-Choose the cheapest model and reasoning level likely to succeed on the first attempt. Prefer moving up one model tier over using xhigh or max; reserve xhigh and max for exceptional quality-first tasks. Avoid Fast mode unless speed is essential. Record the verified runtime separately, and do not claim a preferred runtime actually ran without verification.
+Keep model configuration outside the task prose where the surface supports explicit runtime selection. Record the preferred and verified runtime separately, and do not claim max ran unless it was selectable and verified.
 
 ## Workflow
 
@@ -47,7 +47,9 @@ Preferred runtime:
 
 All fields are required. Reference authoritative sources instead of copying them, keep wording stable across beads, and add review focus, size, migration notes, or rollback detail only when they change execution or acceptance.
 
-`Executor role` is semantic (`focused_executor`, `judgment_worker`, or `planner`). `Preferred runtime` follows the role policy and must not imply that runtime was actually selected. Validation is mandatory. If execution fails, confidence is low, or wider scope is discovered, the packet escalates one model tier (`Luna → Terra → Sol`) with that evidence instead of retrying the same configuration.
+`Executor role` is semantic (`implementor`, `reviewer`, or `planner`). Implementation and fix packets use `GPT-5.6 Luna xhigh (max when available)`; review packets use `GPT-5.6 Sol low`. `Preferred runtime` must not imply that runtime actually ran. Validation is mandatory. A failed or widened implementation returns a revised, evidence-enriched packet to Luna; it does not block because an optional helper skill or exact skill alias is unavailable.
+
+Name the capability a packet benefits from (implementation, TDD, debugging, or code review), not one mandatory package-qualified skill. At execution time, use a matching installed skill when it resolves cleanly. If it does not, the complete packet remains executable directly and the lane continues with the fallback recorded.
 
 ## Output
 

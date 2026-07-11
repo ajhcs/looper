@@ -102,7 +102,12 @@ Run a small representative bead set through at least these variants:
 
 Measure task acceptance, evidence completeness, fix/retry count, wall-clock time, tokens, and coordination failures. Adopt the cheapest configuration that preserves the acceptance bar. This follows OpenAI's recommendation to compare representative workloads rather than assume more reasoning always wins.
 
-## Chosen local policy
+## Chosen local policy (superseded 2026-07-11)
+
+The policy below records the earlier decision. The active Looper and Beadwriter
+policy now uses GPT-5.6 Luna xhigh for implementation (max when the runtime
+exposes it) and GPT-5.6 Sol low for review. See
+`gpt-5.6-luna-implementation-review-pattern.md` for the current research note.
 
 After reviewing the tradeoffs, this plugin intentionally uses a custom usage-limit policy rather than the research baseline:
 

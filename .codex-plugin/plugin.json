@@ -24,7 +24,7 @@
   "interface": {
     "displayName": "Looper",
     "shortDescription": "Write and clean beads, research decisions, run loops.",
-    "longDescription": "Looper writes compact GPT-5.6-aware Codex orchestration loops over plans, beads, bounded execution, review/fix passes, and proof. It includes Beadwriter for commit-sized execution packets, Bead Cleaner for safe bd backlog cleanup, and Phone-A-SWE for research-backed software decisions. System Mapper is deprecated for now, with its backlog retained under docs/postponed-work. Default code lanes require Matt Pocock Skills for matt-pocock-skills:implement and matt-pocock-skills:code-review.",
+    "longDescription": "Looper writes compact GPT-5.6-aware Codex orchestration loops over plans, beads, Luna xhigh implementation, Sol low review/fix passes, and proof. It includes Beadwriter for commit-sized execution packets, Bead Cleaner for safe bd backlog cleanup, and Phone-A-SWE for research-backed software decisions. System Mapper is deprecated for now, with its backlog retained under docs/postponed-work. Installed implementation and review skills are used when available but are never hard blockers.",
     "developerName": "Colet",
     "category": "Productivity",
     "capabilities": [

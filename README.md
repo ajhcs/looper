@@ -35,8 +35,9 @@ It is intentionally compact. The point is not to teach an agent how to think; it
 - Keeping the parent agent focused on synthesis and verification.
 - Leading with the executable loop while preserving authority, proof, stop conditions, material caveats, and next action.
 - Reporting progress without pretending that queued CI or in-progress external jobs are blocked.
-- Choosing the cheapest model and reasoning level likely to succeed first try: Luna Medium/High for mechanical or bounded work, Terra Medium/High for ordinary through complex multi-file work and review, and Sol Medium for ambiguous or high-consequence work and final synthesis.
-- Escalating failed, low-confidence, or unexpectedly broad work by one model tier instead of repeating the same configuration; reserving Sol High and xhigh/max reasoning for exceptional work.
+- Running implementation and fixes on GPT-5.6 Luna xhigh, preferring max only when the active runtime exposes it.
+- Reviewing every implementation/fix diff with GPT-5.6 Sol low, then returning actionable findings to Luna for the next pass.
+- Treating implementation and review skills as optional capability accelerators, so an alias or package-resolution mismatch cannot block an otherwise executable lane.
 - Checkpointing and compacting or starting fresh when work changes phases, so the orchestrator carries decisions and evidence instead of transcript history.
 
 ### Beadwriter
@@ -80,10 +81,7 @@ Looper assumes modern Codex agents can infer routine pathfinding. It focuses on 
 
 ## Install
 
-Looper requires Matt Pocock Skills to be installed first. Its default implementation and review lanes call:
-
-- `matt-pocock-skills:implement`
-- `matt-pocock-skills:code-review`
+Looper can use Matt Pocock Skills when a matching implementation, TDD, debugging, or code-review capability is installed, but no exact package-qualified skill name is required. A missing alias or optional helper skill falls back to the self-contained worker/reviewer contract instead of blocking execution.
 
 Copy this folder into your Codex skills directory:
 
