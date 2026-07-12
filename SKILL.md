@@ -48,9 +48,11 @@ success_criteria:
 validation_steps:
 return_schema:
 stop_or_escalate_when:
+delegation_authority:
+material_evidence_since_last_dispatch:
 ```
 
-Keep the packet self-contained but lean: reference authoritative artifacts instead of copying them, omit settled decisions, and do not replay the transcript. For a planning lane, put the unresolved decision and required planning artifact in `outcome`, and the relevant alternatives, consequences, and failed evidence in `context_refs`.
+Keep the packet self-contained but lean: reference authoritative artifacts instead of copying them, omit settled decisions, and do not replay the transcript. Set `delegation_authority` to `none` unless nested delegation is explicitly necessary and authorized; workers must not spawn or coordinate subagents otherwise. On a redispatch, `material_evidence_since_last_dispatch` must identify the new failing output, changed diff, clarified decision, or other evidence that changes the packet. For a planning lane, put the unresolved decision and required planning artifact in `outcome`, and the relevant alternatives, consequences, and failed evidence in `context_refs`.
 
 Require the worker to run the packet's validation steps. If validation fails, confidence is low, or wider scope appears, narrow or revise the packet and return it to the implementor role. The reviewer role checks the pre-slice fixed point and originating childbead or accepted spec after each implementation or fix pass.
 
@@ -60,8 +62,18 @@ Give the reviewer the originating acceptance criteria, repository instructions, 
 
 Lane returns should contain only `changed_or_learned`, `validation`, `confidence`, `scope_change_or_blocker`, and `next_action`. Use a machine schema only when software parses the return.
 
+## Coordination Contract
+
+Workers must report completion, failure, or escalation proactively through their lane return. The parent must not ask for status or poll worker state without new evidence that requires intervention.
+
+Keep at most one event-driven wait outstanding. Use the longest timeout allowed by the governing runtime and return early only for a worker event, user input, or an external-state change. If the wait expires with no new event or evidence, wait again directly: do not call `list_agents`, send a worker message, synthesize a status update, or perform coordination-only reasoning.
+
+Redispatch or follow up only when material new evidence changes the worker packet; record that evidence in `material_evidence_since_last_dispatch`. A timeout, elapsed time, unchanged status, or repeated worker claim is not material evidence. Do not create a nested orchestrator or authorize worker delegation unless the packet's `delegation_authority` explicitly names the bounded purpose and limits.
+
+Quiet waiting does not lower the reasoning standard for substantive work. The parent may use Sol Medium for difficult diagnosis, consequential errors, replanning, final synthesis, or UI design judgment when new evidence requires it; unchanged waits must not trigger a fresh reasoning pass.
+
 ## Output
 
-Return the executable loop, cross-bead verification contract, uncovered residual risks, status rules, and commit or PR recommendation. Reference the accepted plan, bead IDs, and checkpoint artifacts; do not copy their scope, invariants, proof, or risk checklists into the loop. Emit a worker packet only when dispatching a worker. Name only the roles actually used; do not repeat the routing policy.
+Return the executable loop, coordination contract, cross-bead verification contract, uncovered residual risks, status rules, and commit or PR recommendation. Every generated loop that delegates work must include the event-driven wait, unchanged-timeout, proactive completion, nested-delegation, and evidence-gated redispatch rules above. Reference the accepted plan, bead IDs, and checkpoint artifacts; do not copy their scope, invariants, proof, or risk checklists into the loop. Emit a worker packet only when dispatching a worker. Name only the roles actually used; do not repeat the routing policy.
 
 Aim for one screen and roughly 2,600 characters or less. Exceed that soft target only when authority, proof, adaptation, stop conditions, or a material caveat would otherwise be lost.
